@@ -1,0 +1,15 @@
+Package: VNFirmSurvey
+Title: Clean and link Vietnam annual firm surveys 2000-2018
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Nghiem",
+           family = "Huynh",
+           role = c("aut", "cre"),
+           email = "nghiem.huynh@yale.edu",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Input raw annual surveys from GSO and output linked panel firm data across years.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1

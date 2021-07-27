@@ -1,3 +1,5 @@
 ^VNFirmSurvey\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^data-raw$
+^inst/extdata$

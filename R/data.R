@@ -13,7 +13,7 @@
 #'   \item{\code{College}}{double Number of labor with college degree}
 #'   \item{\code{Pro_secd}}{double Number of labor with professional secondary degree}
 #'   \item{\code{technical}}{double Number of technical workers, professional employees}
-#'   \item{\code{high_skill_tec}}{double Number of higher skilled workers among technicala and professional workers}
+#'   \item{\code{high_skill_tec}}{double Number of higher skilled workers among technical and professional workers}
 #'   \item{\code{other_labor}}{double Number of Other labor}
 #'}
 #' @source \url{https://www.gso.gov.vn/en/enterprises/}

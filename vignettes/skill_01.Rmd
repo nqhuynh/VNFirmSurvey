@@ -79,3 +79,19 @@ plot_scatterplot(skill_01_dta[, !c("ma_thue", "macs","madn", "tinh") ],
 
 ## Construct skill intensity (SI) measures
 
+A sub category of high skill technical workers among technical workers can create confusion. Let's ignore it for now and define skilled workers as all workers with technical degree and more than high school degree. Then, I add other SI measures together
+
+I should check the fraction of such workers in the labor force using household surveys like the VHLSS to confirm that they are rare. 
+
+```{r SIs}
+skill_01_dta[, SI_1 := ((PhD + Masters + Uni + College + Pro_secd + technical)/ total_L)]
+
+skill_01_dta[, SI_2 := ((PhD + Masters + Uni + College + high_skill_tec)/ total_L)]
+
+skill_01_dta[, SI_3 := ((PhD + Masters + Uni + high_skill_tec)/ total_L)]
+
+skill_01_dta[, SI_4 := ((PhD + Masters + Uni)/ total_L)]
+```
+
+
+

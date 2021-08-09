@@ -29,6 +29,6 @@ A data frame with 56551 rows and 13 variables:
 skill_01_dta
 }
 \description{
-Skill Composition of Firms surveyed in 2001. Unlike other years, this skill measure is at the headquarter level and include workers up to July 1st 2002.
+Skill Composition of Firms surveyed in 2001. Unlike other years, this skill measure is at the headquarter level and includes workers up to July 1st 2002.
 }
 \keyword{datasets}

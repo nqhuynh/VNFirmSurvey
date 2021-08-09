@@ -3,23 +3,19 @@
 \docType{data}
 \name{skill_01_dta}
 \alias{skill_01_dta}
-\title{Firm 2001 Skill Composition}
+\title{Firm 2001 Skill Intensity}
 \format{
-A data frame with 56551 rows and 13 variables:
+A data frame with 56541 rows and 9 variables:
 \describe{
-\item{\code{tinh}}{double Province of location}
-\item{\code{macs}}{double Plant ID}
-\item{\code{madn}}{double Firm ID}
-\item{\code{ma_thue}}{character Tax ID}
-\item{\code{total_L}}{double Total labor up to July 1st 2002 at headquarters (person)}
-\item{\code{PhD}}{double Number of labor with doctoral degree}
-\item{\code{Masters}}{double Number of labor with masters degree}
-\item{\code{Uni}}{double Number of labor with university degree}
-\item{\code{College}}{double Number of labor with college degree}
-\item{\code{Pro_secd}}{double Number of labor with professional secondary degree}
-\item{\code{technical}}{double Number of technical workers, professional employees}
-\item{\code{high_skill_tec}}{double Number of higher skilled workers among technical and professional workers}
-\item{\code{other_labor}}{double Number of Other labor}
+\item{\code{tinh}}{integer Province of location}
+\item{\code{macs}}{integer Plant ID}
+\item{\code{madn}}{integer Firm ID}
+\item{\code{ma_thue}}{integer Tax ID}
+\item{\code{total_L_head}}{double Total labor up to July 1st 2002 at headquarters (person)}
+\item{\code{SI_1}}{double (PhD + Masters + Uni + College + Pro_secd + technical)/ total_L_head)}
+\item{\code{SI_2}}{double Replace in SI_1 prefessional secondary and technical workers by number of higher skilled workers among technical and professional workers}
+\item{\code{SI_3}}{double The same as SI_2 except dropping college (Cao Dang)}
+\item{\code{SI_4}}{double The same as SI_3 except dropping high_skill_tec (added in SI_2)}
 }
 }
 \source{
@@ -29,6 +25,6 @@ A data frame with 56551 rows and 13 variables:
 skill_01_dta
 }
 \description{
-Skill Composition of Firms surveyed in 2001. Unlike other years, this skill measure is at the headquarter level and includes workers up to July 1st 2002.
+Firm skill intensity measures in 2001. Unlike other years, these skill measures are at the headquarter level and include workers up to July 1st 2002.
 }
 \keyword{datasets}

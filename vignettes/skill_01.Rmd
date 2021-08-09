@@ -1,0 +1,34 @@
+---
+title: "Firm Skill 2001"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Firm Skill 2001}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(VNFirmSurvey)
+```
+
+
+```{r load-data}
+data(skill_01_dta)
+```
+
+Let's take a first look at the data 
+
+```{r first-look}
+summary(skill_01_dta)
+
+```
+
+
+

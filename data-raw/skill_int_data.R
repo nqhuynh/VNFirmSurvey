@@ -1,10 +1,5 @@
 ## code to prepare `skill_int_data` dataset goes here
 
-library(haven)
-library(dplyr)
-library(data.table)
-library(labelled)
-
 # retrieve paths to doanh nghiep info 2001
 dn2001.file <- system.file(
       "extdata",
@@ -15,8 +10,6 @@ dn2001.file <- system.file(
 
 # read the Stata files
 dn_2001_dta <- read_dta(dn2001.file)
-
-# glimpse(dn_2001_dta)
 
 # select variables in headquarters
 

@@ -18,17 +18,64 @@ knitr::opts_chunk$set(
 library(VNFirmSurvey)
 ```
 
-
 ```{r load-data}
 data(skill_01_dta)
 ```
 
-Let's take a first look at the data 
+Let's take a first look at the data
 
 ```{r first-look}
-summary(skill_01_dta)
+library(DataExplorer)
+plot_intro(skill_01_dta)
+
+```
+
+## Missing variables
+
+```{r missing-variable}
+plot_missing(skill_01_dta)
+profile_missing(skill_01_dta)
+```
+
+
+## Update features 
+```{r features}
+update_columns(skill_01_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
+
+```
+
+Apart from missing data for total_L, I interpret missing data for other skill variables as having zero observations. I also drop 8 firms with missing total_L data (less than 0.001%).  
+
+
+```{r solve-missing}
+
+set_missing(skill_01_dta, 0L, exclude = "total_L")
+
+plot_missing(skill_01_dta)
+
+skill_01_dta <- na.omit(skill_01_dta)
+
+plot_missing(skill_01_dta)
+```
+
+
+## Distributions
+```{r continuous}
+plot_histogram(skill_01_dta)
+```
+
+## Correlation
+```{r heat-map}
+plot_correlation(skill_01_dta, maxcat = 5L)
 
 ```
 
 
+```{r scatter-plot-totalL}
+plot_scatterplot(skill_01_dta[, !c("ma_thue", "macs","madn", "tinh") ], 
+                 by = "total_L")
+
+```
+
+## Construct skill intensity (SI) measures
 

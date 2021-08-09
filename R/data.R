@@ -1,5 +1,5 @@
-#' @title DATASET_TITLE
-#' @description DATASET_DESCRIPTION
+#' @title Firm 2001 Skill Composition
+#' @description Skill Composition of Firms surveyed in 2001. Unlike other years, this skill measure is at the headquarter level and include workers up to July 1st 2002.
 #' @format A data frame with 56551 rows and 13 variables:
 #' \describe{
 #'   \item{\code{tinh}}{double Province of location}

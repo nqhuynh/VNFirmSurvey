@@ -3,7 +3,7 @@
 \docType{data}
 \name{skill_01_dta}
 \alias{skill_01_dta}
-\title{DATASET_TITLE}
+\title{Firm 2001 Skill Composition}
 \format{
 A data frame with 56551 rows and 13 variables:
 \describe{
@@ -29,6 +29,6 @@ A data frame with 56551 rows and 13 variables:
 skill_01_dta
 }
 \description{
-DATASET_DESCRIPTION
+Skill Composition of Firms surveyed in 2001. Unlike other years, this skill measure is at the headquarter level and include workers up to July 1st 2002.
 }
 \keyword{datasets}

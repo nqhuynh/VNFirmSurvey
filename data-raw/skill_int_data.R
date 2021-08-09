@@ -34,7 +34,7 @@ skill_01_dta <- setDT(dn_2001_dta)[, .(tinh,
                                        high_skill_tec = ldc81,
                                        other_labor =ldc91)]
 
-skill_01_dta
+
 # save the dataframe as an .rda file in package/data/
 
 usethis::use_data(skill_01_dta, overwrite = TRUE)

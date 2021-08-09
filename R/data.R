@@ -1,0 +1,20 @@
+#' @title DATASET_TITLE
+#' @description DATASET_DESCRIPTION
+#' @format A data frame with 56551 rows and 13 variables:
+#' \describe{
+#'   \item{\code{tinh}}{double Province of location}
+#'   \item{\code{macs}}{double Plant ID}
+#'   \item{\code{madn}}{double Firm ID}
+#'   \item{\code{ma_thue}}{character Tax ID}
+#'   \item{\code{total_L}}{double Total labor up to July 1st 2002 at headquarters (person)}
+#'   \item{\code{PhD}}{double Number of labor with doctoral degree}
+#'   \item{\code{Masters}}{double Number of labor with masters degree}
+#'   \item{\code{Uni}}{double Number of labor with university degree}
+#'   \item{\code{College}}{double Number of labor with college degree}
+#'   \item{\code{Pro_secd}}{double Number of labor with professional secondary degree}
+#'   \item{\code{technical}}{double Number of technical workers, professional employees}
+#'   \item{\code{high_skill_tec}}{double Number of higher skilled workers among technicala and professional workers}
+#'   \item{\code{other_labor}}{double Number of Other labor}
+#'}
+#' @source \url{https://www.gso.gov.vn/en/enterprises/}
+"skill_01_dta"

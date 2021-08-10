@@ -43,25 +43,6 @@ profile_missing(skill_07_dta)
 
 
 
-```{r solve-missing}
-set_missing(skill_07_dta, 0L, exclude = c("wage_bill",
-                                          "endyear_L"))
-
-plot_missing(skill_07_dta)
-
-skill_07_dta <- na.omit(skill_07_dta)
-```
-
-
-
-
-
-## Update features
-```{r features}
-update_columns(skill_07_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
-
-```
-
 
 ## Distributions
 ```{r continuous}
@@ -70,14 +51,15 @@ plot_histogram(skill_07_dta)
 
 ## Correlation
 ```{r heat-map}
-plot_correlation(skill_07_dta, maxcat = 5L)
+plot_correlation(skill_07_dta[, !c("svyear")], maxcat = 5L)
 
 ```
 
 
 ```{r scatter-plot-totalL}
 plot_scatterplot(skill_07_dta[, !c("ma_thue", "macs","madn", "tinh") ],
-                 by = "endyear_L")
+                 by = "total_L")
+
 
 ```
 

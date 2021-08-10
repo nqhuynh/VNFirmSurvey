@@ -18,12 +18,13 @@ if (file.exists(dn2007.file)){
 
 ### select columns
 
-skill_07_dta <- setDT(dn_2007_dta)[, .(tinh,
+skill_07_dta <- setDT(dn_2007_dta)[, .(svyear = 2007,
+                                       tinh,
                                        macs,
                                        madn,
                                        ma_thue,
                                        #endyear_L = ldct11,
-                                       endyear_L = ld13,
+                                       total_L = ld13,
                                        PhD = ldct91,
                                        Masters = ldct101,
                                        Uni = ldct111,
@@ -32,6 +33,11 @@ skill_07_dta <- setDT(dn_2007_dta)[, .(tinh,
                                        Lterm_voc = ldct141,
                                        Sterm_voc = ldct151,
                                        untrained = ldct161)]
+
+
+### Clean and create skill variables
+
+skill_07_dta <- clean_skill(skill_07_dta)
 
 
 usethis::use_data(skill_07_dta, overwrite = TRUE)

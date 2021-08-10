@@ -47,15 +47,15 @@ plot_histogram(skill_01_dta)
 ## Correlation
 
 ```{r heat-map}
-plot_correlation(skill_01_dta, maxcat = 5L)
+plot_correlation(skill_01_dta[, !c("svyear")], maxcat = 5L)
 
 ```
 
 SI_2 looks like the most promising measure because it has the highest pair-wise correlation. 
 
 ```{r scatter-plot-totalL}
-plot_scatterplot(skill_01_dta[, !c("ma_thue", "macs","madn", "tinh") ], 
-                 by = "total_L_head")
+plot_scatterplot(skill_01_dta[, !c("ma_thue", "macs","madn", "tinh", "svyear") ], 
+                 by = "SI_1")
 
 ```
 

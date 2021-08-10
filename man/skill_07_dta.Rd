@@ -5,23 +5,17 @@
 \alias{skill_07_dta}
 \title{Firm 2007 Skill Intensity}
 \format{
-A data frame with 155771 rows and 15 variables:
+A data frame with 155770 rows and 9 variables:
 \describe{
-\item{\code{tinh}}{character COLUMN_DESCRIPTION}
-\item{\code{macs}}{double COLUMN_DESCRIPTION}
-\item{\code{madn}}{double COLUMN_DESCRIPTION}
-\item{\code{ma_thue}}{character COLUMN_DESCRIPTION}
-\item{\code{endyear_L}}{double Total labor}
-\item{\code{PhD}}{double COLUMN_DESCRIPTION}
-\item{\code{Masters}}{double COLUMN_DESCRIPTION}
-\item{\code{Uni}}{double COLUMN_DESCRIPTION}
-\item{\code{College}}{double COLUMN_DESCRIPTION}
-\item{\code{Pro}}{double Professional level}
-\item{\code{Lterm_voc}}{double Long-term vocational training}
-\item{\code{Sterm_voc}}{double Short-term vocational training}
-\item{\code{untrained}}{double Untrained profession}
-\item{\code{wage_bill}}{double Compensation for employees including wages, bonues, social security, other compensation out of production costs}
-\item{\code{insu_pension}}{double Contributions to insurance and pension, health, trade-union}
+\item{\code{svyear}}{double Survey year}
+\item{\code{tinh}}{integer Province of location}
+\item{\code{macs}}{integer Plant ID}
+\item{\code{madn}}{integer Firm ID}
+\item{\code{ma_thue}}{integer Tax ID}
+\item{\code{total_L}}{double Total number of employees at the end of the year}
+\item{\code{SI_1}}{double (PhD + Masters + Uni + College + skilled workers)/ total_L) where skilled workers are professional and long term vocationally trained}
+\item{\code{SI_2}}{double The same as SI_1 except dropping college (Cao Dang)}
+\item{\code{SI_3}}{double The same as SI_2 except dropping high_skill_tec}
 }
 }
 \source{

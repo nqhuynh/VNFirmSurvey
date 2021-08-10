@@ -1,6 +1,6 @@
 ## code to prepare `skill_int_data` dataset goes here
 
-### retrieve paths to doanh nghiep info 2001
+### retrieve data to doanh nghiep info 2001
 dn2001.file <- system.file(
       "extdata",
       "Stata_2001",

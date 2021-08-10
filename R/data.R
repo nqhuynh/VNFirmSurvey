@@ -14,3 +14,27 @@
 #'}
 #' @source \url{https://www.gso.gov.vn/en/enterprises/}
 "skill_01_dta"
+
+
+#' @title Firm 2007 Skill Intensity
+#' @description Firm skill intensity measures in 2007, measured by labor composition at the end of 2007
+#' @format A data frame with 155771 rows and 15 variables:
+#' \describe{
+#'   \item{\code{tinh}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{macs}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{madn}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{ma_thue}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{endyear_L}}{double Total labor}
+#'   \item{\code{PhD}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{Masters}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{Uni}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{College}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{Pro}}{double Professional level}
+#'   \item{\code{Lterm_voc}}{double Long-term vocational training}
+#'   \item{\code{Sterm_voc}}{double Short-term vocational training}
+#'   \item{\code{untrained}}{double Untrained profession}
+#'   \item{\code{wage_bill}}{double Compensation for employees including wages, bonues, social security, other compensation out of production costs}
+#'   \item{\code{insu_pension}}{double Contributions to insurance and pension, health, trade-union}
+#'}
+#' @source \url{https://www.gso.gov.vn/en/enterprises/}
+"skill_07_dta"

@@ -22,7 +22,8 @@ skill_07_dta <- setDT(dn_2007_dta)[, .(tinh,
                                        macs,
                                        madn,
                                        ma_thue,
-                                       endyear_L = ldct11,
+                                       #endyear_L = ldct11,
+                                       endyear_L = ld13,
                                        PhD = ldct91,
                                        Masters = ldct101,
                                        Uni = ldct111,
@@ -30,9 +31,7 @@ skill_07_dta <- setDT(dn_2007_dta)[, .(tinh,
                                        Pro = ldct131,
                                        Lterm_voc = ldct141,
                                        Sterm_voc = ldct151,
-                                       untrained = ldct161,
-                                       wage_bill = tn1,
-                                       insu_pension = tn5)]
+                                       untrained = ldct161)]
 
 
 usethis::use_data(skill_07_dta, overwrite = TRUE)

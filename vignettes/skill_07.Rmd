@@ -1,0 +1,85 @@
+---
+title: "Skill Intensity 2007"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Skill Intensity 2007}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(VNFirmSurvey)
+```
+
+
+
+
+```{r load-data}
+data(skill_07_dta)
+```
+
+
+Let's take a first look at the data
+
+```{r first-look}
+library(DataExplorer)
+plot_intro(skill_07_dta)
+
+```
+
+## Missing variables
+
+```{r missing-variable}
+plot_missing(skill_07_dta)
+profile_missing(skill_07_dta)
+```
+
+
+
+```{r solve-missing}
+set_missing(skill_07_dta, 0L, exclude = c("wage_bill",
+                                          "endyear_L"))
+
+plot_missing(skill_07_dta)
+
+skill_07_dta <- na.omit(skill_07_dta)
+```
+
+
+
+
+
+## Update features
+```{r features}
+update_columns(skill_07_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
+
+```
+
+
+## Distributions
+```{r continuous}
+plot_histogram(skill_07_dta)
+```
+
+## Correlation
+```{r heat-map}
+plot_correlation(skill_07_dta, maxcat = 5L)
+
+```
+
+
+```{r scatter-plot-totalL}
+plot_scatterplot(skill_07_dta[, !c("ma_thue", "macs","madn", "tinh") ],
+                 by = "endyear_L")
+
+```
+
+
+

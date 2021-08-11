@@ -17,6 +17,7 @@ Imports:
     data.table,
     DataExplorer,
     dplyr,
+    ggplot2,
     haven,
     here
 Depends: 

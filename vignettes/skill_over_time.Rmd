@@ -33,8 +33,6 @@ stacked_data <- rbindlist(dta_list)
 
 
 ```{r plot-skill}
-
-
 stacked_data$svyear <- as.factor(stacked_data$svyear)
 
 ggplot(stacked_data, aes(x = SI_1, col = svyear)) + 
@@ -45,6 +43,64 @@ ggplot(stacked_data, aes(x = SI_2, col = svyear)) +
 
 ggplot(stacked_data, aes(x = SI_3, col = svyear)) + 
   geom_density()
+```
+
+
+# Wage Data 
+
+```{r load-data}
+data("wage_dta")
+```
+
+
+Let's take a first look at the data
+
+```{r first-look}
+plot_intro(wage_dta)
+
+```
+
+## Missing variables
+If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11. 
+
+Furthermore, 9.6% of the firms in 2001 miss total compensation data, while only 0.12% miss data 
+
+```{r missing-variable}
+plot_missing(wage_dta[svyear == 2001])
+profile_missing(wage_dta)
+wage_dta[is.na(total_L) & svyear == 2001]
+```
+
+
+
+```{r solve-missing}
+drop_columns(wage_dta, "ins_pen")
+
+wage_dta <- na.omit(wage_dta)
+
+plot_missing(wage_dta)
+```
+
+
+
+
+
+## Update features 
+```{r features}
+update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
+
+```
+
+
+## Distributions
+```{r continuous}
+plot_histogram(wage_dta)
+```
+
+## Correlation
+```{r heat-map}
+plot_correlation(wage_dta, maxcat = 5L)
+
 ```
 
 

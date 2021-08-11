@@ -32,3 +32,18 @@
 #' @source \url{https://www.gso.gov.vn/en/enterprises/}
 "skill_07_dta"
 
+#' @title Wage data
+#' @description Firm compensation for employees
+#' @format A data frame with 212322 rows and 8 variables:
+#' \describe{
+#'   \item{\code{tinh}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{macs}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{madn}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{ma_thue}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{total_L}}{double Total number of employees at the end of the year}
+#'   \item{\code{wage_bill}}{double Compensation for employees including wages, salaries, bonus, social security, and other compensation out of production costs}
+#'   \item{\code{ins_pen}}{double Employer's contributions to insurance and pension, health, trade-union}
+#'   \item{\code{svyear}}{double survey year}
+#'}
+#' @source \url{https://www.gso.gov.vn/en/enterprises/}
+"wage_dta"

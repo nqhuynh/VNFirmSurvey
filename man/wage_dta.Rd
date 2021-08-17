@@ -24,6 +24,6 @@ A data frame with 212322 rows and 8 variables:
 wage_dta
 }
 \description{
-Firm compensation for employees
+Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees
 }
 \keyword{datasets}

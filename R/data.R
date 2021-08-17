@@ -33,7 +33,7 @@
 "skill_07_dta"
 
 #' @title Wage data
-#' @description Firm compensation for employees
+#' @description Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees
 #' @format A data frame with 212322 rows and 8 variables:
 #' \describe{
 #'   \item{\code{svyear}}{double Year}

@@ -43,5 +43,11 @@ wage_dta <- rbindlist(wage_dta)
 
 update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
 
+### Remove NAs rows in total_L, wage_bill, and ave_wage
+wage_dta <- na.omit(wage_dta)
+
+### Remove firms with zero total labor, only in svyear 2001
+wage_dta <- wage_dta[total_L > 0]
+
 
 usethis::use_data(wage_dta, overwrite = TRUE)

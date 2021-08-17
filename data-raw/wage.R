@@ -37,9 +37,11 @@ wage_dta <- lapply(wage_dta, function(x)  x[, .(  svyear,
                                                   tinh, macs, madn,   ma_thue,
                                                   total_L =  ld13,
                                                   wage_bill = tn1,
-                                                  ins_pen = tn5)])
-
+                                                  ave_wage = tn1/ld13)])
 
 wage_dta <- rbindlist(wage_dta)
+
+update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
+
 
 usethis::use_data(wage_dta, overwrite = TRUE)

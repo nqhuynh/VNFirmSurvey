@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 library(VNFirmSurvey)
 library(data.table)
 library(ggplot2)
+library(DataExplorer)
 ```
 
 
@@ -74,8 +75,6 @@ wage_dta[is.na(total_L) & svyear == 2001]
 
 
 ```{r solve-missing}
-drop_columns(wage_dta, "ins_pen")
-
 wage_dta <- na.omit(wage_dta)
 
 plot_missing(wage_dta)
@@ -94,7 +93,7 @@ update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
 
 ## Distributions
 ```{r continuous}
-plot_histogram(wage_dta)
+plot_histogram(wage_dta[wage_bill>0])
 ```
 
 ## Correlation

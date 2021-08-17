@@ -67,17 +67,17 @@ If I use ld13 for 2001, I have more than 3000 missing observations for total lab
 Furthermore, 9.6% of the firms in 2001 miss total compensation data, while only 0.12% miss data 
 
 ```{r missing-variable}
-plot_missing(wage_dta[svyear == 2001])
+plot_missing(wage_dta)
 profile_missing(wage_dta)
-wage_dta[is.na(total_L) & svyear == 2001]
 ```
 
 
 
 ```{r solve-missing}
-wage_dta <- na.omit(wage_dta)
+wage_dta_na_free <- na.omit(wage_dta)
 
-plot_missing(wage_dta)
+wage_dta_na_free <- wage_dta_na_free[total_L > 0]
+plot_missing(wage_dta_na_free)
 ```
 
 
@@ -93,12 +93,14 @@ update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
 
 ## Distributions
 ```{r continuous}
-plot_histogram(wage_dta[wage_bill>0])
+plot_histogram(wage_dta_na_free)
+
+summary(wage_dta_na_free)
 ```
 
 ## Correlation
 ```{r heat-map}
-plot_correlation(wage_dta, maxcat = 5L)
+plot_correlation(wage_dta_na_free, maxcat = 5L)
 
 ```
 

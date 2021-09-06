@@ -8,6 +8,7 @@
 #' @return Either a stored data in store_dir, or a cleaned data frame
 #' @details DETAILS
 #' @rdname getWage
+#' @import data.table
 #' @export
 
 getWage <- function(dta_list, store_dir){
@@ -16,7 +17,7 @@ getWage <- function(dta_list, store_dir){
 
       if (all(lapply(dta_list, (file.exists)))){
             dn_dta <- lapply(dta_list, haven::read_dta)
-            dn_dta <- lapply(dn_dta, data.table::setDT)
+            #dn_dta <- lapply(dn_dta, data.table::setDT)
       }else{
             print("File dn2001.file or dn2007.dta does not exist.
             Consider using InputData function to copy correct files ?InputData")
@@ -25,12 +26,11 @@ getWage <- function(dta_list, store_dir){
 
       ### select columns
 
-
-      wage_dta <- mapply(function(x, y) (x)[, svyear := y],
+      wage_dta <- mapply(function(x, y) x %>% dplyr::mutate(svyear = y),
                          dn_dta,
                          c(2001, 2007), SIMPLIFY = F)
 
-      wage_dta <- lapply(wage_dta, function(x)  x[, .(  svyear,
+      wage_dta <- lapply(wage_dta, function(x)  setDT(x)[, .( svyear,
                                                         tinh, macs, madn,   ma_thue,
                                                         total_L =  ld13,
                                                         wage_bill = tn1,

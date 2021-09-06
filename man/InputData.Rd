@@ -8,6 +8,8 @@ InputData(dta_dir, store_dir = here::here("inst", "extdata"))
 }
 \arguments{
 \item{dta_dir}{A path to local location of raw data at year level}
+
+\item{store_dir}{Path to store data location}
 }
 \value{
 A copied version of the folder in inst/extdata

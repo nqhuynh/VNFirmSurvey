@@ -10,9 +10,11 @@
 #' }
 #' @rdname InputData
 #' @export
-InputData <- function(dta_dir) {
+InputData <- function(dta_dir,
+                      store_dir = here::here("inst", "extdata")) {
 
-      file.copy(dta_dir, here::here("inst", "extdata"),
+      file.copy(from = dta_dir,
+                to = store_dir,
                 recursive = T,
                 overwrite = F)
 

@@ -4,7 +4,7 @@
 \alias{InputData}
 \title{Copy Raw Firm Data}
 \usage{
-InputData(dta_dir)
+InputData(dta_dir, store_dir = here::here("inst", "extdata"))
 }
 \arguments{
 \item{dta_dir}{A path to local location of raw data at year level}

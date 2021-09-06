@@ -1,6 +1,7 @@
 
 #' @title Clean and create skill intensity variables
-#' @description Get firm characteristics including skill composition and total labot and output firm skill intensity measures
+#' @description Get firm characteristics including skill composition
+#' and total labot and output firm skill intensity measures
 #' @param dta raw skill composition data with tinh, madn, macs, ma_thue, svyear variables
 #' @return Cleaned data frame with skill intensity measures
 #' @details DETAILS

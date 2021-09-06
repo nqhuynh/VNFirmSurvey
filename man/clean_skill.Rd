@@ -13,7 +13,8 @@ clean_skill(dta)
 Cleaned data frame with skill intensity measures
 }
 \description{
-Get firm characteristics including skill composition and total labot and output firm skill intensity measures
+Get firm characteristics including skill composition
+and total labot and output firm skill intensity measures
 }
 \details{
 DETAILS

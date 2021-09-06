@@ -2,3 +2,4 @@
 
 export(InputData)
 export(clean_skill)
+export(getWage)

@@ -127,3 +127,5 @@ View(head(festive_exp))
 It looks like this is a firm survey, and not a plant survey because the plants are listed under tencn, while madn and macs are firm identifiers.
 
 find out across years what information I have at the plants level.
+
+

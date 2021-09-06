@@ -2,20 +2,21 @@
 % Please edit documentation in R/oxy-clean_skill.R
 \name{clean_skill}
 \alias{clean_skill}
-\title{Clean and create skill intensity variables}
+\title{Clean and create skill intensity variables 2001 and 2007}
 \usage{
-clean_skill(dta)
+clean_skill(dta_list)
 }
 \arguments{
-\item{dta}{raw skill composition data with tinh, madn, macs, ma_thue, svyear variables}
+\item{dta_list}{list of raw skill composition data with tinh, madn, macs, ma_thue, svyear variables}
 }
 \value{
-Cleaned data frame with skill intensity measures
+Cleaned data frame with skill intensity measures across years
 }
 \description{
 Get firm characteristics including skill composition
 and total labot and output firm skill intensity measures
 }
 \details{
-DETAILS
+In 2001, total labor is measured at the Number of workers at HEADQUARTER,
+while other years are total labor at the entire enterprise
 }

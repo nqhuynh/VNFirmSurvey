@@ -13,7 +13,7 @@ getWage(dta_list, store_dir)
 Otherwise, output the cleaned data frame.}
 }
 \value{
-Either a stored data in store_dir, or a cleaned data frame
+Either a stored data in store_dir, or a cleaned data frame.  A data frame with 212322 rows and 8 variables
 }
 \description{
 Input a list of enterprise dn files and
@@ -21,4 +21,6 @@ get wage bill data for firms between 2001 and 2007
 }
 \details{
 The list of data dn has to be ordered correctly, first 2001 then 2007.
+Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees.
+A data frame with 212322 rows and 8 variables
 }

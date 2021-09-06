@@ -32,18 +32,4 @@
 #' @source \url{https://www.gso.gov.vn/en/enterprises/}
 "skill_07_dta"
 
-#' @title Wage data
-#' @description Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees
-#' @format A data frame with 212322 rows and 8 variables:
-#' \describe{
-#'   \item{\code{svyear}}{double Year}
-#'   \item{\code{tinh}}{integer Province}
-#'   \item{\code{macs}}{integer Plant ID}
-#'   \item{\code{madn}}{integer Firm ID}
-#'   \item{\code{ma_thue}}{integer Tax ID}
-#'   \item{\code{total_L}}{double Total number of employees at the end of the year}
-#'   \item{\code{wage_bill}}{double Compensation for employees including wages, salaries, bonus, social security, and other compensation out of production costs}
-#'   \item{\code{ave_wage}}{double wage_bill/ total_L}
-#'}
-#' @source \url{https://www.gso.gov.vn/en/enterprises/}
-"wage_dta"
+

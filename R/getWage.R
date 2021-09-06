@@ -5,8 +5,10 @@
 #' @param dta_list raw data list dn from GSO
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
 #' Otherwise, output the cleaned data frame.
-#' @return Either a stored data in store_dir, or a cleaned data frame
+#' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with 212322 rows and 8 variables
 #' @details The list of data dn has to be ordered correctly, first 2001 then 2007.
+#' Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees.
+#' A data frame with 212322 rows and 8 variables
 #' @rdname getWage
 #' @import data.table
 #' @export
@@ -46,6 +48,19 @@ getWage <- function(dta_list, store_dir){
 
       ### Remove firms with zero total labor, only in svyear 2001
       wage_dta <- wage_dta[total_L > 0]
+
+      ## Label variables
+      var_label(wage_dta) <- list(svyear = "Year",
+                                  tinh = "Province",
+                                  macs = "Firm ID",
+                                  madn = "Another firm ID?",
+                                  ma_thue = "Tax ID",
+                                  total_L = "Total number of employees at the end of the year",
+                                  wage_bill = "Compensation for employees including wages,
+                                             salaries, bonus, social security,
+                                                and other compensation out of production costs",
+                                  ave_wage = "wage_bill/ total_L")
+
 
       if (!missing(store_dir)){
 

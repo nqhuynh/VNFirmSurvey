@@ -6,7 +6,7 @@
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
 #' Otherwise, output the cleaned data frame.
 #' @return Either a stored data in store_dir, or a cleaned data frame
-#' @details DETAILS
+#' @details The list of data dn has to be ordered correctly, first 2001 then 2007.
 #' @rdname getWage
 #' @import data.table
 #' @export
@@ -14,14 +14,15 @@
 getWage <- function(dta_list, store_dir){
 
       ### read the Stata files
-
-      if (all(lapply(dta_list, (file.exists)))){
-            dn_dta <- lapply(dta_list, haven::read_dta)
-            #dn_dta <- lapply(dn_dta, data.table::setDT)
-      }else{
-            print("File dn2001.file or dn2007.dta does not exist.
-            Consider using InputData function to copy correct files ?InputData")
-      }
+     dn_dta <- lapply(dta_list, haven::read_dta)
+     dn_dta <- lapply(dn_dta, setDT)
+      # if (all(lapply(dta_list, (file.exists)))){
+      #
+      #
+      # }else{
+      #       print("File dn2001.file or dn2007.dta does not exist.
+      #       Consider using InputData function to copy correct files ?InputData")
+      # }
 
 
       ### select columns

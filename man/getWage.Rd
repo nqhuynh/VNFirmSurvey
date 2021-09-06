@@ -20,5 +20,5 @@ Input a list of enterprise dn files and
 get wage bill data for firms between 2001 and 2007
 }
 \details{
-DETAILS
+The list of data dn has to be ordered correctly, first 2001 then 2007.
 }

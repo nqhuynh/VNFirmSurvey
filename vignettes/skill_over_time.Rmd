@@ -104,4 +104,25 @@ plot_correlation(wage_dta_na_free, maxcat = 5L)
 
 ```
 
+## Can I link plants to firms?
+
+```{r}
+library(haven)
+cn2007 <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2007/cn2007.dta"))  ## Maybe phieu 3.3 chi phi 
+
+festive_exp <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2007/ds2007.dta", 
+                         encoding="latin1"))  
+names(festive_exp)
+
+
+setDT(festive_exp)
+
+festive_exp[!duplicated(macs), .(tinh, macs) ,by = .(madn)][order(madn)]
+
+## What does it mean to have duplicated macs? Does it mean 2 plants belonging to the same firm? 
+
+View(head(festive_exp))
+
+```
+
 

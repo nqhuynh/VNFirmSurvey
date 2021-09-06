@@ -1,10 +1,6 @@
 ---
 title: "Skill intensity over years"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Skill intensity over years}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: bookdown::pdf_document2 
 ---
 
 ```{r, include = FALSE}
@@ -19,8 +15,9 @@ library(VNFirmSurvey)
 library(data.table)
 library(ggplot2)
 library(DataExplorer)
+library(here)
+library(haven)
 ```
-
 
 ```{r}
 data("skill_07_dta")
@@ -30,8 +27,6 @@ dta_list <- list(skill_07_dta, skill_01_dta)
 
 stacked_data <- rbindlist(dta_list)
 ```
-
-
 
 ```{r plot-skill}
 stacked_data$svyear <- as.factor(stacked_data$svyear)
@@ -46,13 +41,22 @@ ggplot(stacked_data, aes(x = SI_3, col = svyear)) +
   geom_density()
 ```
 
+# Wage Data
 
-# Wage Data 
+```{r load-wage-data}
 
-```{r load-data}
-data("wage_dta")
+dta_list <- list(here("inst", "extdata", 
+                    "Stata_2001", 
+                    "dn2001.dta"), 
+                 here("inst", "extdata", 
+                    "Stata_2007", 
+                    "dn2007.dta") )
+
+
+wage_dta <- getWage(dta_list)
+
+
 ```
-
 
 Let's take a first look at the data
 
@@ -62,16 +66,15 @@ plot_intro(wage_dta)
 ```
 
 ## Missing variables
-If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11. 
 
-Furthermore, 9.6% of the firms in 2001 miss total compensation data, while only 0.12% miss data 
+If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11.
+
+Furthermore, 9.6% of the firms in 2001 miss total compensation data, while only 0.12% miss data
 
 ```{r missing-variable}
 plot_missing(wage_dta)
 profile_missing(wage_dta)
 ```
-
-
 
 ```{r solve-missing}
 wage_dta_na_free <- na.omit(wage_dta)
@@ -80,18 +83,15 @@ wage_dta_na_free <- wage_dta_na_free[total_L > 0]
 plot_missing(wage_dta_na_free)
 ```
 
+## Update features
 
-
-
-
-## Update features 
 ```{r features}
 update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
 
 ```
 
-
 ## Distributions
+
 ```{r continuous}
 plot_histogram(wage_dta_na_free)
 
@@ -99,6 +99,7 @@ summary(wage_dta_na_free)
 ```
 
 ## Correlation
+
 ```{r heat-map}
 plot_correlation(wage_dta_na_free, maxcat = 5L)
 
@@ -106,7 +107,7 @@ plot_correlation(wage_dta_na_free, maxcat = 5L)
 
 ## Can I link plants to firms?
 
-```{r}
+```{r, eval=FALSE}
 library(haven)
 cn2007 <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2007/cn2007.dta"))  ## Maybe phieu 3.3 chi phi 
 
@@ -119,10 +120,10 @@ setDT(festive_exp)
 
 festive_exp[!duplicated(macs), .(tinh, macs) ,by = .(madn)][order(madn)]
 
-## What does it mean to have duplicated macs? Does it mean 2 plants belonging to the same firm? 
-
 View(head(festive_exp))
 
 ```
 
+It looks like this is a firm survey, and not a plant survey because the plants are listed under tencn, while madn and macs are firm identifiers.
 
+find out across years what information I have at the plants level.

@@ -17,6 +17,7 @@ library(ggplot2)
 library(DataExplorer)
 library(here)
 library(haven)
+library(labelled)
 ```
 
 ```{r}
@@ -54,78 +55,34 @@ dta_list <- list(here("inst", "extdata",
 
 
 wage_dta <- getWage(dta_list)
+```
 
+## Convert wage bill to USD 
+Let's get exchange rate from the World Bank (PA.NUS.FCRF)
+```{r exchange-rate}
+library(WDI)
+exchange_rate_US_VN <- WDI(country = "VN", 
+    indicator = "PA.NUS.FCRF",
+    start = 1999, 
+    end = 2019)
+
+
+ggplot(exchange_rate_US_VN, 
+       aes(x = year, y = PA.NUS.FCRF)) + 
+  geom_line() + 
+  geom_point()
 
 ```
 
-Let's take a first look at the data
 
-```{r first-look}
-plot_intro(wage_dta)
+```{r merge-wage-EX-rate}
+wage_dta_merged <- merge(wage_dta, 
+     exchange_rate_US_VN, 
+     by.x = "svyear", 
+     by.y = "year")
 
-```
-
-## Missing variables
-
-If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11.
-
-Furthermore, 9.6% of the firms in 2001 miss total compensation data, while only 0.12% miss data
-
-```{r missing-variable}
-plot_missing(wage_dta)
-profile_missing(wage_dta)
-```
-
-```{r solve-missing}
-wage_dta_na_free <- na.omit(wage_dta)
-
-wage_dta_na_free <- wage_dta_na_free[total_L > 0]
-plot_missing(wage_dta_na_free)
-```
-
-## Update features
-
-```{r features}
-update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
+wage_dta_merged[, wage_bill_USD := (wage_bill*1000000/PA.NUS.FCRF)]
 
 ```
-
-## Distributions
-
-```{r continuous}
-plot_histogram(wage_dta_na_free)
-
-summary(wage_dta_na_free)
-```
-
-## Correlation
-
-```{r heat-map}
-plot_correlation(wage_dta_na_free, maxcat = 5L)
-
-```
-
-## Can I link plants to firms?
-
-```{r, eval=FALSE}
-library(haven)
-cn2007 <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2007/cn2007.dta"))  ## Maybe phieu 3.3 chi phi 
-
-festive_exp <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2007/ds2007.dta", 
-                         encoding="latin1"))  
-names(festive_exp)
-
-
-setDT(festive_exp)
-
-festive_exp[!duplicated(macs), .(tinh, macs) ,by = .(madn)][order(madn)]
-
-View(head(festive_exp))
-
-```
-
-It looks like this is a firm survey, and not a plant survey because the plants are listed under tencn, while madn and macs are firm identifiers.
-
-find out across years what information I have at the plants level.
 
 

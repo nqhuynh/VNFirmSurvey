@@ -21,6 +21,8 @@ get wage bill data for firms between 2001 and 2007
 }
 \details{
 The list of data dn has to be ordered correctly, first 2001 then 2007.
+If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11.
+Furthermore, 9.6\% of the firms in 2001 miss total compensation data, while only 0.12\% miss data
 Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees.
 A data frame with 212322 rows and 8 variables
 }

@@ -99,7 +99,7 @@ CovertUSD <- function(dta){
       #   geom_line() +
       #   geom_point()
 
-      merged_dta <- data.table::merge(dta,
+      merged_dta <- merge(dta,
            exchange_rate_US_VN,
            by.x = "svyear",
            by.y = "year")

@@ -58,4 +58,17 @@ wage_dta <- getWage(dta_list)
 ```
 
 
+```{r wage-distribution}
+graph_wage <- merge(wage_dta[, .(svyear, wage_bill_USD)],
+                    wage_dta[, .(mean_wage = mean(wage_bill_USD)), 
+                       by = svyear], 
+                    by = "svyear")
+
+ggplot(graph_wage, aes(x = log(wage_bill_USD), col = factor(svyear))) + 
+  geom_density()
+
+
+
+```
+
 

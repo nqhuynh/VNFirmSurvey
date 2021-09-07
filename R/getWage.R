@@ -7,6 +7,8 @@
 #' Otherwise, output the cleaned data frame.
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with 212322 rows and 8 variables
 #' @details The list of data dn has to be ordered correctly, first 2001 then 2007.
+#' If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11.
+#' Furthermore, 9.6% of the firms in 2001 miss total compensation data, while only 0.12% miss data
 #' Firm compensation for employees, already removed missing values for total_L, wage_bill, and ave_wage, and firms with zero employees.
 #' A data frame with 212322 rows and 8 variables
 #' @rdname getWage
@@ -49,6 +51,12 @@ getWage <- function(dta_list, store_dir){
       ### Remove firms with zero total labor, only in svyear 2001
       wage_dta <- wage_dta[total_L > 0]
 
+
+      ## Convert wage bill to USD
+      wage_dta <- CovertUSD(wage_dta)
+
+      wage_dta[, wage_bill_USD := (wage_bill*1000000/PA.NUS.FCRF)]
+
       ## Label variables
       var_label(wage_dta) <- list(svyear = "Year",
                                   tinh = "Province",
@@ -56,9 +64,11 @@ getWage <- function(dta_list, store_dir){
                                   madn = "Another firm ID?",
                                   ma_thue = "Tax ID",
                                   total_L = "Total number of employees at the end of the year",
-                                  wage_bill = "Compensation for employees including wages,
+                                  wage_bill = "tn1 (mil VND), Compensation for employees including wages,
                                              salaries, bonus, social security,
                                                 and other compensation out of production costs",
+                                  wage_bill_USD = "Wage bill (in USD)",
+                                  PA.NUS.FCRF = "Exchange rate WB",
                                   ave_wage = "wage_bill/ total_L")
 
 
@@ -74,3 +84,27 @@ getWage <- function(dta_list, store_dir){
       }
 
 }
+
+CovertUSD <- function(dta){
+   ## Convert wage bill to USD
+   ## Let's get exchange rate from the World Bank (PA.NUS.FCRF)
+      exchange_rate_US_VN <- WDI::WDI(country = "VN",
+          indicator = "PA.NUS.FCRF",
+          start = 1999,
+          end = 2019)
+
+
+      # ggplot(exchange_rate_US_VN,
+      #        aes(x = year, y = PA.NUS.FCRF)) +
+      #   geom_line() +
+      #   geom_point()
+
+      merged_dta <- data.table::merge(dta,
+           exchange_rate_US_VN,
+           by.x = "svyear",
+           by.y = "year")
+
+      return(merged_dta)
+}
+
+

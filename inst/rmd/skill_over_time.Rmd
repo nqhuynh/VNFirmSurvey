@@ -57,32 +57,5 @@ dta_list <- list(here("inst", "extdata",
 wage_dta <- getWage(dta_list)
 ```
 
-## Convert wage bill to USD 
-Let's get exchange rate from the World Bank (PA.NUS.FCRF)
-```{r exchange-rate}
-library(WDI)
-exchange_rate_US_VN <- WDI(country = "VN", 
-    indicator = "PA.NUS.FCRF",
-    start = 1999, 
-    end = 2019)
-
-
-ggplot(exchange_rate_US_VN, 
-       aes(x = year, y = PA.NUS.FCRF)) + 
-  geom_line() + 
-  geom_point()
-
-```
-
-
-```{r merge-wage-EX-rate}
-wage_dta_merged <- merge(wage_dta, 
-     exchange_rate_US_VN, 
-     by.x = "svyear", 
-     by.y = "year")
-
-wage_dta_merged[, wage_bill_USD := (wage_bill*1000000/PA.NUS.FCRF)]
-
-```
 
 

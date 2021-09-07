@@ -20,31 +20,9 @@ library(haven)
 library(labelled)
 ```
 
-```{r}
+```{r load-data}
 data("skill_07_dta")
 data("skill_01_dta")
-
-dta_list <- list(skill_07_dta, skill_01_dta)
-
-stacked_data <- rbindlist(dta_list)
-```
-
-```{r plot-skill}
-stacked_data$svyear <- as.factor(stacked_data$svyear)
-
-ggplot(stacked_data, aes(x = SI_1, col = svyear)) + 
-  geom_density()
-
-ggplot(stacked_data, aes(x = SI_2, col = svyear)) + 
-  geom_density()
-
-ggplot(stacked_data, aes(x = SI_3, col = svyear)) + 
-  geom_density()
-```
-
-# Wage Data
-
-```{r load-wage-data}
 
 dta_list <- list(here("inst", "extdata", 
                     "Stata_2001", 
@@ -53,6 +31,11 @@ dta_list <- list(here("inst", "extdata",
                     "Stata_2007", 
                     "dn2007.dta") )
 
+```
+
+# Wage Data
+
+```{r load-wage-data}
 
 wage_dta <- getWage(dta_list)
 ```
@@ -69,6 +52,12 @@ ggplot(graph_wage, aes(x = log(wage_bill_USD), col = factor(svyear))) +
 
 
 
+```
+
+## Location 
+```{r}
+
+location_dta <- getLocation(dta_list)
 ```
 
 

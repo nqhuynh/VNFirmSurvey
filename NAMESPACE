@@ -3,6 +3,7 @@
 export("%>%")
 export(InputData)
 export(clean_skill)
+export(getLocation)
 export(getWage)
 import(data.table)
 importFrom(magrittr,"%>%")

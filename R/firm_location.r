@@ -12,15 +12,6 @@
 #' @import data.table
 #' @export
 
-dta_list <- list(here("inst", "extdata",
-                      "Stata_2001",
-                      "dn2001.dta"),
-                 here("inst", "extdata",
-                      "Stata_2007",
-                      "dn2007.dta") )
-
-temp<- getLocation(dta_list)
-
 getLocation <- function(dta_list, store_dir){
 
       ### read the Stata files

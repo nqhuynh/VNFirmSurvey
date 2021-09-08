@@ -4,10 +4,12 @@
 \alias{getWage}
 \title{Get wage bill data for firms 2001 and 2007}
 \usage{
-getWage(dta_list, store_dir)
+getWage(dta_list, years = c(2001, 2004, 2007), store_dir)
 }
 \arguments{
 \item{dta_list}{raw data list dn from GSO}
+
+\item{years}{A vector of survey years that correspond to the raw data list dn from GSO dta_list}
 
 \item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
 Otherwise, output the cleaned data frame.}

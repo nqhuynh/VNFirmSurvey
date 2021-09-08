@@ -4,10 +4,12 @@
 \alias{getLocation}
 \title{Firm geographic location 2001, 2004, and 2007, Not harmonized}
 \usage{
-getLocation(dta_list, store_dir)
+getLocation(dta_list, years = c(2001, 2004, 2007), store_dir)
 }
 \arguments{
 \item{dta_list}{raw data list dn from GSO}
+
+\item{years}{A vector of survey years that correspond to the raw data list dn from GSO dta_list}
 
 \item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
 Otherwise, output the cleaned data frame.}
@@ -20,5 +22,5 @@ Input a list of enterprise dn files and
 get location data for firms 2001, 2004 and 2007
 }
 \details{
-The list of data dn has to be ordered correctly, first 2001, 2004 then 2007.
+The list of data dn has to be ordered correctly to match with the years vector of survey years.
 }

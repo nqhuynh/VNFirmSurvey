@@ -5,6 +5,7 @@
 #' @param dta_list raw data list dn from GSO
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
 #' Otherwise, output the cleaned data frame.
+#' @param years A vector of survey years that correspond to the raw data list dn from GSO dta_list
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with 212322 rows and 8 variables
 #' @details The list of data dn has to be ordered correctly, first 2001 then 2007.
 #' If I use ld13 for 2001, I have more than 3000 missing observations for total labor while only 8 for ldc11.
@@ -15,7 +16,9 @@
 #' @import data.table
 #' @export
 
-getWage <- function(dta_list, store_dir){
+getWage <- function(dta_list,
+                    years = c(2001, 2004, 2007),
+                    store_dir){
 
       ### read the Stata files
      dn_dta <- lapply(dta_list, haven::read_dta)
@@ -33,7 +36,7 @@ getWage <- function(dta_list, store_dir){
 
       wage_dta <- mapply(function(x, y) x %>% dplyr::mutate(svyear = y),
                          dn_dta,
-                         c(2001, 2004, 2007), SIMPLIFY = F)
+                         years, SIMPLIFY = F)
 
       wage_dta <- lapply(wage_dta, function(x)  setDT(x)[, .( svyear,
                                                         tinh, macs, madn,   ma_thue,

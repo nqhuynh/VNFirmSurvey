@@ -24,6 +24,7 @@ library(labelled)
 data("skill_07_dta")
 data("skill_01_dta")
 
+
 dta_list <- list(here("inst", "extdata", 
                     "Stata_2001", 
                     "dn2001.dta"), 
@@ -33,6 +34,8 @@ dta_list <- list(here("inst", "extdata",
                  here("inst", "extdata", 
                     "Stata_2007", 
                     "dn2007.dta") )
+
+years <- c(2001, 2004, 2007)
 
 ```
 
@@ -60,7 +63,13 @@ ggplot(graph_wage, aes(x = log(wage_bill_USD), col = factor(svyear))) +
 ## Location 
 ```{r}
 
-location_dta <- getLocation(dta_list)
+#location_dta <- getLocation(dta_list)
+```
+
+
+## Entry, exit 
+```{r}
+dynamic_dta <- EntryExit(dta_list, base_year = years)
 ```
 
 

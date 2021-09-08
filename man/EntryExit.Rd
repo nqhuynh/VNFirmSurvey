@@ -4,7 +4,12 @@
 \alias{EntryExit}
 \title{Firm entry and exit status}
 \usage{
-EntryExit(dta_list, store_dir, base_year = 2001, years = c(2001, 2004, 2007))
+EntryExit(
+  dta_list,
+  store_dir,
+  base_year = c(2001),
+  years = c(2001, 2004, 2007)
+)
 }
 \arguments{
 \item{dta_list}{Input a list of enterprise dn files from GSO}
@@ -12,9 +17,9 @@ EntryExit(dta_list, store_dir, base_year = 2001, years = c(2001, 2004, 2007))
 \item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
 Otherwise, output the cleaned data frame.}
 
-\item{base_year}{The year to which firms from future survey years are compared}
+\item{base_year}{A vector of base years to which firms from future survey years are compared. Default is 2001}
 
-\item{years}{A vector of survey years that need firm status relative to the base_year}
+\item{years}{A vector of survey years that need firm status relative to the base_year, should include the base_year}
 }
 \value{
 Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables

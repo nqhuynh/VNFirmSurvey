@@ -1,54 +1,46 @@
-#' @title Firm entry and exit status between 2001 and 2007
+#' @title Firm entry and exit status
 #' @description Input a list of enterprise dn files and
-#' get firm entry, exit, incumbent status between 2001 and 2007
-#' @param dta_list raw data list dn from GSO
+#' get firm entry, exit, incumbent status
+#' @param dta_list Input a list of enterprise dn files from GSO
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
 #' Otherwise, output the cleaned data frame.
+#' @param base_year The year to which firms from future survey years are compared
+#' @param years A vector of survey years that need firm status relative to the base_year
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
-#' @details The list of data dn has to be ordered correctly, first 2001 then 2007.
+#' @details The list of data dn has to be ordered correctly, first 2001, 2004 then 2007.
 #' @rdname EntryExit
 #' @import data.table
 #' @export
 
-EntryExit <- function(dta_list){
+EntryExit <- function(dta_list, store_dir,
+                      base_year = 2001,
+                      years = c(2001, 2004, 2007)){
 
       dynamic_dta <- VNFirmSurvey::getLocation(dta_list)
 
-      temp <- dynamic_dta[,
-                          status_07 := fcase(
-            madn %in%  intersect(dynamic_dta[svyear == 2001]$madn,
-                                 dynamic_dta[svyear == 2007]$madn), "incumbent",
-            madn %in%  setdiff(dynamic_dta[svyear == 2001]$madn,
-                                 dynamic_dta[svyear == 2007]$madn), "exit",
-            madn %in%  setdiff(dynamic_dta[svyear == 2007]$madn,
-                               dynamic_dta[svyear == 2001]$madn), "entrant"
-      )]
+      for (j in years){
+            if (j > base_year){
+            dynamic_dta[svyear >= base_year, paste0("status_", j, "rel_", base_year) :=  fcase(
+                  (madn %in%  intersect(dynamic_dta[svyear == base_year]$madn,
+                                       dynamic_dta[svyear == j]$madn)), "incumbent",
+                  madn %in%  setdiff(dynamic_dta[svyear == base_year]$madn,
+                                     dynamic_dta[svyear == j]$madn), "exit",
+                  madn %in%  setdiff(dynamic_dta[svyear == j]$madn,
+                                     dynamic_dta[svyear == base_year]$madn), "entrant")]
+            }
+      }
 
-      temp[, .N, by = status_07]
-
-      # DataExplorer::profile_missing(geo_dta)
-
-      ### If need be, Remove 1 missing xa, huyen.
-      #wage_dta <- stats::na.omit(wage_dta)
-
-      ## Label variables
-      var_label(geo_dta) <- list(svyear = "Year",
-                                 tinh = "Province",
-                                 macs = "Firm ID",
-                                 madn = "Another firm ID?",
-                                 ma_thue = "Tax ID",
-                                 xa = "commune",
-                                 huyen = "district")
+      #DataExplorer::profile_missing(dynamic_dta)
 
 
       if (!missing(store_dir)){
 
-            saveRDS(geo_dta,
+            saveRDS(dynamic_dta,
                     file = store_dir)
 
             return(print(paste("Data is stored at "), store_dir))
       }else{
 
-            return(geo_dta)
+            return(dynamic_dta)
       }
 }

@@ -28,6 +28,9 @@ dta_list <- list(here("inst", "extdata",
                     "Stata_2001", 
                     "dn2001.dta"), 
                  here("inst", "extdata", 
+                    "Stata_2004", 
+                    "dn2004.dta"),
+                 here("inst", "extdata", 
                     "Stata_2007", 
                     "dn2007.dta") )
 

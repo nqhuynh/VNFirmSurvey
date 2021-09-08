@@ -1,13 +1,13 @@
 
 
-#' @title Firm geographic location 2001 and 2007, Not harmonized
+#' @title Firm geographic location 2001, 2004, and 2007, Not harmonized
 #' @description Input a list of enterprise dn files and
-#' get location data for firms between 2001 and 2007
+#' get location data for firms 2001, 2004 and 2007
 #' @param dta_list raw data list dn from GSO
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
 #' Otherwise, output the cleaned data frame.
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
-#' @details The list of data dn has to be ordered correctly, first 2001 then 2007.
+#' @details The list of data dn has to be ordered correctly, first 2001, 2004 then 2007.
 #' @rdname getLocation
 #' @import data.table
 #' @export
@@ -30,7 +30,7 @@ getLocation <- function(dta_list, store_dir){
 
       geo_dta <- mapply(function(x, y) x %>% dplyr::mutate(svyear = y),
                          dn_dta,
-                         c(2001, 2007), SIMPLIFY = F)
+                         c(2001, 2004, 2007), SIMPLIFY = F)
 
       geo_dta <- lapply(geo_dta, function(x)  setDT(x)[, .( svyear,
                                                               macs, madn,
@@ -46,7 +46,7 @@ getLocation <- function(dta_list, store_dir){
                                    c( "madn", "macs", "ma_thue",
                                      "ma_thue2", "xa", "huyen", "tinh"), as.factor)
 
-      # DataExplorer::profile_missing(geo_dta)
+      #DataExplorer::profile_missing(geo_dta)
 
       ### If need be, Remove 1 missing xa, huyen.
       #wage_dta <- stats::na.omit(wage_dta)

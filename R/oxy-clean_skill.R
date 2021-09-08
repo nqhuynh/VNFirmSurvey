@@ -10,6 +10,7 @@
 #' @rdname clean_skill
 #' @export
 clean_skill <- function(dta_list){
+      ## Only get years that have skill 2001, 2007
       dta_list <- list(dn2001.file, dn2007.file)
       ### read the Stata files
       dn_dta <- lapply(dta_list, haven::read_dta)

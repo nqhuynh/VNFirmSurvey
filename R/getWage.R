@@ -33,20 +33,20 @@ getWage <- function(dta_list, store_dir){
 
       wage_dta <- mapply(function(x, y) x %>% dplyr::mutate(svyear = y),
                          dn_dta,
-                         c(2001, 2007), SIMPLIFY = F)
+                         c(2001, 2004, 2007), SIMPLIFY = F)
 
       wage_dta <- lapply(wage_dta, function(x)  setDT(x)[, .( svyear,
                                                         tinh, macs, madn,   ma_thue,
                                                         total_L =  ld13,
-                                                        wage_bill = tn1,
-                                                        ave_wage = tn1/ld13)])
+                                                        wage_bill = tn1)])
 
       wage_dta <- data.table::rbindlist(wage_dta)
 
       DataExplorer::update_columns(wage_dta, c("tinh", "madn", "macs", "ma_thue"), as.factor)
 
+      #DataExplorer::profile_missing(wage_dta)
       ### Remove NAs rows in total_L, wage_bill, and ave_wage
-      wage_dta <- stats::na.omit(wage_dta)
+      #wage_dta <- stats::na.omit(wage_dta)
 
       ### Remove firms with zero total labor, only in svyear 2001
       wage_dta <- wage_dta[total_L > 0]
@@ -68,8 +68,9 @@ getWage <- function(dta_list, store_dir){
                                              salaries, bonus, social security,
                                                 and other compensation out of production costs",
                                   wage_bill_USD = "Wage bill (in USD)",
-                                  PA.NUS.FCRF = "Exchange rate WB",
-                                  ave_wage = "wage_bill/ total_L")
+                                  PA.NUS.FCRF = "Exchange rate WB"
+                                  #ave_wage = "wage_bill/ total_L"
+                                  )
 
 
       if (!missing(store_dir)){

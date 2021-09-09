@@ -18,6 +18,8 @@ library(DataExplorer)
 library(here)
 library(haven)
 library(labelled)
+library(dplyr)
+library(labelled)
 ```
 
 ```{r load-data}
@@ -39,6 +41,31 @@ years <- c(2001, 2004, 2007)
 
 ```
 
+
+
+## Location 
+
+The location codes at district level change from 2004. I need a concodore between these two system 
+```{r}
+
+location_dta <- getLocation(dta_list)
+
+location_dta[svyear == 2001, .(madn, xa, huyen, tinh)]
+
+location_dta[svyear == 2007 & tinh == "01"
+             & huyen == "001", .(madn, xa, huyen, tinh)]
+
+```
+
+
+## Entry, exit 
+```{r}
+dynamic_dta <- EntryExit(dta_list, base_year = years)
+```
+
+
+
+
 # Wage Data
 
 ```{r load-wage-data}
@@ -59,17 +86,3 @@ ggplot(graph_wage, aes(x = log(wage_bill_USD), col = factor(svyear))) +
 
 
 ```
-
-## Location 
-```{r}
-
-#location_dta <- getLocation(dta_list)
-```
-
-
-## Entry, exit 
-```{r}
-dynamic_dta <- EntryExit(dta_list, base_year = years)
-```
-
-

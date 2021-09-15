@@ -23,9 +23,6 @@ library(labelled)
 ```
 
 ```{r load-data}
-data("skill_07_dta")
-data("skill_01_dta")
-
 
 dta_list <- list(here("inst", "extdata", 
                     "Stata_2001", 
@@ -43,6 +40,7 @@ years <- c(2001, 2004, 2007)
 
 
 
+
 ## Location 
 
 The location codes at district level change from 2004. I need a concodore between these two system 
@@ -57,12 +55,44 @@ location_dta[svyear == 2007 & tinh == "01"
 
 ```
 
+## Ownership 
+```{r load-ownership}
+ownership_dta <- ownership(dta_list)
+```
+
+```{r}
+ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
+       aes(fill=simple_ownership, y=N, x=svyear)) + 
+    geom_bar(position="fill", stat="identity") + 
+  theme_classic()
+
+```
+
 
 ## Entry, exit 
 ```{r}
 dynamic_dta <- EntryExit(dta_list, base_year = years)
 ```
 
+
+# Industry code
+For 2010, use nganh_kd and nganh_cu to create a cocondorance. 
+Use nganh_kd as the main product code. 
+```{r}
+
+ # geo_dta[[1]][, .(nganh_kd)]
+ #      geo_dta[[3]][, .(nganh_kd, nganh_cu)]
+ #      names(geo_dta[[3]])
+```
+
+
+
+
+# Plant 
+```{r}
+# festive_exp <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2011/cs2011.dta", encoding = "latin1")) 
+
+```
 
 
 

@@ -12,7 +12,7 @@
 #' @import data.table
 #' @export
 
-ownership <- function(dta_list,
+plant <- function(dta_list,
                       years,
                       store_dir){
       dta_list <- plant_list
@@ -40,7 +40,7 @@ ownership <- function(dta_list,
                                      "commune", "district",
                                      "branch_province"), as.factor)
 
-      #DataExplorer::profile_missing(plant_data)
+      DataExplorer::profile_missing(plant_data)
 
       ## Label variables
 
@@ -146,7 +146,23 @@ harmonize_plant <- function(dta, svyear){
                         num_employee = lao_dong,
                         net_revenue = doanh_thu
          )]
+      }else if (svyear == 2011){
+         dta <- dta[, .(svyear,
+                        tinh,
+                        madn,
+                        macs,
+                        stt = phieu1b,
+                        branch_name = tencstt,
+                        #tax_id = ma_thue,
+                        branch_tax_id = ma_thuecs,
+                        address = dchics,
+                        district = mahuyen,
+                        commune = maxa,
+                        branch_province = matinh,
+                        sector =  nganh_kd,
+                        num_employee = ld,
+                        net_revenue = doanhthu1
+         )]
       }
       return(dta)
 }
-

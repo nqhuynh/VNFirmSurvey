@@ -67,6 +67,7 @@ plant_list <- list("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data
                    "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2008/ds2008.dta", 
                    "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2007_2009/Stata_2009/ds2009.dta", 
                    "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2010/ds2010.dta", 
+                   "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2011/cs2011.dta", 
                    "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2012/ds2012.dta", 
                    "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2013/ds2013.dta", 
                    "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2014/ds2014.dta" 
@@ -75,8 +76,8 @@ plant_list <- list("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data
 
 
 ```{r}
-years <- c(2000:2010, 2012:2014)
-plant_data <- ownership(dta_list = plant_list, 
+years <- c(2000:2014)
+plant_data <- plant(dta_list = plant_list, 
           years = years)      
 
 plant_data[is.na(district), .N, by = .(macs, svyear)][N > 1,  sum(N)]

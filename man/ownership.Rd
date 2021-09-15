@@ -4,7 +4,7 @@
 \alias{ownership}
 \title{Firm harmonized-ownership type 2001, 2004, and 2007}
 \usage{
-ownership(dta_list, years, store_dir)
+ownership(dta_list, years = c(2001, 2004, 2007), store_dir)
 }
 \arguments{
 \item{dta_list}{raw data list dn from GSO}

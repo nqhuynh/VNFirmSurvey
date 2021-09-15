@@ -89,8 +89,25 @@ Use nganh_kd as the main product code.
 
 
 # Plant 
+
+About 83127 plants with no district codes. Let's say it takes 5 mins to get 1 plant done. It would take about 7000 hours. 
+
+Each week we spend 8*5 = 40. It would take 173 weeks for 1 person. 
+
+If there are 10 people, it would take 18 weeks.
+If there are 5 people, it would take 34 weeks.
+
+Alternative approaches: 
+1. What if I do a machine learning where they learn the address of the later years, and then guess the district of the plants? Then I need some people to verify some of these matching 
+Based on the address text and province code. 
+
+2. Only do the last two years, 30000 plants let's say. Then about 100 hours. 
+
+
 ```{r}
-# festive_exp <- (read_dta("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Stata_2011/cs2011.dta", encoding = "latin1")) 
+plant_data[, .N, by = svyear][, sum(N)]
+
+plant_data[is.na(district), .N, by = .(macs, svyear)][N > 1,  sum(N), by = svyear]
 
 ```
 

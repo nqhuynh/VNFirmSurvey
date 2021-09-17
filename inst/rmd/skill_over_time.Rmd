@@ -40,32 +40,59 @@ dta_list <- list(
                  # here("inst", "extdata", 
                  #    "Stata_2010", 
                  #    "dn2010.dta"), 
-                 here("inst", "extdata", 
-                    "Stata_2011", 
-                    "dn2011_mst.dta"),
-                 here("inst", "extdata", 
-                    "Stata_2012", 
-                    "dn2012_mst.dta"),
+                 # here("inst", "extdata", 
+                 #    "Stata_2011", 
+                 #    "dn2011_mst.dta"),
+                 # here("inst", "extdata", 
+                 #    "Stata_2012", 
+                 #    "dn2012_mst.dta"),
                  here("inst", "extdata", 
                     "Stata_2013", 
                     "dn2013_mst.dta"),
-                 here("inst", "extdata", 
-                    "Stata_2014", 
-                    "dn2014.dta"),
-                 here("inst", "extdata", 
-                    "Stata_2015", 
-                    "dn2015.dta"),
-                 here("inst", "extdata", 
-                    "Stata_2016", 
-                    "dn2016.dta"),
+                 # here("inst", "extdata", 
+                 #    "Stata_2014", 
+                 #    "dn2014.dta"),
+                 # here("inst", "extdata", 
+                 #    "Stata_2015", 
+                 #    "dn2015.dta"),
+                 # here("inst", "extdata", 
+                 #    "Stata_2016", 
+                 #    "dn2016.dta"),
                  here("inst", "extdata", 
                     "Stata_2017", 
-                    "dn2017_new.dta"))
+                    "dn2017_new.dta"),
+                 here("inst", "extdata", 
+                    "Stata_2018", 
+                    "dn2018.dta"))
 
-years <- c(2011:2017)
+years <- c(2013,2017, 2018)
 
 ```
 
+## Orbis 
+```{r orbis}
+orbis_dta <- fread("/Volumes/GoogleDrive/My Drive/papers/conglomerates_and_growth/data/Orbis_Data/vietnam_very_large.csv")
+
+
+orbis_dta <- orbis_dta[, .(firm_name= `Company name Latin alphabet`, 
+              BvD_ID = `BvD ID number`,
+              GUO_name = `GUO - Name`,
+              GUO_BvD_ID = `GUO - BvD ID number`)
+          ][, 
+            ma_thue :=  sub('..', '', BvD_ID)
+          ]
+
+firm_dta <- geo_dta[svyear == 2018 & ma_thue != "", .(svyear, ma_thue, tinh)]
+
+merged_data <-merge(firm_dta, 
+      orbis_dta, 
+      by = "ma_thue")[order(ma_thue)]
+
+# 
+# temp[ma_thue == "6303000078", .(ma_thue, BvD_ID, 
+#                                 check = (ma_thue == sub('..', '', BvD_ID) ))]
+
+```
 
 
 ## Plants 

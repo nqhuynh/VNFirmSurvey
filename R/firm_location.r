@@ -22,7 +22,6 @@ getLocation <- function(dta_list,
       dn_dta <- lapply(dn_dta, setDT)
 
       ### select columns
-      names(dn_dta[[7]])
       select_cols <- function(dta, svyear){
          if (svyear < 2016){
             dta <-  dta[, .( svyear = svyear,

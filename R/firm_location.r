@@ -95,10 +95,10 @@ harmonize_sector <- function(dta,
       return(dta)
 }
 
-
-geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,
-                                                        crosswalk = here::here("inst", "extdata",
-                                                                               "vsic_2007_to_1993.xlsx")))
+#
+# geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,
+#                                                         crosswalk = here::here("inst", "extdata",
+#                                                                                "vsic_2007_to_1993.xlsx")))
 
 
 ## Create harmonized products

@@ -22,37 +22,40 @@ getLocation <- function(dta_list,
       dn_dta <- lapply(dn_dta, setDT)
 
       ### select columns
+      names(dn_dta[[7]])
+      select_cols <- function(dta, svyear){
+         if (svyear < 2016){
+            dta <-  dta[, .( svyear = svyear,
+                             macs, madn,
+                             ma_thue,
+                             xa,
+                             huyen,
+                             tinh,
+                             sector = nganh_kd)]
+         }else{
+            dta <-  dta[, .( svyear = svyear,
+                             #macs, madn,
+                             ma_thue,
+                             xa,
+                             huyen,
+                             tinh,
+                             sector = nganh_kd)]
+         }
+         return(dta)
+      }
 
-      geo_dta <- mapply(function(x, y) x %>% dplyr::mutate(svyear = y),
-                         dn_dta,
-                        years, SIMPLIFY = F)
+      geo_dta <- mapply(select_cols,
+                        dn_dta,
+                        years,
+                        SIMPLIFY = F)
 
-      geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,
-                                                crosswalk = here::here("inst", "extdata",
-                                                                 "vsic_2007_to_1993.xlsx")))
-
-      geo_dta <- lapply(geo_dta, function(x)    (x)[, .( svyear,
-                                                              macs, madn,
-                                                              ma_thue,
-                                                              #ma_thue2,
-                                                              xa,
-                                                              huyen,
-                                                              tinh,
-                                                            sector = fcase(
-                                                               svyear < 2007, nganh_kd,
-                                                               svyear >= 2007, vsis_93) )])
-
-      geo_dta <- data.table::rbindlist(geo_dta)
+      geo_dta <- data.table::rbindlist(geo_dta, fill = T)
 
       DataExplorer::update_columns(geo_dta,
                                    c( "madn", "macs", "ma_thue",
-                                      "xa", "huyen", "tinh",
-                                     "sector"), as.factor)
+                                      "xa", "huyen", "tinh"), as.factor)
 
-      DataExplorer::profile_missing(geo_dta)
-
-      ### If need be, Remove 1 missing xa, huyen.
-      #wage_dta <- stats::na.omit(wage_dta)
+      #DataExplorer::profile_missing(geo_dta)
 
       ## Label variables
       var_label(geo_dta) <- list(svyear = "Year",
@@ -83,14 +86,19 @@ harmonize_sector <- function(dta,
                              crosswalk){
 
       crosswalk <- readxl::read_xlsx(crosswalk)
-      crosswalk <- setDT(crosswalk)[, .(vsis_07 = nganh_kd,
-                                        vsis_93 = nganh_cu)]
-      dta <- merge(dta, crosswalk,
+      crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
+                                        vsis_93 = factor(nganh_cu))]
+      dta <- merge(dta[, nganh_kd := factor(nganh_kd)], crosswalk,
             all.x = TRUE,
             by.x = "nganh_kd",
             by.y = "vsis_07")
       return(dta)
 }
+
+
+geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,
+                                                        crosswalk = here::here("inst", "extdata",
+                                                                               "vsic_2007_to_1993.xlsx")))
 
 
 ## Create harmonized products

@@ -24,17 +24,45 @@ library(labelled)
 
 ```{r load-data}
 
-dta_list <- list(here("inst", "extdata", 
-                    "Stata_2001", 
-                    "dn2001.dta"), 
+dta_list <- list(
+                 # here("inst", "extdata", 
+                 #    "Stata_2001", 
+                 #    "dn2001.dta"), 
+                 # here("inst", "extdata", 
+                 #    "Stata_2007", 
+                 #    "dn2007.dta"),
+                 # here("inst", "extdata",
+                 #    "Stata_2008",
+                 #    "dn2008.dta"),
+                 # here("inst", "extdata", 
+                 #    "Stata_2009", 
+                 #    "dn2009.dta"), 
+                 # here("inst", "extdata", 
+                 #    "Stata_2010", 
+                 #    "dn2010.dta"), 
                  here("inst", "extdata", 
-                    "Stata_2004", 
-                    "dn2004.dta"),
+                    "Stata_2011", 
+                    "dn2011_mst.dta"),
                  here("inst", "extdata", 
-                    "Stata_2007", 
-                    "dn2007.dta") )
+                    "Stata_2012", 
+                    "dn2012_mst.dta"),
+                 here("inst", "extdata", 
+                    "Stata_2013", 
+                    "dn2013_mst.dta"),
+                 here("inst", "extdata", 
+                    "Stata_2014", 
+                    "dn2014.dta"),
+                 here("inst", "extdata", 
+                    "Stata_2015", 
+                    "dn2015.dta"),
+                 here("inst", "extdata", 
+                    "Stata_2016", 
+                    "dn2016.dta"),
+                 here("inst", "extdata", 
+                    "Stata_2017", 
+                    "dn2017_new.dta"))
 
-years <- c(2001, 2004, 2007)
+years <- c(2011:2017)
 
 ```
 
@@ -82,6 +110,9 @@ plant_data <- plant(dta_list = plant_list,
 
 plant_data[is.na(district), .N, by = .(macs, svyear)][N > 1,  sum(N)]
 
+library(writexl)
+writexl::write_xlsx(plant_data[svyear == 2009], )
+
 ```
 
 
@@ -93,7 +124,8 @@ plant_data[is.na(district), .N, by = .(macs, svyear)][N > 1,  sum(N)]
 The location codes at district level change from 2004. I need a concodore between these two system 
 ```{r}
 
-location_dta <- getLocation(dta_list)
+location_dta <- getLocation(dta_list, 
+                            years = years)
 
 location_dta[svyear == 2001, .(madn, xa, huyen, tinh)]
 

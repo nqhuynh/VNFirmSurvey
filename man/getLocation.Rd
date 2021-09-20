@@ -2,7 +2,7 @@
 % Please edit documentation in R/firm_location.r
 \name{getLocation}
 \alias{getLocation}
-\title{Firm geographic location and sectors 2000-2011, Not harmonized}
+\title{Firm geographic location and sectors 2000-2018, Not harmonized}
 \usage{
 getLocation(dta_list, years, store_dir)
 }
@@ -19,7 +19,7 @@ Either a stored data in store_dir, or a cleaned data frame.  A data frame with  
 }
 \description{
 Input a list of enterprise dn files and
-get location data for firms 2000-2011
+get location data for firms 2000-2018
 }
 \details{
 The list of data dn has to be ordered correctly to match with the years vector of survey years.

@@ -4,15 +4,10 @@
 \alias{EntryExit}
 \title{Firm entry and exit status}
 \usage{
-EntryExit(
-  dta_list,
-  store_dir,
-  base_year = c(2001),
-  years = c(2001, 2004, 2007)
-)
+EntryExit(geo_dta, store_dir, base_year = c(2001), years = c(2001, 2004, 2007))
 }
 \arguments{
-\item{dta_list}{Input a list of enterprise dn files from GSO}
+\item{geo_dta}{Input cleaned geographic data, stacked over years.}
 
 \item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
 Otherwise, output the cleaned data frame.}

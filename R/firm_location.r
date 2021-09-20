@@ -1,8 +1,8 @@
 
 
-#' @title Firm geographic location and sectors 2000-2011, Not harmonized
+#' @title Firm geographic location and sectors 2000-2018, Not harmonized
 #' @description Input a list of enterprise dn files and
-#' get location data for firms 2000-2011
+#' get location data for firms 2000-2018
 #' @param dta_list raw data list dn from GSO
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
 #' Otherwise, output the cleaned data frame.

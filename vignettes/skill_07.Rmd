@@ -7,61 +7,61 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
+<!-- ```{r, include = FALSE} -->
+<!-- knitr::opts_chunk$set( -->
+<!--   collapse = TRUE, -->
+<!--   comment = "#>" -->
+<!-- ) -->
+<!-- ``` -->
 
-```{r setup}
-library(VNFirmSurvey)
-```
-
-
-
-
-```{r load-data}
-data(skill_07_dta)
-```
-
-
-Let's take a first look at the data
-
-```{r first-look}
-library(DataExplorer)
-plot_intro(skill_07_dta)
-
-```
-
-## Missing variables
-
-```{r missing-variable}
-plot_missing(skill_07_dta)
-profile_missing(skill_07_dta)
-```
+<!-- ```{r setup} -->
+<!-- library(VNFirmSurvey) -->
+<!-- ``` -->
 
 
 
 
-## Distributions
-```{r continuous}
-plot_histogram(skill_07_dta)
-```
-
-## Correlation
-```{r heat-map}
-plot_correlation(skill_07_dta[, !c("svyear")], maxcat = 5L)
-
-```
+<!-- ```{r load-data} -->
+<!-- data(skill_07_dta) -->
+<!-- ``` -->
 
 
-```{r scatter-plot-totalL}
-plot_scatterplot(skill_07_dta[, !c("ma_thue", "macs","madn", "tinh") ],
-                 by = "total_L")
+<!-- Let's take a first look at the data -->
+
+<!-- ```{r first-look} -->
+<!-- library(DataExplorer) -->
+<!-- plot_intro(skill_07_dta) -->
+
+<!-- ``` -->
+
+<!-- ## Missing variables -->
+
+<!-- ```{r missing-variable} -->
+<!-- plot_missing(skill_07_dta) -->
+<!-- profile_missing(skill_07_dta) -->
+<!-- ``` -->
 
 
-```
+
+
+<!-- ## Distributions -->
+<!-- ```{r continuous} -->
+<!-- plot_histogram(skill_07_dta) -->
+<!-- ``` -->
+
+<!-- ## Correlation -->
+<!-- ```{r heat-map} -->
+<!-- plot_correlation(skill_07_dta[, !c("svyear")], maxcat = 5L) -->
+
+<!-- ``` -->
+
+
+<!-- ```{r scatter-plot-totalL} -->
+<!-- plot_scatterplot(skill_07_dta[, !c("ma_thue", "macs","madn", "tinh") ], -->
+<!--                  by = "total_L") -->
+
+
+<!-- ``` -->
 
 
 

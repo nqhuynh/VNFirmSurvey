@@ -7,57 +7,57 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width=9, 
-  fig.height=6
-)
-```
+<!-- ```{r, include = FALSE} -->
+<!-- knitr::opts_chunk$set( -->
+<!--   collapse = TRUE, -->
+<!--   comment = "#>", -->
+<!--   fig.width=9,  -->
+<!--   fig.height=6 -->
+<!-- ) -->
+<!-- ``` -->
 
-```{r setup}
-library(VNFirmSurvey)
-```
+<!-- ```{r setup} -->
+<!-- library(VNFirmSurvey) -->
+<!-- ``` -->
 
-```{r load-data}
-data(skill_01_dta)
-```
+<!-- ```{r load-data} -->
+<!-- data(skill_01_dta) -->
+<!-- ``` -->
 
-Let's take a first look at the data
+<!-- Let's take a first look at the data -->
 
-```{r first-look}
-library(DataExplorer)
-plot_intro(skill_01_dta)
+<!-- ```{r first-look} -->
+<!-- library(DataExplorer) -->
+<!-- plot_intro(skill_01_dta) -->
 
-```
+<!-- ``` -->
 
-## Missing variables
+<!-- ## Missing variables -->
 
-```{r missing-variable}
-plot_missing(skill_01_dta)
-```
+<!-- ```{r missing-variable} -->
+<!-- plot_missing(skill_01_dta) -->
+<!-- ``` -->
 
 
-## Distributions
-```{r continuous}
-plot_histogram(skill_01_dta)
-```
+<!-- ## Distributions -->
+<!-- ```{r continuous} -->
+<!-- plot_histogram(skill_01_dta) -->
+<!-- ``` -->
 
-## Correlation
+<!-- ## Correlation -->
 
-```{r heat-map}
-plot_correlation(skill_01_dta[, !c("svyear")], maxcat = 5L)
+<!-- ```{r heat-map} -->
+<!-- plot_correlation(skill_01_dta[, !c("svyear")], maxcat = 5L) -->
 
-```
+<!-- ``` -->
 
-SI_2 looks like the most promising measure because it has the highest pair-wise correlation. 
+<!-- SI_2 looks like the most promising measure because it has the highest pair-wise correlation.  -->
 
-```{r scatter-plot-totalL}
-plot_scatterplot(skill_01_dta[, !c("ma_thue", "macs","madn", "tinh", "svyear") ], 
-                 by = "SI_1")
+<!-- ```{r scatter-plot-totalL} -->
+<!-- plot_scatterplot(skill_01_dta[, !c("ma_thue", "macs","madn", "tinh", "svyear") ],  -->
+<!--                  by = "SI_1") -->
 
-```
+<!-- ``` -->
 
 
 

@@ -14,23 +14,40 @@
 
 EntryExit <- function(dta_list, store_dir,
                       base_year = c(2001),
-                      years = c(2001, 2004, 2007)){
+                      years = c(2001, 2004, 2007),
+                      approach = 1){
 
-      dynamic_dta <- VNFirmSurvey::getLocation(dta_list, years)
+      dynamic_dta <- getLocation(dta_list, years)
+
+      if (approach == 1){
       for (byear in base_year){
             for (j in years){
                   if (j > byear){
                         dynamic_dta[svyear >= byear, paste0("status_", j, "rel_", byear) :=  fcase(
-                              (madn %in%  intersect(dynamic_dta[svyear == byear]$madn,
-                                                    dynamic_dta[svyear == j]$madn)), "incumbent",
-                              madn %in%  setdiff(dynamic_dta[svyear == byear]$madn,
-                                                 dynamic_dta[svyear == j]$madn), "exit",
-                              madn %in%  setdiff(dynamic_dta[svyear == j]$madn,
-                                                 dynamic_dta[svyear == byear]$madn), "entrant")]
+                              (firm_id %in%  intersect(dynamic_dta[svyear == byear]$firm_id,
+                                                    dynamic_dta[svyear == j]$firm_id)), "incumbent",
+                              firm_id %in%  setdiff(dynamic_dta[svyear == byear]$firm_id,
+                                                 dynamic_dta[svyear == j]$firm_id), "exit",
+                              firm_id %in%  setdiff(dynamic_dta[svyear == j]$firm_id,
+                                                 dynamic_dta[svyear == byear]$firm_id), "entrant")]
                   }
             }
       }
-
+      }else{
+      for (byear in base_year){
+         for (j in years){
+            if (j > byear){
+               dynamic_dta[svyear >= byear, paste0("status_", j, "rel_", byear) :=  fcase(
+                  (unique_tax_id %in%  intersect(dynamic_dta[svyear == byear]$unique_tax_id,
+                                        dynamic_dta[svyear == j]$unique_tax_id)), "incumbent",
+                  unique_tax_id %in%  setdiff(dynamic_dta[svyear == byear]$unique_tax_id,
+                                     dynamic_dta[svyear == j]$unique_tax_id), "exit",
+                  unique_tax_id %in%  setdiff(dynamic_dta[svyear == j]$unique_tax_id,
+                                     dynamic_dta[svyear == byear]$unique_tax_id), "entrant")]
+            }
+         }
+      }
+      }
 
       #DataExplorer::profile_missing(dynamic_dta)
 

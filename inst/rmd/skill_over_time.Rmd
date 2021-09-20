@@ -28,9 +28,9 @@ dta_list <- list(
                  # here("inst", "extdata", 
                  #    "Stata_2001", 
                  #    "dn2001.dta"), 
-                 # here("inst", "extdata", 
-                 #    "Stata_2007", 
-                 #    "dn2007.dta"),
+                 here("inst", "extdata",
+                    "Stata_2007",
+                    "dn2007.dta"),
                  # here("inst", "extdata",
                  #    "Stata_2008",
                  #    "dn2008.dta"),
@@ -58,18 +58,20 @@ dta_list <- list(
                  # here("inst", "extdata", 
                  #    "Stata_2016", 
                  #    "dn2016.dta"),
-                 here("inst", "extdata", 
-                    "Stata_2017", 
-                    "dn2017_new.dta"),
-                 here("inst", "extdata", 
-                    "Stata_2018", 
-                    "dn2018.dta"))
+                 here("inst", "extdata",
+                    "Stata_2017",
+                    "dn2017_new.dta")
+                 # here("inst", "extdata", 
+                 #    "Stata_2018", 
+                 #    "dn2018.dta")
+                 )
 
-years <- c(2013,2017, 2018)
+years <- c(2007, 2013,2017)
 
 ```
 
-## Orbis 
+## Orbis
+
 ```{r orbis}
 orbis_dta <- fread("/Volumes/GoogleDrive/My Drive/papers/conglomerates_and_growth/data/Orbis_Data/vietnam_very_large.csv")
 
@@ -94,21 +96,17 @@ merged_data <-merge(firm_dta,
 
 ```
 
+## Plants
 
-## Plants 
+About 120000 plants with no district codes. Let's say it takes 5 mins to get 1 plant done. It would take about 7000 hours.
 
-About 120000 plants with no district codes. Let's say it takes 5 mins to get 1 plant done. It would take about 7000 hours. 
+Each week we spend 8\*5 = 40. It would take 173 weeks for 1 person.
 
-Each week we spend 8*5 = 40. It would take 173 weeks for 1 person. 
+If there are 10 people, it would take 18 weeks. If there are 5 people, it would take 34 weeks.
 
-If there are 10 people, it would take 18 weeks.
-If there are 5 people, it would take 34 weeks.
+Alternative approaches: 1. What if I do a machine learning where they learn the address of the later years, and then guess the district of the plants? Then I need some people to verify some of these matching Based on the address text and province code.
 
-Alternative approaches: 
-1. What if I do a machine learning where they learn the address of the later years, and then guess the district of the plants? Then I need some people to verify some of these matching 
-Based on the address text and province code. 
-
-2. Only do the last two years, 30000 plants let's say. Then about 100 hours. 
+2.  Only do the last two years, 30000 plants let's say. Then about 100 hours.
 
 ```{r load-plant}
 plant_list <- list("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data/Data_DS_Updated/ds2000.dta",
@@ -129,7 +127,6 @@ plant_list <- list("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data
                    )
 ```
 
-
 ```{r}
 years <- c(2000:2014)
 plant_data <- plant(dta_list = plant_list, 
@@ -142,13 +139,10 @@ writexl::write_xlsx(plant_data[svyear == 2009], )
 
 ```
 
+## Location
 
+The location codes at district level change from 2004. I need a concodore between these two system
 
-
-
-## Location 
-
-The location codes at district level change from 2004. I need a concodore between these two system 
 ```{r}
 
 location_dta <- getLocation(dta_list, 
@@ -161,7 +155,8 @@ location_dta[svyear == 2007 & tinh == "01"
 
 ```
 
-## Ownership 
+## Ownership
+
 ```{r load-ownership}
 ownership_dta <- ownership(dta_list)
 ```
@@ -174,16 +169,21 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 
 ```
 
+## Entry, exit
 
-## Entry, exit 
 ```{r}
-dynamic_dta <- EntryExit(dta_list, base_year = years)
+dynamic_dta <- EntryExit(dta_list, 
+                         base_year = years[1], 
+                         years= years,
+                         approach = 2)
+
+beepr::
 ```
 
-
 # Industry code
-For 2010, use nganh_kd and nganh_cu to create a cocondorance. 
-Use nganh_kd as the main product code. 
+
+For 2010, use nganh_kd and nganh_cu to create a cocondorance. Use nganh_kd as the main product code.
+
 ```{r}
 
  # geo_dta[[1]][, .(nganh_kd)]
@@ -191,17 +191,12 @@ Use nganh_kd as the main product code.
  #      names(geo_dta[[3]])
 ```
 
-
-
-
-
 # Wage Data
 
 ```{r load-wage-data}
 
 wage_dta <- getWage(dta_list)
 ```
-
 
 ```{r wage-distribution}
 graph_wage <- merge(wage_dta[, .(svyear, wage_bill_USD)],

@@ -14,8 +14,8 @@
 
 EntryExit <- function(geo_dta,
                       store_dir,
-                      base_year = c(2001),
-                      years = c(2001, 2004, 2007)){
+                      base_year,
+                      years){
 
       dynamic_dta <- geo_dta  # getLocation(dta_list, years)
 

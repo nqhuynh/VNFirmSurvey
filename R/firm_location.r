@@ -106,8 +106,8 @@ harmonize_firmID <- function(geo_dta){
                  huyen,
                  tinh,
                  sector,
-                 status_2016rel_2015,
-                 firm_2015_id,
+                 #status_2016rel_2015,
+                 #firm_2015_id,
                  unique_tax_id,
            firm_id = case.(
               svyear < 2016, firm_id,

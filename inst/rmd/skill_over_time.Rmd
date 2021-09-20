@@ -24,34 +24,48 @@ library(labelled)
 
 ```{r load-data}
 
-dta_list <- list(
-                 # here("inst", "extdata", 
-                 #    "Stata_2001", 
-                 #    "dn2001.dta"), 
-                 # here("inst", "extdata",
-                 #    "Stata_2007",
-                 #    "dn2007.dta"),
-                 # here("inst", "extdata",
-                 #    "Stata_2008",
-                 #    "dn2008.dta"),
-                 # here("inst", "extdata", 
-                 #    "Stata_2009", 
-                 #    "dn2009.dta"), 
-                 # here("inst", "extdata", 
-                 #    "Stata_2010", 
-                 #    "dn2010.dta"), 
-                 # here("inst", "extdata", 
-                 #    "Stata_2011", 
-                 #    "dn2011_mst.dta"),
-                 # here("inst", "extdata", 
-                 #    "Stata_2012", 
-                 #    "dn2012_mst.dta"),
-                 # here("inst", "extdata", 
-                 #    "Stata_2013", 
-                 #    "dn2013_mst.dta"),
-                 # here("inst", "extdata", 
-                 #    "Stata_2014", 
-                 #    "dn2014.dta"),
+dta_list <- list(here("inst", "extdata",
+                    "Stata_2001",
+                    "dn2001.dta"),
+                 here("inst", "extdata",
+                    "Stata_2002",
+                    "dn2002.dta"),
+                 here("inst", "extdata",
+                    "Stata_2003",
+                    "dn2003.dta"),
+                 here("inst", "extdata",
+                    "Stata_2004",
+                    "dn2004.dta"),
+                 here("inst", "extdata",
+                    "Stata_2005",
+                    "dn2005.dta"),
+                 here("inst", "extdata",
+                    "Stata_2006",
+                    "dn2006.dta"),
+                 here("inst", "extdata",
+                    "Stata_2007",
+                    "dn2007.dta"),
+                 here("inst", "extdata",
+                    "Stata_2008",
+                    "dn2008.dta"),
+                 here("inst", "extdata",
+                    "Stata_2009",
+                    "dn2009.dta"),
+                 here("inst", "extdata",
+                    "Stata_2010",
+                    "dn2010.dta"),
+                 here("inst", "extdata",
+                    "Stata_2011",
+                    "dn2011_mst.dta"),
+                 here("inst", "extdata",
+                    "Stata_2012",
+                    "dn2012_mst.dta"),
+                 here("inst", "extdata",
+                    "Stata_2013",
+                    "dn2013_mst.dta"),
+                 here("inst", "extdata",
+                    "Stata_2014",
+                    "dn2014.dta"),
                  here("inst", "extdata",
                     "Stata_2015",
                     "dn2015.dta"),
@@ -66,7 +80,7 @@ dta_list <- list(
                     "dn2018.dta")
                  )
 
-years <- c(2015:2018)
+years <- c(2001:2018)
 
 ```
 
@@ -175,17 +189,17 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 geo_dta <- getLocation(dta_list, 
                           years = years)
 
-dynamic_dta <- EntryExit(geo_dta, 
-                         base_year = years[1], 
-                         years= years)
-
-temp <- harmonize_firmID(geo_dta)
-
-temp[svyear == 2016 & status_2016rel_2015 != "incumbent" ]
 beepr::beep(1)
 
-dynamic_dta[ !duplicated(unique_tax_id), .N, by = status_2017rel_2015]
+dynamic_dta <- harmonize_firmID(geo_dta)
 
+
+dynamic_dta <- EntryExit(dynamic_dta, 
+                         base_year = c(2001, 2004), 
+                         years= years)
+beepr::beep(1)
+
+dynamic_dta[!duplicated(firm_id), .N, by = status_2018rel_2004]
 ```
 58598
 macs: 69719

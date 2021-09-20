@@ -123,7 +123,7 @@ harmonize_firmID <- function(geo_dta){
 harmonize_sector <- function(dta,
                              crosswalk){
 
-      crosswalk <- readxl::read_xlsx(crosswalk)
+      #crosswalk <- readxl::read_xlsx(crosswalk)
       crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
                                         vsis_93 = factor(nganh_cu))]
       dta <- merge(dta[, nganh_kd := factor(nganh_kd)], crosswalk,

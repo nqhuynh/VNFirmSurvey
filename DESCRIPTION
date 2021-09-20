@@ -22,6 +22,7 @@ Imports:
     here,
     labelled,
     magrittr,
+    tidytable,
     WDI
 Depends: 
     R (>= 2.10)

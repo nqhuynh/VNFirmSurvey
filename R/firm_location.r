@@ -10,7 +10,7 @@
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
 #' @details The list of data dn has to be ordered correctly to match with the years vector of survey years.
 #' @rdname getLocation
-#' @import data.table
+#' @import data.table tidytable
 #' @export
 
 getLocation <- function(dta_list,
@@ -83,6 +83,42 @@ getLocation <- function(dta_list,
 }
 
 
+harmonize_firmID <- function(geo_dta){
+
+   dynamic_dta <- EntryExit(geo_dta,
+             base_year = 2015,
+             years = c(2016:2017))
+
+   dta <- merge(dynamic_dta[svyear == 2015 , .(firm_id,  unique_tax_id)],
+                  dynamic_dta[svyear > 2015 &
+                                 (status_2016rel_2015 == "incumbent" |
+                                     status_2017rel_2015 == "incumbent"), .(svyear,
+                                                                            unique_tax_id)],
+                  by = "unique_tax_id")[, firm_2015_id := firm_id]
+
+   dta <- merge(dta[, .(svyear, unique_tax_id, firm_2015_id)],
+         dynamic_dta,
+         by = c("svyear", "unique_tax_id"),
+         all.y =  T)
+
+   dta<- dta[, .(svyear,
+                 xa,
+                 huyen,
+                 tinh,
+                 sector,
+                 status_2016rel_2015,
+                 firm_2015_id,
+                 unique_tax_id,
+           firm_id = case.(
+              svyear < 2016, firm_id,
+              svyear >= 2016 &
+                 (status_2016rel_2015 == "incumbent" |
+                     status_2017rel_2015 == "incumbent" ), firm_2015_id,
+              default = unique_tax_id
+           ) )]
+
+   return(dta)
+}
 
 harmonize_sector <- function(dta,
                              crosswalk){

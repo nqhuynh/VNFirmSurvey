@@ -12,7 +12,6 @@
 
 ownership <- function(geo_dta){
 
-      #owner_data <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
       owner_data <-    harmonize_ownership(geo_dta)
 

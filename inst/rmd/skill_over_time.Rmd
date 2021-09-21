@@ -132,13 +132,18 @@ writexl::write_xlsx(plant_data[svyear == 2009], )
 The location codes at district level change from 2004. I need a concodore between these two system
 
 ```{r}
+# geo_dta <- getLocation(dta_list, 
+#                           years = years)
 
-location_dta <- getLocation(dta_list, 
-                            years = years)
+# saveRDS(geo_dta,
+#         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
-location_dta[svyear == 2001, .(madn, xa, huyen, tinh)]
 
-location_dta[svyear == 2007 & tinh == "01"
+geo_dta <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+
+geo_dta[svyear == 2001, .(madn, xa, huyen, tinh)]
+
+geo_dta[svyear == 2007 & tinh == "01"
              & huyen == "001", .(madn, xa, huyen, tinh)]
 
 ```
@@ -146,7 +151,7 @@ location_dta[svyear == 2007 & tinh == "01"
 ## Ownership
 
 ```{r load-ownership}
-ownership_dta <- ownership(dta_list)
+ownership_dta <- ownership(geo_dta)
 ```
 
 ```{r}
@@ -160,13 +165,6 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 ## Entry, exit
 
 ```{r entry}
-geo_dta <- getLocation(dta_list, 
-                          years = years)
-
-#View(geo_dta)
-
-saveRDS(geo_dta,
-        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
 dynamic_dta <- harmonize_firmID(geo_dta)
 

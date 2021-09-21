@@ -50,23 +50,23 @@ ownership <- function(geo_dta){
 
 
 harmonize_ownership <- function(dta){
-   dta[svyear == 2001, ownership := fcase(
-         lhdn == 1, "Central SOE",
-         lhdn == 2, "Local SOE",
-         lhdn == 3, "Collective",
-         lhdn == 4, "Private enterprise",
-         lhdn == 5, "Partnership company",
-         lhdn == 6, "State LLC",
-         lhdn == 7, "Private LLC",
-         #lhdn == 8, "State LLC",
-         lhdn == 9, "Private LLC",
-         #lhdn == 10, "State LLC",
-         lhdn == 11, "JSC without state capital",
-         lhdn == 12, "100% foreign",
-         lhdn == 13, "Foreign with state partner",
-         lhdn == 14, "Foreign with other partner")]
+   # dta[svyear == 2001, ownership := fcase(
+   #       lhdn == 1, "Central SOE",
+   #       lhdn == 2, "Local SOE",
+   #       lhdn == 3, "Collective",
+   #       lhdn == 4, "Private enterprise",
+   #       lhdn == 5, "Partnership company",
+   #       lhdn == 6, "State LLC",
+   #       lhdn == 7, "Private LLC",
+   #       #lhdn == 8, "State LLC",
+   #       lhdn == 9, "Private LLC",
+   #       #lhdn == 10, "State LLC",
+   #       lhdn == 11, "JSC without state capital",
+   #       lhdn == 12, "100% foreign",
+   #       lhdn == 13, "Foreign with state partner",
+   #       lhdn == 14, "Foreign with other partner")]
 
-   dta[svyear == 2002, ownership := fcase(
+   dta[svyear == 2001 | svyear == 2002, ownership := fcase(
          lhdn == 1, "Central SOE",
          lhdn == 2, "Local SOE",
          lhdn == 3, "Collective",

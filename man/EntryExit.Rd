@@ -4,7 +4,7 @@
 \alias{EntryExit}
 \title{Firm entry and exit status}
 \usage{
-EntryExit(geo_dta, store_dir, base_year = c(2001), years = c(2001, 2004, 2007))
+EntryExit(geo_dta, store_dir, base_year, years)
 }
 \arguments{
 \item{geo_dta}{Input cleaned geographic data, stacked over years.}
@@ -24,5 +24,5 @@ Input a list of enterprise dn files and
 get firm entry, exit, incumbent status
 }
 \details{
-The list of data dn has to be ordered correctly, first 2001, 2004 then 2007.
+The list of data dn has to be ordered in an ascending order.
 }

@@ -7,7 +7,7 @@
 #' @param base_year A vector of base years to which firms from future survey years are compared. Default is 2001
 #' @param years A vector of survey years that need firm status relative to the base_year, should include the base_year
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
-#' @details The list of data dn has to be ordered correctly, first 2001, 2004 then 2007.
+#' @details The list of data dn has to be ordered in an ascending order.
 #' @rdname EntryExit
 #' @import data.table
 #' @export

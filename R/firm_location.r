@@ -82,56 +82,19 @@ getLocation <- function(dta_list,
 
 }
 
-
-harmonize_firmID <- function(geo_dta){
-
-   dynamic_dta <- EntryExit(geo_dta,
-             base_year = 2015,
-             years = c(2016:2017))
-
-   dta <- merge(dynamic_dta[svyear == 2015 , .(firm_id,  unique_tax_id)],
-                  dynamic_dta[svyear > 2015 &
-                                 (status_2016rel_2015 == "incumbent" |
-                                     status_2017rel_2015 == "incumbent"), .(svyear,
-                                                                            unique_tax_id)],
-                  by = "unique_tax_id")[, firm_2015_id := firm_id]
-
-   dta <- merge(dta[, .(svyear, unique_tax_id, firm_2015_id)],
-         dynamic_dta,
-         by = c("svyear", "unique_tax_id"),
-         all.y =  T)
-
-   dta<- dta[, .(svyear,
-                 xa,
-                 huyen,
-                 tinh,
-                 sector,
-                 #status_2016rel_2015,
-                 #firm_2015_id,
-                 unique_tax_id,
-           firm_id = case.(
-              svyear < 2016, firm_id,
-              svyear >= 2016 &
-                 (status_2016rel_2015 == "incumbent" |
-                     status_2017rel_2015 == "incumbent" ), firm_2015_id,
-              default = unique_tax_id
-           ) )]
-
-   return(dta)
-}
-
-harmonize_sector <- function(dta,
-                             crosswalk){
-
-      #crosswalk <- readxl::read_xlsx(crosswalk)
-      crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
-                                        vsis_93 = factor(nganh_cu))]
-      dta <- merge(dta[, nganh_kd := factor(nganh_kd)], crosswalk,
-            all.x = TRUE,
-            by.x = "nganh_kd",
-            by.y = "vsis_07")
-      return(dta)
-}
+#
+# harmonize_sector <- function(dta,
+#                              crosswalk){
+#
+#       #crosswalk <- readxl::read_xlsx(crosswalk)
+#       crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
+#                                         vsis_93 = factor(nganh_cu))]
+#       dta <- merge(dta[, nganh_kd := factor(nganh_kd)], crosswalk,
+#             all.x = TRUE,
+#             by.x = "nganh_kd",
+#             by.y = "vsis_07")
+#       return(dta)
+# }
 
 #
 # geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,

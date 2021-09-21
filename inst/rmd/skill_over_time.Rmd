@@ -84,32 +84,6 @@ years <- c(2001:2018)
 
 ```
 
-## Orbis
-
-```{r orbis}
-orbis_dta <- fread("/Volumes/GoogleDrive/My Drive/papers/conglomerates_and_growth/data/Orbis_Data/vietnam_very_large.csv")
-
-
-orbis_dta <- orbis_dta[, .(firm_name= `Company name Latin alphabet`, 
-              BvD_ID = `BvD ID number`,
-              GUO_name = `GUO - Name`,
-              GUO_BvD_ID = `GUO - BvD ID number`)
-          ][, 
-            ma_thue :=  sub('..', '', BvD_ID)
-          ]
-
-firm_dta <- geo_dta[svyear == 2018 & ma_thue != "", .(svyear, ma_thue, tinh)]
-
-merged_data <-merge(firm_dta, 
-      orbis_dta, 
-      by = "ma_thue")[order(ma_thue)]
-
-# 
-# temp[ma_thue == "6303000078", .(ma_thue, BvD_ID, 
-#                                 check = (ma_thue == sub('..', '', BvD_ID) ))]
-
-```
-
 ## Plants
 
 About 120000 plants with no district codes. Let's say it takes 5 mins to get 1 plant done. It would take about 7000 hours.
@@ -189,7 +163,10 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 geo_dta <- getLocation(dta_list, 
                           years = years)
 
-beepr::beep(1)
+View(geo_dta)
+# 
+# saveRDS(geo_dta, 
+#         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
 dynamic_dta <- harmonize_firmID(geo_dta)
 
@@ -197,7 +174,6 @@ dynamic_dta <- harmonize_firmID(geo_dta)
 dynamic_dta <- EntryExit(dynamic_dta, 
                          base_year = c(2001, 2004), 
                          years= years)
-beepr::beep(1)
 
 dynamic_dta[!duplicated(firm_id), .N, by = status_2018rel_2004]
 ```
@@ -216,6 +192,34 @@ For 2010, use nganh_kd and nganh_cu to create a cocondorance. Use nganh_kd as th
  #      geo_dta[[3]][, .(nganh_kd, nganh_cu)]
  #      names(geo_dta[[3]])
 ```
+
+
+## Orbis
+
+```{r orbis}
+orbis_dta <- fread("/Volumes/GoogleDrive/My Drive/papers/conglomerates_and_growth/data/Orbis_Data/vietnam_very_large.csv")
+
+
+orbis_dta <- orbis_dta[, .(firm_name= `Company name Latin alphabet`, 
+              BvD_ID = `BvD ID number`,
+              GUO_name = `GUO - Name`,
+              GUO_BvD_ID = `GUO - BvD ID number`)
+          ][, 
+            ma_thue :=  sub('..', '', BvD_ID)
+          ]
+
+firm_dta <- geo_dta[svyear == 2018 & ma_thue != "", .(svyear, ma_thue, tinh)]
+
+merged_data <-merge(firm_dta, 
+      orbis_dta, 
+      by = "ma_thue")[order(ma_thue)]
+
+# 
+# temp[ma_thue == "6303000078", .(ma_thue, BvD_ID, 
+#                                 check = (ma_thue == sub('..', '', BvD_ID) ))]
+
+```
+
 
 # Wage Data
 

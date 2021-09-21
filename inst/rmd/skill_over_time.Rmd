@@ -163,10 +163,10 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 geo_dta <- getLocation(dta_list, 
                           years = years)
 
-View(geo_dta)
-# 
-# saveRDS(geo_dta, 
-#         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+#View(geo_dta)
+
+saveRDS(geo_dta,
+        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
 dynamic_dta <- harmonize_firmID(geo_dta)
 
@@ -177,12 +177,18 @@ dynamic_dta <- EntryExit(dynamic_dta,
 
 dynamic_dta[!duplicated(firm_id), .N, by = status_2018rel_2004]
 ```
+
 58598
 macs: 69719
 without capso: 62491
 
+## Economic zones
 
-# Industry code
+From at least 2010, there is a question whether the firm locates in an economic zone. 
+
+
+
+## Industry code
 
 For 2010, use nganh_kd and nganh_cu to create a cocondorance. Use nganh_kd as the main product code.
 

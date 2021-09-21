@@ -1,11 +1,8 @@
 
-#' @title Firm harmonized-ownership type 2001, 2004, and 2007
+#' @title Firm harmonized-ownership type 2001-2019
 #' @description Input a list of enterprise dn files and
 #' get location data for firms 2001, 2004 and 2007
-#' @param dta_list raw data list dn from GSO
-#' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
-#' Otherwise, output the cleaned data frame.
-#' @param years A vector of survey years that correspond to the raw data list dn from GSO dta_list
+#' @param geo_dta geographic data 2001-2019
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
 #' @details The list of data dn has to be ordered correctly to match with the years vector of survey years.
 #' The harmonization follows Mccaig et al (2020) Appendix Table 4: Ownership types by year.
@@ -13,30 +10,19 @@
 #' @import data.table
 #' @export
 
-ownership <- function(dta_list,
-                        years = c(2001, 2004, 2007),
-                        store_dir){
+ownership <- function(geo_dta){
 
-      ### read the Stata files
-      dn_dta <- lapply(dta_list, haven::read_dta)
-      dn_dta <- lapply(dn_dta, setDT)
+      #owner_data <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
-      ### select columns
+      owner_data <-    harmonize_ownership(geo_dta)
 
-      owner_data <- mapply(function(x, y) x[, svyear := y],
-                        dn_dta,
-                        years, SIMPLIFY = F)
-
-      owner_data <- mapply(harmonize_ownership,
-                           dn_dta,
-                           years,
-                           SIMPLIFY = F)
-
-      owner_data <-
-         lapply(owner_data,
-                function(x)
-                   (x)[, .( svyear, macs, madn,
-                            ma_thue, ownership,
+      owner_data <-  owner_data[, .( svyear, firm_id,
+                                     ma_thue,  unique_tax_id,
+                                     xa,
+                                     huyen,
+                                     tinh,
+                                     sector,
+                                     ownership,
                             simple_ownership = fcase(
                                (ownership == "Central SOE" |
                                   ownership == "Local SOE" |
@@ -51,38 +37,20 @@ ownership <- function(dta_list,
                                (ownership == "100% foreign" |
                                    ownership == "Foreign with state partner"|
                                    ownership == "Foreign with other partner"), "foreign"
-                                       ))])
-
-      owner_data <- data.table::rbindlist(owner_data)
-
-      DataExplorer::update_columns(owner_data,
-                                   c( "madn", "macs", "ma_thue"), as.factor)
+                                       ))]
 
       #DataExplorer::profile_missing(owner_data)
 
-      ## Label variables
+      return(owner_data)
 
-
-      if (!missing(store_dir)){
-
-            saveRDS(owner_data,
-                    file = store_dir)
-
-            return(print(paste("Data is stored at "), store_dir))
-      }else{
-
-            return(owner_data)
-      }
 
 }
 
 
 
 
-harmonize_ownership <- function(dta, svyear){
-   if (svyear == 2001)
-   { #ft_von
-      dta[, ownership := fcase(
+harmonize_ownership <- function(dta){
+   dta[svyear == 2001, ownership := fcase(
          lhdn == 1, "Central SOE",
          lhdn == 2, "Local SOE",
          lhdn == 3, "Collective",
@@ -90,17 +58,15 @@ harmonize_ownership <- function(dta, svyear){
          lhdn == 5, "Partnership company",
          lhdn == 6, "State LLC",
          lhdn == 7, "Private LLC",
-         #lhdn == 8, "",
+         #lhdn == 8, "State LLC",
          lhdn == 9, "Private LLC",
          #lhdn == 10, "State LLC",
          lhdn == 11, "JSC without state capital",
          lhdn == 12, "100% foreign",
          lhdn == 13, "Foreign with state partner",
-         lhdn == 14, "Foreign with other partner"
-      )]
-   }else if (svyear == 2002)
-   {
-      dta[, ownership := fcase(
+         lhdn == 14, "Foreign with other partner")]
+
+   dta[svyear == 2002, ownership := fcase(
          lhdn == 1, "Central SOE",
          lhdn == 2, "Local SOE",
          lhdn == 3, "Collective",
@@ -116,9 +82,8 @@ harmonize_ownership <- function(dta, svyear){
          lhdn == 13, "Foreign with state partner",
          lhdn == 14, "Foreign with other partner"
       )]
-   }else if (svyear == 2003 | svyear == 2004)
-   {
-      dta[, ownership := fcase(
+
+   dta[(svyear > 2002 & svyear <= 2004), ownership := fcase(
          lhdn == 1, "Central SOE",
          lhdn == 2, "Local SOE",
          lhdn == 3, "State LLC",
@@ -133,9 +98,9 @@ harmonize_ownership <- function(dta, svyear){
          lhdn == 12, "100% foreign",
          lhdn == 13, "Foreign with state partner",
          lhdn == 14, "Foreign with other partner"
-      )]}else if (svyear > 2004 & svyear < 2011)
-      {
-         dta[, ownership := fcase(
+      )]
+
+   dta[(svyear > 2004 & svyear <= 2011), ownership := fcase(
             lhdn == 1, "Central SOE",
             lhdn == 2, "Local SOE",
             lhdn == 3, "State LLC",
@@ -146,11 +111,119 @@ harmonize_ownership <- function(dta, svyear){
             lhdn == 8, "Partnership company",
             lhdn == 9, "Private LLC",
             lhdn == 10, "JSC without state capital",
-            lhdn == 11, "JSC with state capital<50%",
+            lhdn == 11, "JSC with state capital<50%", # In 2011, the survey asks whether the government intervenes
             lhdn == 12, "100% foreign",
             lhdn == 13, "Foreign with state partner",
             lhdn == 14, "Foreign with other partner"
          )]
-      }
+
+   dta[(svyear >= 2012 & svyear <= 2019), ownership := fcase(
+            lhdn == 1, "Central SOE",
+            lhdn == 2, "Local SOE",
+            lhdn == 3, "JSC or Private LLC with state capital>50%",
+            lhdn == 4, "Central SOE",
+            lhdn == 5, "Collective",
+            lhdn == 6, "Private enterprise",
+            lhdn == 7, "Partnership company",
+            lhdn == 8,  "Private LLC",
+            lhdn == 9, "JSC without state capital",
+            lhdn == 10, "JSC with state capital<50%", #  In 2011-2015 the survey asks whether the government intervenes
+            lhdn == 11, "100% foreign",
+            lhdn == 12, "Foreign with state partner",
+            lhdn == 13, "Foreign with other partner"
+         )]
+
    return(dta)
 }
+
+#
+#
+# if (svyear == 2001)
+# { #ft_von
+#    dta[, ownership := fcase(
+#       lhdn == 1, "Central SOE",
+#       lhdn == 2, "Local SOE",
+#       lhdn == 3, "Collective",
+#       lhdn == 4, "Private enterprise",
+#       lhdn == 5, "Partnership company",
+#       lhdn == 6, "State LLC",
+#       lhdn == 7, "Private LLC",
+#       #lhdn == 8, "",
+#       lhdn == 9, "Private LLC",
+#       #lhdn == 10, "State LLC",
+#       lhdn == 11, "JSC without state capital",
+#       lhdn == 12, "100% foreign",
+#       lhdn == 13, "Foreign with state partner",
+#       lhdn == 14, "Foreign with other partner"
+#    )]
+# }else if (svyear == 2002)
+# {
+#    dta[, ownership := fcase(
+#       lhdn == 1, "Central SOE",
+#       lhdn == 2, "Local SOE",
+#       lhdn == 3, "Collective",
+#       lhdn == 4, "Private enterprise",
+#       lhdn == 5, "Partnership company",
+#       lhdn == 6, "State LLC",
+#       lhdn == 7, "State LLC",
+#       lhdn == 8, "Private LLC",
+#       lhdn == 9, "JSC or Private LLC with state capital>50%",
+#       lhdn == 10, "JSC with state capital<50%",
+#       lhdn == 11, "JSC without state capital",
+#       lhdn == 12, "100% foreign",
+#       lhdn == 13, "Foreign with state partner",
+#       lhdn == 14, "Foreign with other partner"
+#    )]
+# }else if (svyear == 2003 | svyear == 2004)
+# {
+#    dta[, ownership := fcase(
+#       lhdn == 1, "Central SOE",
+#       lhdn == 2, "Local SOE",
+#       lhdn == 3, "State LLC",
+#       lhdn == 4, "State LLC",
+#       lhdn == 5, "JSC or Private LLC with state capital>50%",
+#       lhdn == 6, "Collective",
+#       lhdn == 7, "Private enterprise",
+#       lhdn == 8, "Partnership company",
+#       lhdn == 9, "Private LLC",
+#       lhdn == 10, "JSC without state capital",
+#       lhdn == 11, "JSC with state capital<50%",
+#       lhdn == 12, "100% foreign",
+#       lhdn == 13, "Foreign with state partner",
+#       lhdn == 14, "Foreign with other partner"
+#    )]}else if (svyear > 2004 & svyear <= 2011)
+#    {
+#       dta[, ownership := fcase(
+#          lhdn == 1, "Central SOE",
+#          lhdn == 2, "Local SOE",
+#          lhdn == 3, "State LLC",
+#          lhdn == 4, "State LLC",
+#          lhdn == 5, "JSC or Private LLC with state capital>50%",
+#          lhdn == 6, "Collective",
+#          lhdn == 7, "Private enterprise",
+#          lhdn == 8, "Partnership company",
+#          lhdn == 9, "Private LLC",
+#          lhdn == 10, "JSC without state capital",
+#          lhdn == 11, "JSC with state capital<50%", # In 2011, the survey asks whether the government intervenes
+#          lhdn == 12, "100% foreign",
+#          lhdn == 13, "Foreign with state partner",
+#          lhdn == 14, "Foreign with other partner"
+#       )]
+#    }else if (svyear >= 2012 & svyear <= 2019)
+#    {
+#       dta[, ownership := fcase(
+#          lhdn == 1, "Central SOE",
+#          lhdn == 2, "Local SOE",
+#          lhdn == 3, "JSC or Private LLC with state capital>50%",
+#          lhdn == 4, "Central SOE",
+#          lhdn == 5, "Collective",
+#          lhdn == 6, "Private enterprise",
+#          lhdn == 7, "Partnership company",
+#          lhdn == 8,  "Private LLC",
+#          lhdn == 9, "JSC without state capital",
+#          lhdn == 10, "JSC with state capital<50%", #  In 2011-2015 the survey asks whether the government intervenes
+#          lhdn == 11, "100% foreign",
+#          lhdn == 12, "Foreign with state partner",
+#          lhdn == 13, "Foreign with other partner"
+#       )]
+#    }

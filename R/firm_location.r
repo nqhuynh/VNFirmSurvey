@@ -32,7 +32,8 @@ getLocation <- function(dta_list,
                              xa,
                              huyen,
                              tinh,
-                             sector = nganh_kd)]
+                             sector = nganh_kd,
+                             lhdn)]
          }else{
             dta <-  dta[, .( svyear = svyear,
                              #macs, madn,
@@ -41,7 +42,8 @@ getLocation <- function(dta_list,
                              xa,
                              huyen,
                              tinh,
-                             sector = nganh_kd)]
+                             sector = nganh_kd,
+                             lhdn)]
          }
          return(dta)
       }

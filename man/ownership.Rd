@@ -2,17 +2,12 @@
 % Please edit documentation in R/ownership_type.r
 \name{ownership}
 \alias{ownership}
-\title{Firm harmonized-ownership type 2001, 2004, and 2007}
+\title{Firm harmonized-ownership type 2001-2019}
 \usage{
-ownership(dta_list, years = c(2001, 2004, 2007), store_dir)
+ownership(geo_dta)
 }
 \arguments{
-\item{dta_list}{raw data list dn from GSO}
-
-\item{years}{A vector of survey years that correspond to the raw data list dn from GSO dta_list}
-
-\item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
-Otherwise, output the cleaned data frame.}
+\item{geo_dta}{geographic data 2001-2019}
 }
 \value{
 Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables

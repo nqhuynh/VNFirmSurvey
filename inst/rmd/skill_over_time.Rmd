@@ -145,6 +145,15 @@ geo_dta <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/clea
 
 ```
 
+```{r harmonize-district-codes}
+district_codes <- fread(here("inst", "extdata", 
+                             "harmonized_district_codes.csv"))
+
+harmonized_dta<- harmonize_district(geo_dta, 
+                   district_codes)
+```
+
+
 ## Ownership
 
 ```{r load-ownership}
@@ -240,19 +249,16 @@ vn_shape <- vn_shape %>%
  mutate(ID = paste0(PARENT, DIST2009))
 
 
-result[, ID := paste0(province_2015, district_2015)]
+harmonized_dta[, ID := paste0(province_2015, district_2015)]
 
-temp <- merge(vn_shape, 
-      result[, .N, by = 
-               .(ID)])
+graph_dta <- merge(vn_shape, 
+      harmonized_dta[, .N, by = .( svyear, ID)])
 
-result[province_2001 == "401", .N, by = district_2001]
+df<- setdiff(vn_shape$ID, graph_dta[svyear == 2009]$ID)
 
-setdiff(vn_shape$ID, temp$ID)
-length(setdiff(vn_shape$ID, temp$ID))
 ```
 
-2001 to check for merging with geo_dta 
+2001 to check for merging with district_2001 
 [1] "56570" "82825" "66657" "67660" "67667" "68674"
  [7] "86863" "02035" "25240" "26244" "26253" "26248"
 [13] "01008" "01250" "04044" "45467" "42448" "42441"
@@ -302,7 +308,9 @@ length(setdiff(vn_shape$ID, temp$ID))
 
 2009, 2010, 2011 to 2018 uses 2015. no mismatch 
 ```{r visualize}
-ggplot(data = temp, aes(fill = N, 
+ggplot(data = graph_dta[svyear == 2007 |
+                        svyear == 2009 | 
+                          svyear == 2017], aes(fill = N, 
                             geometry = geometry)) +
   geom_sf(size = 0.01) + 
   scale_fill_continuous() + 
@@ -321,7 +329,8 @@ ggplot(data = temp, aes(fill = N,
         axis.text.y = element_blank(), 
         line = element_blank(), 
         legend.title = element_blank(),
-        legend.position = "right")
+        legend.position = "right") + 
+  facet_wrap(~svyear)
 ```
 
 

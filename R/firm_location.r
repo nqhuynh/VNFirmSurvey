@@ -33,7 +33,8 @@ getLocation <- function(dta_list,
                              huyen,
                              tinh,
                              sector = nganh_kd,
-                             lhdn)]
+                             lhdn,
+                             labor = ld13)]
          }else{
             dta <-  dta[, .( svyear = svyear,
                              #macs, madn,
@@ -43,7 +44,8 @@ getLocation <- function(dta_list,
                              huyen,
                              tinh,
                              sector = nganh_kd,
-                             lhdn)]
+                             lhdn,
+                             labor = ld13)]
          }
          return(dta)
       }
@@ -84,33 +86,10 @@ getLocation <- function(dta_list,
 }
 
 
-harmonize_district <- function(geo_dta, district_codes){
-   district_codes <- fread("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/harmonized_district_codes.csv")
+harmonize_district <- function(geo_dta,
+                               district_codes){
 
    ## Using 2015 as the base year for district codes, this is as close to 2009 census map as possible
-   district_codes[, province_2015 := case.(province_2015 >= 10, factor(province_2015),
-                                          province_2015 < 10, paste0("0", province_2015))]
-   district_codes[, district_2015 := case.(district_2015 >= 10 & district_2015 < 100, paste0("0", district_2015),
-                                           district_2015 < 10, paste0("00", district_2015),
-                                           district_2015 >= 100, factor(district_2015))]
-   ## Harmonize provinces
-   province_codes <- district_codes[!duplicated(province_2005) & !is.na(province_2005),
-                  .(province_2001 = factor(province_2001),
-                    #provinceName_2001,
-                    province_2004 = factor(province_2004), ## Capture changes in 2003
-                    #provinceName_2004,
-                     province_2005 = case.(province_2005 >= 10, factor(province_2005),
-                                          province_2005 < 10, paste0("0", province_2005)),  ## big changes in 2004
-                    #provinceName_2005,
-                     province_2020)  ] ## Finally, Ha Tay
-
-   merge(geo_dta[svyear <= 2002, .N, by = tinh],
-         district_2005,
-         by.x = "tinh",
-         by.y = "province_2001")
-
-
-   ## Districts
    district <- district_codes[!is.na(district_2015),
                   .(district_2001 = factor(district_2001),
                     province_2001 = factor(province_2001),
@@ -131,21 +110,42 @@ harmonize_district <- function(geo_dta, district_codes){
                                           district_2010 >= 100, factor(district_2010)),
                     province_2010 = case.(province_2010 >= 10, factor(province_2010),
                                           province_2010 < 10, paste0("0", province_2010)),
-                    district_2015,
-                    districtName_2020,
-                    province_2015)]
+                    district_2015  = case.(district_2015 >= 10 & district_2015 < 100, paste0("0", district_2015),
+                                        district_2015 < 10, paste0("00", district_2015),
+                                        district_2015 >= 100, factor(district_2015)),
+                    province_2015 = case.(province_2015 >= 10, factor(province_2015),
+                                           province_2015 < 10, paste0("0", province_2015)),
+                    districtName_2020)]
 
-   geo <- geo_dta[svyear >=  2016 & svyear <= 2018]
+   dat_list <- list(geo_dta[svyear < 2003],
+                    geo_dta[svyear == 2003],
+                    geo_dta[svyear > 2003 & svyear < 2007],
+                    geo_dta[svyear == 2007],
+                    geo_dta[svyear >=  2008 & svyear <= 2018])
 
-   result <-merge(district[, .(#district_2010, province_2010,
-                               district_2015, province_2015)],
-                  geo,
-                  all.y =  T,
-         by.x = c("district_2015", "province_2015"),
-         by.y = c("huyen", "tinh"),
-         allow.cartesian = T)
+   district_list <- list(district[, .(huyen = district_2001, tinh = province_2001,
+                                      district_2015, province_2015)],
+                         district[, .(huyen = district_2004, tinh = province_2004,
+                                      district_2015, province_2015)],
+                         district[, .(huyen = district_2005, tinh = province_2005,
+                                      district_2015, province_2015)],
+                         district[, .(huyen = district_2007, tinh = province_2007,
+                                      district_2015, province_2015)],
+                         district[, .(huyen = district_2015, tinh = province_2015,
+                                      district_2015, province_2015)])
 
-   View(result)
+   result <- mapply(function(x, y)  {merge(x, y,
+                                           all.x =  T,
+                                           by = c("huyen", "tinh"),
+                                           #by.y = c("district_2015", "province_2015"),
+                                           allow.cartesian = T)},
+                    dat_list,
+                    district_list,
+                    SIMPLIFY = F)
+
+   result <- rbindlist(result)
+
+   return(result)
 }
 
 
@@ -164,6 +164,23 @@ harmonize_district <- function(geo_dta, district_codes){
 # }
 
 #
+#
+## Harmonize provinces
+# province_codes <- district_codes[!duplicated(province_2005) & !is.na(province_2005),
+#                                  .(province_2001 = factor(province_2001),
+#                                    #provinceName_2001,
+#                                    province_2004 = factor(province_2004), ## Capture changes in 2003
+#                                    #provinceName_2004,
+#                                    province_2005 = case.(province_2005 >= 10, factor(province_2005),
+#                                                          province_2005 < 10, paste0("0", province_2005)),  ## big changes in 2004
+#                                    #provinceName_2005,
+#                                    province_2020)  ] ## Finally, Ha Tay
+#
+# merge(geo_dta[svyear <= 2002, .N, by = tinh],
+#       district_2005,
+#       by.x = "tinh",
+#       by.y = "province_2001")
+
 # geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,
 #                                                         crosswalk = here::here("inst", "extdata",
 #                                                                                "vsic_2007_to_1993.xlsx")))

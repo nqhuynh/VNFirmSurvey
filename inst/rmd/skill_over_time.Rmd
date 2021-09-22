@@ -132,19 +132,16 @@ writexl::write_xlsx(plant_data[svyear == 2009], )
 The location codes at district level change from 2004. I need a concodore between these two system
 
 ```{r}
-# geo_dta <- getLocation(dta_list, 
-#                           years = years)
+geo_dta <- getLocation(dta_list,
+                          years = years)
 
-# saveRDS(geo_dta,
-#         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+saveRDS(geo_dta,
+        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+```
 
-
+```{r}
 geo_dta <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
-geo_dta[svyear == 2001, .(madn, xa, huyen, tinh)]
-
-geo_dta[svyear == 2007 & tinh == "01"
-             & huyen == "001", .(madn, xa, huyen, tinh)]
 
 ```
 
@@ -223,6 +220,110 @@ merged_data <-merge(firm_dta,
 #                                 check = (ma_thue == sub('..', '', BvD_ID) ))]
 
 ```
+
+## Map 
+```{r}
+library(ipumsr)
+library(sf)
+vn_shape <- read_ipums_sf((here("inst", 
+                                "extdata", 
+                                "geo2_vn2009.zip")), 
+                          verbose = FALSE)
+setDT(vn_shape)
+vn_shape <- vn_shape %>% 
+  mutate(PARENT = substr(PARENT, 2,3)) %>% 
+  mutate(DIST2009 = case_when(
+    nchar(DIST2009) == 1 ~ paste0("00", DIST2009), 
+    nchar(DIST2009) == 2 ~ paste0("0", DIST2009),
+    TRUE ~ DIST2009
+  )) %>%
+ mutate(ID = paste0(PARENT, DIST2009))
+
+
+result[, ID := paste0(province_2015, district_2015)]
+
+temp <- merge(vn_shape, 
+      result[, .N, by = 
+               .(ID)])
+
+result[province_2001 == "401", .N, by = district_2001]
+
+setdiff(vn_shape$ID, temp$ID)
+length(setdiff(vn_shape$ID, temp$ID))
+```
+
+2001 to check for merging with geo_dta 
+[1] "56570" "82825" "66657" "67660" "67667" "68674"
+ [7] "86863" "02035" "25240" "26244" "26253" "26248"
+[13] "01008" "01250" "04044" "45467" "42448" "42441"
+[19] "40415" "40416" "75739" "91913" "93931" "92925"
+[25] "92927" "92926" "94942" "11097" "11101" "11102"
+[31] "38385" "31309" "48495"
+
+2002 merge with district_2001
+[1] "56570" "82825" "66657" "67660" "67667" "68674"
+ [7] "86863" "02035" "25240" "26244" "26253" "26248"
+[13] "01250" "04044" "42448" "42441" "40415" "91913"
+[19] "93931" "92925" "92927" "92926" "94942" "11097"
+[25] "11101" "11102" "38385" "31309" "48495"
+
+ 2003 merge with district_2004
+ [1] "56570" "51526" "82825" "66657" "67667" "86863"
+ [7] "02035" "25240" "26244" "26253" "26248" "01250"
+[13] "06060" "42448" "91913" "93931" "92927" "94942"
+[19] "11097" "11102" "14127" "31309" "48495"
+
+2004 merg witth district_2005
+[1] "56570" "60594" "82825" "62617" "66657" "67660"
+ [7] "67667" "68674" "86863" "25240" "26253" "01250"
+[13] "49518" "42448" "91913" "93931" "92927" "95961"
+[19] "94942" "58588" "11097" "11102" "54564" "31309"
+[25] "48495"
+
+
+2005 merg witth district_2005
+[1] "56570" "82825" "66657" "67667" "68674" "86863"
+ [7] "25240" "26253" "01250" "42448" "91913" "93931"
+[13] "92927" "94942" "11097" "11102" "31309"
+
+2006 uses district_2005
+ [1] "56570" "82825" "66657" "67667" "68674" "86863"
+ [7] "25240" "26253" "01250" "49516" "42448" "91913"
+[13] "93931" "92927" "94942" "11097" "11102" "38384"
+[19] "31309"
+
+2007 uses district_2007 
+[1] "82825" "64634" "66657" "67667" "86863" "25240"
+ [7] "26253" "01250" "91913" "93931" "92927" "94942"
+[13] "11097" "11102" "31309"
+
+2008 uses 2015
+"26253"
+
+2009, 2010, 2011 to 2018 uses 2015. no mismatch 
+```{r visualize}
+ggplot(data = temp, aes(fill = N, 
+                            geometry = geometry)) +
+  geom_sf(size = 0.01) + 
+  scale_fill_continuous() + 
+  # scale_fill_viridis_c(alpha = .4,
+  #                      #breaks = c(1, median(temp$N), 1000, 2000, 5000), 
+  #                      #labels = c(10, 500, 1000), 
+  #                      option="magma") +
+  labs(
+    #title = "Poor district status",
+    #subtitle = "2005 Import and Export Law",
+    caption = paste0("Source: Decree 49/2005/ND-CP"))+
+  #scale_fill_brewer(palette = "Accent") + 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(), 
+        line = element_blank(), 
+        legend.title = element_blank(),
+        legend.position = "right")
+```
+
 
 
 # Wage Data

@@ -56,7 +56,7 @@ getLocation <- function(dta_list,
       geo_dta <- data.table::rbindlist(geo_dta, fill = T)
 
       DataExplorer::update_columns(geo_dta,
-                                   c( "madn", "macs", "ma_thue", "tinh"), as.factor)
+                                   c( "madn", "macs", "ma_thue"), as.factor)
 
       #DataExplorer::profile_missing(geo_dta)
 
@@ -86,14 +86,14 @@ getLocation <- function(dta_list,
 
 harmonize_district <- function(geo_dta, district_codes){
    district_codes <- fread("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/harmonized_district_codes.csv")
-   mccaig <- fread("/Volumes/GoogleDrive/.shortcut-targets-by-id/1eDcqByikv9SuhOJqc70ZhSWEUTdnXWk_/Sex Ratio VN/other data/VHLSS and enterprise province codes.csv")
 
+   ## Using 2015 as the base year for district codes, this is as close to 2009 census map as possible
+   district_codes[, province_2015 := case.(province_2015 >= 10, factor(province_2015),
+                                          province_2015 < 10, paste0("0", province_2015))]
+   district_codes[, district_2015 := case.(district_2015 >= 10 & district_2015 < 100, paste0("0", district_2015),
+                                           district_2015 < 10, paste0("00", district_2015),
+                                           district_2015 >= 100, factor(district_2015))]
    ## Harmonize provinces
-   geo_2001 <- geo_dta[svyear == 2003, .N, by = tinh]
-   geo_2004 <- geo_dta[svyear == 2004, .N, by = tinh]
-
-   district_codes[, province_2005 := case.(province_2005 >= 10, factor(province_2005),
-                                          province_2005 < 10, paste0("0", province_2005))]  ## big changes in 2004]
    province_codes <- district_codes[!duplicated(province_2005) & !is.na(province_2005),
                   .(province_2001 = factor(province_2001),
                     #provinceName_2001,
@@ -111,24 +111,39 @@ harmonize_district <- function(geo_dta, district_codes){
 
 
    ## Districts
-   district <- district_codes[!is.na(district_2005),
+   district <- district_codes[!is.na(district_2015),
                   .(district_2001 = factor(district_2001),
                     province_2001 = factor(province_2001),
                     district_2004 = factor(district_2004),
                     province_2004 = factor(province_2004),
-                    district_2005 = factor(district_2005),
-                    province_2005 = factor(province_2005),
-                    district_2020,
-                    districtName_2020)][order(district_2001)]
+                    district_2005 = case.(district_2005 >= 10 & district_2005 < 100, paste0("0", district_2005),
+                                          district_2005 < 10, paste0("00", district_2005),
+                                          district_2005 >= 100, factor(district_2005)),
+                    province_2005 = case.(province_2005 >= 10, factor(province_2005),
+                                          province_2005 < 10, paste0("0", province_2005)),
+                    district_2007 = case.(district_2007 >= 10 & district_2007 < 100, paste0("0", district_2007),
+                                          district_2007 < 10, paste0("00", district_2007),
+                                          district_2007 >= 100, factor(district_2007)),
+                    province_2007 = case.(province_2007 >= 10, factor(province_2007),
+                                          province_2007 < 10, paste0("0", province_2007)),
+                    district_2010 = case.(district_2010 >= 10 & district_2010 < 100, paste0("0", district_2010),
+                                          district_2010 < 10, paste0("00", district_2010),
+                                          district_2010 >= 100, factor(district_2010)),
+                    province_2010 = case.(province_2010 >= 10, factor(province_2010),
+                                          province_2010 < 10, paste0("0", province_2010)),
+                    district_2015,
+                    districtName_2020,
+                    province_2015)]
 
-   geo <- geo_dta[svyear == 2004,
-           .N, by = .(huyen, tinh)][order(huyen)]
+   geo <- geo_dta[svyear >=  2016 & svyear <= 2018]
 
-   result <-merge(district,
-         geo,
-         all.y =  T,
-         by.x = c("district_2005", "province_2005"),
-         by.y = c("huyen", "tinh"))[!is.na(district_2005)]
+   result <-merge(district[, .(#district_2010, province_2010,
+                               district_2015, province_2015)],
+                  geo,
+                  all.y =  T,
+         by.x = c("district_2015", "province_2015"),
+         by.y = c("huyen", "tinh"),
+         allow.cartesian = T)
 
    View(result)
 }

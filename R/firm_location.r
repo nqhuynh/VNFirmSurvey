@@ -4,8 +4,8 @@
 #' @description Input a list of enterprise dn files and
 #' get location data for firms 2000-2018
 #' @param dta_list raw data list dn from GSO
-#' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
-#' Otherwise, output the cleaned data frame.
+#' @param district_codes If provided a district_codes file path, then the output data has district codes harmonized according to
+#' the 2015 district codes.
 #' @param years A vector of survey years that correspond to the raw data list dn from GSO dta_list
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
 #' @details The list of data dn has to be ordered correctly to match with the years vector of survey years.
@@ -15,7 +15,7 @@
 
 getLocation <- function(dta_list,
                         years,
-                        store_dir){
+                        district_codes){
 
       ### read the Stata files
       dn_dta <- lapply(dta_list, function(x) haven::read_dta(x, encoding = "latin1"))
@@ -70,12 +70,12 @@ getLocation <- function(dta_list,
                                   huyen = "district")
 
 
-      if (!missing(store_dir)){
+      if (!missing(district_codes)){
 
-            saveRDS(geo_dta,
-                    file = store_dir)
+           district_dta <- harmonize_district(geo_dta = geo_dta,
+                                              district_codes = district_codes)
 
-            return(print(paste("Data is stored at "), store_dir))
+          return(district_dta)
       }else{
 
             return(geo_dta)

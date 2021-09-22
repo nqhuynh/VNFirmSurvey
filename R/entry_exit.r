@@ -1,5 +1,5 @@
 #' @title Firm entry and exit status
-#' @description Input a list of enterprise dn files and
+#' @description Input geo_data and
 #' get firm entry, exit, incumbent status
 #' @param geo_dta Input cleaned geographic data, stacked over years.
 #' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.

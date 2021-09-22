@@ -20,6 +20,7 @@ library(haven)
 library(labelled)
 library(dplyr)
 library(labelled)
+library(tidytable)
 ```
 
 ```{r load-data}
@@ -139,18 +140,21 @@ saveRDS(geo_dta,
         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 ```
 
+```{r harmonize-district-codes}
+district_codes <- fread("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/harmonized_district_codes.csv")
+
+geo_dta <- getLocation(dta_list,
+                      years = years,
+                   district_codes = district_codes)
+```
+
+
+
+
 ```{r}
 geo_dta <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
 
-```
-
-```{r harmonize-district-codes}
-district_codes <- fread(here("inst", "extdata", 
-                             "harmonized_district_codes.csv"))
-
-harmonized_dta<- harmonize_district(geo_dta, 
-                   district_codes)
 ```
 
 

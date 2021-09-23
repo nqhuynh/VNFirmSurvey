@@ -4,13 +4,12 @@
 \alias{EntryExit}
 \title{Firm entry and exit status}
 \usage{
-EntryExit(geo_dta, store_dir, base_year, years)
+EntryExit(geo_dta, harmonized, base_year, years)
 }
 \arguments{
 \item{geo_dta}{Input cleaned geographic data, stacked over years.}
 
-\item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
-Otherwise, output the cleaned data frame.}
+\item{harmonized}{Input True if the input geo_dta has firm ID harmonized.}
 
 \item{base_year}{A vector of base years to which firms from future survey years are compared. Default is 2001}
 
@@ -20,7 +19,7 @@ Otherwise, output the cleaned data frame.}
 Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
 }
 \description{
-Input a list of enterprise dn files and
+Input geo_data and
 get firm entry, exit, incumbent status
 }
 \details{

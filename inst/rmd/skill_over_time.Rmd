@@ -133,11 +133,9 @@ writexl::write_xlsx(plant_data[svyear == 2009], )
 The location codes at district level change from 2004. I need a concodore between these two system
 
 ```{r}
-geo_dta <- getLocation(dta_list,
-                          years = years)
+# geo_dta <- getLocation(dta_list,
+#                           years = years)
 
-saveRDS(geo_dta,
-        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 ```
 
 ```{r harmonize-district-codes}
@@ -146,6 +144,10 @@ district_codes <- fread("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES
 geo_dta <- getLocation(dta_list,
                       years = years,
                    district_codes = district_codes)
+
+
+saveRDS(geo_dta,
+        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 ```
 
 
@@ -178,12 +180,12 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 
 dynamic_dta <- harmonize_firmID(geo_dta)
 
-
-dynamic_dta <- EntryExit(dynamic_dta, 
-                         base_year = c(2001, 2004), 
-                         years= years)
-
-dynamic_dta[!duplicated(firm_id), .N, by = status_2018rel_2004]
+# 
+# dynamic_dta <- EntryExit(dynamic_dta, 
+#                          base_year = c(2001, 2004), 
+#                          years= years)
+# 
+# dynamic_dta[!duplicated(firm_id), .N, by = status_2018rel_2004]
 ```
 
 58598
@@ -311,6 +313,9 @@ df<- setdiff(vn_shape$ID, graph_dta[svyear == 2009]$ID)
 "26253"
 
 2009, 2010, 2011 to 2018 uses 2015. no mismatch 
+
+
+
 ```{r visualize}
 ggplot(data = graph_dta[svyear == 2007 |
                         svyear == 2009 | 

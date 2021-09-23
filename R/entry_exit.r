@@ -2,8 +2,7 @@
 #' @description Input geo_data and
 #' get firm entry, exit, incumbent status
 #' @param geo_dta Input cleaned geographic data, stacked over years.
-#' @param store_dir If provided a store_dir, then the output wage data frame will be stored there.
-#' Otherwise, output the cleaned data frame.
+#' @param harmonized Input True if the input geo_dta has firm ID harmonized.
 #' @param base_year A vector of base years to which firms from future survey years are compared. Default is 2001
 #' @param years A vector of survey years that need firm status relative to the base_year, should include the base_year
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
@@ -13,7 +12,7 @@
 #' @export
 
 EntryExit <- function(geo_dta,
-                      store_dir,
+                      harmonized,
                       base_year,
                       years){
 
@@ -21,7 +20,7 @@ EntryExit <- function(geo_dta,
 
 
       for (byear in base_year){
-         if (byear < 2015){
+         if (byear < 2015 | (harmonized = T) ){
             for (j in years){
                   if (j > byear){
                         dynamic_dta[svyear >= byear, paste0("status_", j, "rel_", byear) :=  fcase(
@@ -50,16 +49,6 @@ EntryExit <- function(geo_dta,
       }
 
       #DataExplorer::profile_missing(dynamic_dta)
+      return(dynamic_dta)
 
-
-      if (!missing(store_dir)){
-
-            saveRDS(dynamic_dta,
-                    file = store_dir)
-
-            return(print(paste("Data is stored at "), store_dir))
-      }else{
-
-            return(dynamic_dta)
-      }
 }

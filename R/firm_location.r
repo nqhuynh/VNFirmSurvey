@@ -1,6 +1,6 @@
 
 
-#' @title Firm geographic location and sectors 2000-2018, Not harmonized
+#' @title Firm geographic location and sectors 2000-2018, harmonized district codes
 #' @description Input a list of enterprise dn files and
 #' get location data for firms 2000-2018
 #' @param dta_list raw data list dn from GSO
@@ -23,12 +23,14 @@ getLocation <- function(dta_list,
 
       ### select columns
       select_cols <- function(dta, svyear){
+
          if (svyear < 2016){
             dta <-  dta[, .( svyear = svyear,
                              macs, madn,
-                             firm_id = paste0(tinh, capso, madn),
+                             capso,
+                             #firm_id = paste0(tinh, capso, madn),
                              ma_thue,
-                             unique_tax_id = paste0(tinh, ma_thue),
+                             #unique_tax_id = paste0(tinh, ma_thue),
                              xa,
                              huyen,
                              tinh,
@@ -37,7 +39,7 @@ getLocation <- function(dta_list,
          }else{
             dta <-  dta[, .( svyear = svyear,
                              #macs, madn,
-                             unique_tax_id = paste0(tinh, ma_thue),
+                             #unique_tax_id = paste0(tinh, ma_thue),
                              ma_thue,
                              xa,
                              huyen,
@@ -45,6 +47,7 @@ getLocation <- function(dta_list,
                              sector = nganh_kd,
                              lhdn)]
          }
+
          return(dta)
       }
 
@@ -55,8 +58,8 @@ getLocation <- function(dta_list,
 
       geo_dta <- data.table::rbindlist(geo_dta, fill = T)
 
-      DataExplorer::update_columns(geo_dta,
-                                   c( "madn", "macs", "ma_thue"), as.factor)
+      # DataExplorer::update_columns(geo_dta,
+      #                              c( "madn", "macs", "ma_thue"), as.factor)
 
       #DataExplorer::profile_missing(geo_dta)
 
@@ -74,6 +77,12 @@ getLocation <- function(dta_list,
 
            district_dta <- harmonize_district(geo_dta = geo_dta,
                                               district_codes = district_codes)
+
+           district_dta[svyear < 2016,
+                        firm_id := paste0(province_2015, madn)]
+
+           district_dta[, unique_tax_id := paste0(tinh, ma_thue)]
+
 
           return(district_dta)
       }else{

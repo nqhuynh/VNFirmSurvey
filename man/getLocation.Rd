@@ -2,17 +2,17 @@
 % Please edit documentation in R/firm_location.r
 \name{getLocation}
 \alias{getLocation}
-\title{Firm geographic location and sectors 2000-2018, Not harmonized}
+\title{Firm geographic location and sectors 2000-2018, harmonized district codes}
 \usage{
-getLocation(dta_list, years, store_dir)
+getLocation(dta_list, years, district_codes)
 }
 \arguments{
 \item{dta_list}{raw data list dn from GSO}
 
 \item{years}{A vector of survey years that correspond to the raw data list dn from GSO dta_list}
 
-\item{store_dir}{If provided a store_dir, then the output wage data frame will be stored there.
-Otherwise, output the cleaned data frame.}
+\item{district_codes}{If provided a district_codes file path, then the output data has district codes harmonized according to
+the 2015 district codes.}
 }
 \value{
 Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables

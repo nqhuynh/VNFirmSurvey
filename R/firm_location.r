@@ -156,23 +156,15 @@ harmonize_district <- function(geo_dta,
 }
 
 
-#
-# harmonize_sector <- function(dta,
-#                              crosswalk){
-#
-#       #crosswalk <- readxl::read_xlsx(crosswalk)
-#       crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
-#                                         vsis_93 = factor(nganh_cu))]
-#       dta <- merge(dta[, nganh_kd := factor(nganh_kd)], crosswalk,
-#             all.x = TRUE,
-#             by.x = "nganh_kd",
-#             by.y = "vsis_07")
-#       return(dta)
-# }
+
+
+harmonize_province <- function(geo_dta,
+                               district_codes){
+
+}
 
 #
-#
-## Harmonize provinces
+# # Harmonize provinces
 # province_codes <- district_codes[!duplicated(province_2005) & !is.na(province_2005),
 #                                  .(province_2001 = factor(province_2001),
 #                                    #provinceName_2001,
@@ -187,6 +179,21 @@ harmonize_district <- function(geo_dta,
 #       district_2005,
 #       by.x = "tinh",
 #       by.y = "province_2001")
+
+
+#
+# harmonize_sector <- function(dta,
+#                              crosswalk){
+#
+#       #crosswalk <- readxl::read_xlsx(crosswalk)
+#       crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
+#                                         vsis_93 = factor(nganh_cu))]
+#       dta <- merge(dta[, nganh_kd := factor(nganh_kd)], crosswalk,
+#             all.x = TRUE,
+#             by.x = "nganh_kd",
+#             by.y = "vsis_07")
+#       return(dta)
+# }
 
 # geo_dta <- lapply(geo_dta, function(x) harmonize_sector(x,
 #                                                         crosswalk = here::here("inst", "extdata",

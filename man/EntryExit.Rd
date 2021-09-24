@@ -4,12 +4,10 @@
 \alias{EntryExit}
 \title{Firm entry and exit status}
 \usage{
-EntryExit(geo_dta, harmonized, base_year, years)
+EntryExit(geo_dta, base_year, years)
 }
 \arguments{
 \item{geo_dta}{Input cleaned geographic data, stacked over years.}
-
-\item{harmonized}{Input True if the input geo_dta has firm ID harmonized.}
 
 \item{base_year}{A vector of base years to which firms from future survey years are compared. Default is 2001}
 

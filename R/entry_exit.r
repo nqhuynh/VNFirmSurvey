@@ -2,7 +2,6 @@
 #' @description Input geo_data and
 #' get firm entry, exit, incumbent status
 #' @param geo_dta Input cleaned geographic data, stacked over years.
-#' @param harmonized Input True if the input geo_dta has firm ID harmonized.
 #' @param base_year A vector of base years to which firms from future survey years are compared. Default is 2001
 #' @param years A vector of survey years that need firm status relative to the base_year, should include the base_year
 #' @return Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables
@@ -12,15 +11,15 @@
 #' @export
 
 EntryExit <- function(geo_dta,
-                      harmonized,
+                      #harmonized,
                       base_year,
                       years){
 
       dynamic_dta <- geo_dta  # getLocation(dta_list, years)
 
-
+      #(harmonized = T)
       for (byear in base_year){
-         if (byear < 2015 | (harmonized = T) ){
+         if (byear < 2015 ){
             for (j in years){
                   if (j > byear){
                         dynamic_dta[svyear >= byear, paste0("status_", j, "rel_", byear) :=  fcase(

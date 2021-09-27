@@ -15,14 +15,8 @@ ownership <- function(geo_dta){
 
       owner_data <-    harmonize_ownership(geo_dta)
 
-      owner_data <-  owner_data[, .( svyear, firm_id,
-                                     ma_thue,  unique_tax_id,
-                                     xa,
-                                     huyen,
-                                     tinh,
-                                     sector,
-                                     ownership,
-                            simple_ownership = fcase(
+      owner_data <-  owner_data[,
+                            simple_ownership := fcase(
                                (ownership == "Central SOE" |
                                   ownership == "Local SOE" |
                                    ownership == "State LLC" |
@@ -36,7 +30,7 @@ ownership <- function(geo_dta){
                                (ownership == "100% foreign" |
                                    ownership == "Foreign with state partner"|
                                    ownership == "Foreign with other partner"), "foreign"
-                                       ))]
+                                       )]
 
       #DataExplorer::profile_missing(owner_data)
 

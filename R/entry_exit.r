@@ -23,12 +23,12 @@ EntryExit <- function(geo_dta,
             for (j in years){
                   if (j > byear){
                         dynamic_dta[svyear >= byear, paste0("status_", j, "rel_", byear) :=  fcase(
-                              (firm_id %in%  intersect(dynamic_dta[svyear == byear]$firm_id,
-                                                    dynamic_dta[svyear == j]$firm_id)), "incumbent",
-                              firm_id %in%  setdiff(dynamic_dta[svyear == byear]$firm_id,
-                                                 dynamic_dta[svyear == j]$firm_id), "exit",
-                              firm_id %in%  setdiff(dynamic_dta[svyear == j]$firm_id,
-                                                 dynamic_dta[svyear == byear]$firm_id), "entrant")]
+                              (madn %in%  intersect(dynamic_dta[svyear == byear]$madn,
+                                                    dynamic_dta[svyear == j]$madn)), "incumbent",
+                              madn %in%  setdiff(dynamic_dta[svyear == byear]$madn,
+                                                 dynamic_dta[svyear == j]$madn), "exit",
+                              madn %in%  setdiff(dynamic_dta[svyear == j]$madn,
+                                                 dynamic_dta[svyear == byear]$madn), "entrant")]
                   }
             }
          }

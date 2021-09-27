@@ -13,7 +13,7 @@ harmonize_firmID <- function(geo_dta){
 
       dynamic_dta <- EntryExit(geo_dta,
                                base_year = 2015,
-                               years = c(2016:2017)
+                               years = c(2016:2018)
                                )
 
       dta <- merge(dynamic_dta[svyear == 2015 , .(firm_id,  unique_tax_id)],
@@ -32,7 +32,8 @@ harmonize_firmID <- function(geo_dta){
                           svyear < 2016, firm_id,
                           svyear >= 2016 &
                                 (status_2016rel_2015 == "incumbent" |
-                                       status_2017rel_2015 == "incumbent" ), firm_2015_id,
+                                       status_2017rel_2015 == "incumbent"|
+                                    status_2018rel_2015 == "incumbent"), firm_2015_id,
                           default = unique_tax_id
                     )]
       return(dta)

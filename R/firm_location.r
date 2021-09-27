@@ -21,36 +21,40 @@ getLocation <- function(dta_list,
       dn_dta <- lapply(dta_list, function(x) haven::read_dta(x, encoding = "latin1"))
       dn_dta <- lapply(dn_dta, setDT)
 
+
       ### select columns
-      select_cols <- function(dta, svyear){
+      select_cols <- function(dta, year){
+         final_dta <-  dta[, .( svyear = year,
+                                # macs, madn,
+                                # capso,
+                                ma_thue,
+                                xa,
+                                huyen,
+                                tinh,
+                                sector = nganh_kd,
+                                lhdn,
+                                endyear_L = ld11,
+                                # wage_bill = tn11,
+                                revenue = kqkd1,
+                                total_asset = ts12
+         )]
 
-         if (svyear < 2016){
-            dta <-  dta[, .( svyear = svyear,
-                             macs, madn,
-                             capso,
-                             #firm_id = paste0(tinh, capso, madn),
-                             ma_thue,
-                             #unique_tax_id = paste0(tinh, ma_thue),
-                             xa,
-                             huyen,
-                             tinh,
-                             sector = nganh_kd,
-                             lhdn)]
+         if (year == 2009){
+            final_dta$wage_bill <-  dta$tn11
+
          }else{
-            dta <-  dta[, .( svyear = svyear,
-                             #macs, madn,
-                             #unique_tax_id = paste0(tinh, ma_thue),
-                             ma_thue,
-                             xa,
-                             huyen,
-                             tinh,
-                             sector = nganh_kd,
-                             lhdn)]
+            final_dta$wage_bill <-  dta$tn1
+
+            if (year < 2016){
+
+               final_dta[, `:=` (macs = dta$macs,
+                                 madn = dta$madn,
+                                 capso = dta$capso)]
+            }
          }
-
-         return(dta)
+         return(final_dta)
       }
-
+      lapply(dn_dta, function(x) "co_xnk" %in% names(x))
       geo_dta <- mapply(select_cols,
                         dn_dta,
                         years,
@@ -70,7 +74,9 @@ getLocation <- function(dta_list,
                                   madn = "Another firm ID?",
                                   ma_thue = "Tax ID",
                                   xa = "commune",
-                                  huyen = "district")
+                                  huyen = "district",
+                                 revenue = "Total revenue and other income (no sales tax) (kqkd1)",
+                                  total_asset = "Total assets at the end of the year ts12")
 
 
       if (!missing(district_codes)){

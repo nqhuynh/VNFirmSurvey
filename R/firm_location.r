@@ -38,23 +38,24 @@ getLocation <- function(dta_list,
                                 revenue = kqkd1,
                                 total_asset = ts12
          )]
+         if (year < 2016){
+
+            final_dta[, `:=` (macs = dta$macs,
+                              madn = dta$madn,
+                              capso = dta$capso)]
+         }
 
          if (year == 2009){
-            final_dta$wage_bill <-  dta$tn11
+            final_dta[, wage_bill :=  dta$tn11]
 
          }else{
-            final_dta$wage_bill <-  dta$tn1
+            final_dta[, wage_bill :=  dta$tn1]
 
-            if (year < 2016){
-
-               final_dta[, `:=` (macs = dta$macs,
-                                 madn = dta$madn,
-                                 capso = dta$capso)]
-            }
          }
+
          return(final_dta)
       }
-      lapply(dn_dta, function(x) "co_xnk" %in% names(x))
+
       geo_dta <- mapply(select_cols,
                         dn_dta,
                         years,
@@ -164,10 +165,6 @@ harmonize_district <- function(geo_dta,
 
 
 
-harmonize_province <- function(geo_dta,
-                               district_codes){
-
-}
 
 #
 # # Harmonize provinces

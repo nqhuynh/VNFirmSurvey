@@ -138,9 +138,9 @@ The location codes at district level change from 2004. I need a concodore betwee
 district_codes <- fread(here("inst", "extdata", 
                              "harmonized_district_codes.csv"))
 
-# geo_dta <- getLocation(dta_list,
-#                       years = years,
-#                    district_codes = district_codes)
+geo_dta <- getLocation(dta_list,
+                      years = years,
+                   district_codes = district_codes)
 
 # 
 # saveRDS(geo_dta,
@@ -173,16 +173,92 @@ ggplot(ownership_dta[, .N, by = .(svyear, simple_ownership)],
 
 ## Entry, exit
 
+Shall I use madn to link? 
+
+   -  Before 2003, the fraction of firms with more than one madn is about 10% about 5000-6000 firms per year. The number goes down from 2003 to 2013 and goes back up to about 5% for 2014 and 2015. 
+   
+   - macs alone is even worse 
+   
+   - For paste0(province_2015, capso, macs), the numbers are quite the same as madn before 2003 and get worse before 2009 (possibly due to Ha Tay)
+ 
+```{r test-madn-more-than-1}
+dynamic_dta <- geo_dta[, firm_id_2:=  paste0(province_2015, capso, macs)
+                       ][, .N, by = .(firm_id_2, svyear)
+                         ][, more_than_1 := (N > 1)]
+
+dynamic_madn_dta <- geo_dta[, .N, by = .(madn, svyear)
+                         ][, more_than_1 := (N > 1)]
+
+library(modelsummary)
+
+
+table_id <- datasummary(data = dynamic_dta,
+            factor(svyear)*more_than_1  ~  (N + Percent()))
+
+table_md <- datasummary(data = dynamic_madn_dta,
+            factor(svyear)*more_than_1  ~  (N + Percent()))
+
+ggplot(data = dynamic_dta[svyear < 2016]) + 
+  geom_bar(mapping = aes(x = more_than_1, y = ..prop.., group = 1), stat = "count")  + 
+  labs(x = "") +
+  facet_wrap(~svyear)
+```
+
+```{r}
+table_id
+
+table_md
+```
+
+What if I used ma_thue for pre 2003 
+
+```{r}
+dynamic_dta <- geo_dta[svyear < 2004, .N, by = .(unique_tax_id, svyear)
+                         ][, more_than_1 := (N > 1)]
+
+dynamic_dta <- geo_dta[svyear < 2004, .N, by = .(ma_thue, svyear)
+                         ][, more_than_1 := (N > 1)]
+
+
+table_ma_thue <- datasummary(data = dynamic_dta,
+            factor(svyear)*more_than_1  ~  (N + Percent()))
+table_ma_thue
+
+```
+
+
 ```{r entry}
 
 dynamic_dta <- harmonize_firmID(geo_dta)
 
-# 
-# dynamic_dta <- EntryExit(dynamic_dta, 
-#                          base_year = c(2001, 2004), 
-#                          years= years)
-# 
-# dynamic_dta[!duplicated(firm_id), .N, by = status_2018rel_2004]
+dynamic_dta[, firm_id_2 := paste0(tinh, capso, macs)]
+
+entry_exit <- EntryExit(geo_dta = dynamic_dta,
+                         base_year = c(2009:2013),
+                         years= c(2009:2013))
+
+GraphEntrantDta <- function(graph_dta, year) {
+    df_id <- c( "svyear")
+
+    rel_col <- paste0("status_", year, "rel_", year-1)
+
+    temp <- graph_dta[svyear == year , .N, by = c( df_id,  eval(rel_col))]
+
+    
+    temp <- dcast(temp,
+        formula = as.formula(paste(paste(df_id, collapse = " + "), "~", rel_col )),
+          value.var = "N")
+
+    temp <- temp[, entrant_share :=  entrant / (entrant + incumbent)]
+
+  return(temp)
+
+}
+
+
+entry_graph_dta <-  rbindlist(lapply(c(2010:2013), function(x) GraphEntrantDta(graph_dta = entry_exit,year = x)))
+
+entry_graph_dta
 ```
 
 58598

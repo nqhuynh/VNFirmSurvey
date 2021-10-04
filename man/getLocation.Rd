@@ -4,7 +4,7 @@
 \alias{getLocation}
 \title{Firm geographic location and sectors 2000-2018, harmonized district codes}
 \usage{
-getLocation(dta_list, years, district_codes)
+getLocation(dta_list, years, district_codes, crosswalk_07_to_93)
 }
 \arguments{
 \item{dta_list}{raw data list dn from GSO}
@@ -13,6 +13,9 @@ getLocation(dta_list, years, district_codes)
 
 \item{district_codes}{If provided a district_codes file path, then the output data has district codes harmonized according to
 the 2015 district codes.}
+
+\item{crosswalk_07_to_93}{If provided a crosswalk_07_to_93 file path, then the output data has sector codes harmonized according to
+the 1993 VSIC codes.}
 }
 \value{
 Either a stored data in store_dir, or a cleaned data frame.  A data frame with  rows and  variables

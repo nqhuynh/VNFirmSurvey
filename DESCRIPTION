@@ -22,6 +22,7 @@ Imports:
     here,
     labelled,
     magrittr,
+    readxl,
     tidytable,
     WDI
 Depends: 

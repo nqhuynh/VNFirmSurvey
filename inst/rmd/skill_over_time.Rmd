@@ -26,63 +26,63 @@ library(tidytable)
 ```{r load-data}
 
 dta_list <- list(
-  # here("inst", "extdata",
-  #                   "Stata_2001",
-  #                   "dn2001.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2002",
-  #                   "dn2002.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2003",
-  #                   "dn2003.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2004",
-  #                   "dn2004.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2005",
-  #                   "dn2005.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2006",
-  #                   "dn2006.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2007",
-  #                   "dn2007.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2008",
-  #                   "dn2008.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2009",
-  #                   "dn2009.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2010",
-  #                   "dn2010.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2011",
-  #                   "dn2011_mst.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2012",
-  #                   "dn2012_mst.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2013",
-  #                   "dn2013_mst.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2014",
-  #                   "dn2014.dta"),
-  #                here("inst", "extdata",
-  #                   "Stata_2015",
-  #                   "dn2015.dta"),
+  here("inst", "extdata",
+                    "Stata_2001",
+                    "dn2001.dta"),
+                 here("inst", "extdata",
+                    "Stata_2002",
+                    "dn2002.dta"),
+                 here("inst", "extdata",
+                    "Stata_2003",
+                    "dn2003.dta"),
+                 here("inst", "extdata",
+                    "Stata_2004",
+                    "dn2004.dta"),
+                 here("inst", "extdata",
+                    "Stata_2005",
+                    "dn2005.dta"),
+                 here("inst", "extdata",
+                    "Stata_2006",
+                    "dn2006.dta"),
+                 here("inst", "extdata",
+                    "Stata_2007",
+                    "dn2007.dta"),
+                 here("inst", "extdata",
+                    "Stata_2008",
+                    "dn2008.dta"),
+                 here("inst", "extdata",
+                    "Stata_2009",
+                    "dn2009.dta"),
+                 here("inst", "extdata",
+                    "Stata_2010",
+                    "dn2010.dta"),
+                 here("inst", "extdata",
+                    "Stata_2011",
+                    "dn2011_mst.dta"),
+                 here("inst", "extdata",
+                    "Stata_2012",
+                    "dn2012_mst.dta"),
+                 here("inst", "extdata",
+                    "Stata_2013",
+                    "dn2013_mst.dta"),
+                 here("inst", "extdata",
+                    "Stata_2014",
+                    "dn2014.dta"),
+                 here("inst", "extdata",
+                    "Stata_2015",
+                    "dn2015.dta"),
                  here("inst", "extdata",
                     "Stata_2016",
-                    "dn2016.dta")
-                 # here("inst", "extdata",
-                 #    "Stata_2017",
-                 #    "dn2017_new.dta"),
-                 # here("inst", "extdata",
-                 #    "Stata_2018",
-                 #    "dn2018.dta")
+                    "dn2016.dta"),
+                 here("inst", "extdata",
+                    "Stata_2017",
+                    "dn2017_new.dta"),
+                 here("inst", "extdata",
+                    "Stata_2018",
+                    "dn2018.dta")
                  )
 
-years <- c(2016)
+years <- c(2001:2018)
 
 ```
 
@@ -140,11 +140,15 @@ district_codes <- fread(here("inst", "extdata",
 
 geo_dta <- getLocation(dta_list,
                       years = years,
-                   district_codes = district_codes)
+                   district_codes = district_codes, 
+                   crosswalk_07_to_93 = here::here("inst", "extdata",
+                                                "vsic_2007_to_1993.xlsx"))
 
-# 
-# saveRDS(geo_dta,
-#         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+
+
+
+saveRDS(geo_dta,
+        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 ```
 
 
@@ -276,10 +280,6 @@ From at least 2010, there is a question whether the firm locates in an economic 
 For 2010, use nganh_kd and nganh_cu to create a cocondorance. Use nganh_kd as the main product code.
 
 ```{r}
-
-geo_dta<- harmonize_sector(geo_dta,
-                         crosswalk_07_to_93 = here::here("inst", "extdata",
-                                                "vsic_2007_to_1993.xlsx"))
 
 
 ```

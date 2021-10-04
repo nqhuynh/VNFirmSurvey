@@ -227,7 +227,7 @@ harmonize_sector <- function(dta,
                                 substr(sector, 2, nchar(sector)),
                                 sector)]
 
-      dta <- merge(geo_dta, crosswalk,
+      dta <- merge(dta, crosswalk,
                    all.x = TRUE,
                    by.x = "sector",
                    by.y = "vsis_07")

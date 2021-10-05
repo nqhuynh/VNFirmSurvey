@@ -232,7 +232,8 @@ harmonize_sector <- function(dta,
                    by.x = "sector",
                    by.y = "vsis_07")
 
-      dta[, const_sector_93 := ifelse(svyear < 2007, sector, vsis_93)]
+      dta[, const_sector_93 := case.(svyear < 2007, sector,
+                                     svyear >= 2007, vsis_93)]
 
 
       return(dta)

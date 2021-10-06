@@ -25,8 +25,10 @@ library(tidytable)
 
 ```{r load-data}
 
-dta_list <- list(
-  here("inst", "extdata",
+dta_list <- list(here("inst", "extdata",
+                    "Stata_2000",
+                    "dn2000.dta"),
+                 here("inst", "extdata",
                     "Stata_2001",
                     "dn2001.dta"),
                  here("inst", "extdata",
@@ -76,13 +78,13 @@ dta_list <- list(
                     "dn2016.dta"),
                  here("inst", "extdata",
                     "Stata_2017",
-                    "dn2017_new.dta"),
-                 here("inst", "extdata",
-                    "Stata_2018",
-                    "dn2018.dta")
+                    "dn2017_new.dta")
+                 # here("inst", "extdata",
+                 #    "Stata_2018",
+                 #    "dn2018.dta")
                  )
 
-years <- c(2001:2018)
+years <- c(2000:2017)
 
 ```
 
@@ -118,16 +120,71 @@ plant_list <- list("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/Data
 ```
 
 ```{r}
+geo_dta <- VNFirmSurvey::ownership(geo_dta)
+
+
+
 years <- c(2000:2014)
+
 plant_data <- plant(dta_list = plant_list, 
           years = years)      
-
-plant_data[is.na(district), .N, by = .(macs, svyear)][N > 1,  sum(N)]
 
 library(writexl)
 writexl::write_xlsx(plant_data[svyear == 2009], )
 
 ```
+
+```{r num-plants}
+
+merged_dta <- merge(geo_dta[, madn:= factor(madn)], 
+      plant_data[, .(plant_num = .N), by = .(madn, svyear)], 
+      by = c("madn", "svyear"),
+      all.x = T)
+
+merged_dta[is.na(plant_num), plant_num := 0]
+
+merged_dta[, .N, by = .(plant_num, svyear)][plant_num > 0]
+
+sum_dta <- merged_dta[, .(plant_num_0_1 = (plant_num < 2) , svyear, simple_ownership)][!is.na(simple_ownership), 
+                                                                                       .N,
+                                                                                       by = .(svyear, simple_ownership, plant_num_0_1)
+]
+
+num_plant <- datasummary(factor(svyear) * simple_ownership * plant_num_0_1 ~ N + Percent(),
+            data = sum_dta)
+
+g_dta <- sum_dta[svyear < 2015, percent := prop.table(N)*100, .(svyear, simple_ownership)][plant_num_0_1 == F][order(svyear)]
+
+
+g <- ggplot(data= g_dta, aes(x = factor(svyear), y = percent, group = simple_ownership)) +
+    geom_line(aes(color=simple_ownership))+
+    geom_point(aes(color=simple_ownership)) + 
+    #geom_text(aes(label = percent), hjust=0.7, vjust=-0.5, size = 4) + 
+    # scale_y_continuous(trans='log2', 
+    #                    limits = c(NA,NA)) + 
+    labs(x = "Year", 
+         y = "", 
+         title = "Percentage of firms with no more than 1 branch, by ownership",
+         caption = "Source: Vietnam Annual Enterprise Surveys 2001-2014") + 
+    theme_minimal() + 
+    theme(#axis.line.y = element_blank(), 
+          #axis.text.y = element_blank(),
+          #axis.ticks.y = element_blank(), 
+          legend.title = element_blank(), 
+          legend.position = "none") + 
+
+   geom_text_repel(aes(label = simple_ownership), 
+                  data = g_dta[svyear == 2014],
+                  #color = "red",
+                  hjust = 1, 
+                  size = 4, 
+                  nudge_x = 0) +
+  scale_color_brewer(palette = "Dark2") 
+
+ggsave(plot = g, path = "/Users/nghiemhuynh/Documents/papers/TradeSOE/output", 
+       filename = "plant_share_by_ownership.png")
+```
+
 
 ## Location
 

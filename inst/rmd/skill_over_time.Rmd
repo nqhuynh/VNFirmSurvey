@@ -107,12 +107,13 @@ geo_dta <- getLocation(dta_list,
 
 
 # 
-# saveRDS(geo_dta,
-#         file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+saveRDS(geo_dta,
+        file = "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
 
 # 
-# write.csv(geo_dta, "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.csv", 
-#           row.names = F)
+# write.csv(geo_dta, "/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.csv",
+#           row.names = F, 
+#           )
 ```
 
 
@@ -120,8 +121,12 @@ geo_dta <- getLocation(dta_list,
 
 ```{r}
 geo_dta <- readRDS("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.rds")
+# 
+# geo_dta <- fread("/Volumes/GoogleDrive/My Drive/econ_datasets/Vietnam_VES/cleaned_data/geo_dta.csv", 
+#                  nrows = 2000000)
 
 
+geo_dta[sample(nrow(geo_dta), 300)][svyear == 2008]
 ```
 
 

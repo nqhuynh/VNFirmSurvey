@@ -66,11 +66,6 @@ getLocation <- function(dta_list,
 
       geo_dta <- data.table::rbindlist(geo_dta, fill = T)
 
-      # DataExplorer::update_columns(geo_dta,
-      #                              c( "madn", "macs", "ma_thue"), as.factor)
-
-      #DataExplorer::profile_missing(geo_dta)
-
       ## Label variables
       var_label(geo_dta) <- list(svyear = "Year",
                                   tinh = "Province",
@@ -131,11 +126,14 @@ harmonize_district <- function(geo_dta,
                                district_codes){
 
    ## Using 2015 as the base year for district codes, this is as close to 2009 census map as possible
+
    district <- district_codes[!is.na(district_2015),
-                  .(district_2001 = factor(district_2001),
-                    province_2001 = factor(province_2001),
-                    district_2004 = factor(district_2004),
-                    province_2004 = factor(province_2004),
+                  .(district_2001 = as.character(district_2001),
+                    province_2001 = as.character(province_2001),
+                    district_2003 = as.character(district_2003),
+                    province_2003 = as.character(province_2003),
+                    district_2004 = as.character(district_2004),
+                    province_2004 = as.character(province_2004),
                     district_2005 = case.(district_2005 >= 10 & district_2005 < 100, paste0("0", district_2005),
                                           district_2005 < 10, paste0("00", district_2005),
                                           district_2005 >= 100, factor(district_2005)),
@@ -166,7 +164,7 @@ harmonize_district <- function(geo_dta,
 
    district_list <- list(district[, .(huyen = district_2001, tinh = province_2001,
                                       district_2015, province_2015)],
-                         district[, .(huyen = district_2004, tinh = province_2004,
+                         district[, .(huyen = district_2003, tinh = province_2003,
                                       district_2015, province_2015)],
                          district[, .(huyen = district_2005, tinh = province_2005,
                                       district_2015, province_2015)],
@@ -176,7 +174,7 @@ harmonize_district <- function(geo_dta,
                                       district_2015, province_2015)])
 
    result <- mapply(function(x, y)  {merge(x, y,
-                                           all.x =  T,
+                                           #all.x =  T,
                                            by = c("huyen", "tinh"),
                                            #by.y = c("district_2015", "province_2015"),
                                            allow.cartesian = T)},
@@ -185,32 +183,8 @@ harmonize_district <- function(geo_dta,
                     SIMPLIFY = F)
 
    result <- rbindlist(result)
-
    return(result)
 }
-
-
-
-
-
-#
-# # Harmonize provinces
-# province_codes <- district_codes[!duplicated(province_2005) & !is.na(province_2005),
-#                                  .(province_2001 = factor(province_2001),
-#                                    #provinceName_2001,
-#                                    province_2004 = factor(province_2004), ## Capture changes in 2003
-#                                    #provinceName_2004,
-#                                    province_2005 = case.(province_2005 >= 10, factor(province_2005),
-#                                                          province_2005 < 10, paste0("0", province_2005)),  ## big changes in 2004
-#                                    #provinceName_2005,
-#                                    province_2020)  ] ## Finally, Ha Tay
-#
-# merge(geo_dta[svyear <= 2002, .N, by = tinh],
-#       district_2005,
-#       by.x = "tinh",
-#       by.y = "province_2001")
-
-
 
 harmonize_sector <- function(dta,
                              crosswalk_07_to_93){
@@ -219,8 +193,8 @@ harmonize_sector <- function(dta,
       ## Harmonize by using 1993.
 
       crosswalk <- readxl::read_xlsx(crosswalk_07_to_93)
-      crosswalk <- setDT(crosswalk)[, .(vsis_07 = factor(nganh_kd),
-                                        vsis_93 = factor(nganh_cu))]
+      crosswalk <- setDT(crosswalk)[, .(vsis_07 = as.character(nganh_kd),
+                                        vsis_93 = as.character(nganh_cu))]
 
       dta[ svyear >= 2016,
                sector := ifelse(substr(sector, 0, 1) == "0",
@@ -232,8 +206,8 @@ harmonize_sector <- function(dta,
                    by.x = "sector",
                    by.y = "vsis_07")
 
-      dta[, const_sector_93 := case.(svyear < 2007, sector,
-                                     svyear >= 2007, vsis_93)]
+      dta[, const_sector_93 := case.(svyear < 2006, sector,
+                                     svyear >= 2006, vsis_93)]
 
 
       return(dta)

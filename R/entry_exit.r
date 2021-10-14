@@ -11,7 +11,6 @@
 #' @export
 
 EntryExit <- function(geo_dta,
-                      #harmonized,
                       base_year,
                       years){
 

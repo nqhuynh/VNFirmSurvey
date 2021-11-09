@@ -192,7 +192,7 @@ harmonize_sector <- function(dta,
       ## 2018 use VSIC 2018.
       ## Harmonize by using 1993.
 
-      crosswalk <- readxl::read_xlsx(crosswalk_07_to_93)
+      crosswalk <- fread(crosswalk_07_to_93)
       crosswalk <- setDT(crosswalk)[, .(vsis_07 = as.character(nganh_kd),
                                         vsis_93 = as.character(nganh_cu))]
 

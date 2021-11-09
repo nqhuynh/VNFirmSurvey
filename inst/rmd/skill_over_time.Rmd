@@ -11,16 +11,45 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(VNFirmSurvey)
-library(data.table)
-library(ggplot2)
-library(DataExplorer)
-library(here)
-library(haven)
-library(labelled)
-library(dplyr)
-library(labelled)
-library(tidytable)
+packages <- c(
+  "here", 
+  "haven",
+  "ggplot2", 
+  "dplyr",
+  "tidymodels",
+  "cowplot", 
+  "data.table", 
+  "modelsummary", 
+  "ipumsr", 
+  "htmltools",
+  "shiny",
+  "DT",
+  "beepr",
+  "sf",
+  "fixest", 
+  "RColorBrewer",
+  "tabulator",
+  "labelled", 
+  "tictoc",
+  "survey", 
+  "srvyr",
+  "kableExtra",
+  "knitr",
+  "targets",
+  "tarchetypes",
+  "DataExplorer"
+)
+
+
+# Change to install = TRUE to install the required packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(packages, character.only = TRUE, install = T)
+
+#renv::snapshot() 
+
+
+#library(VNFirmSurvey)
+
 ```
 
 ```{r load-data}
@@ -102,7 +131,7 @@ geo_dta <- getLocation(dta_list,
                       years = years,
                    district_codes = district_codes, 
                    crosswalk_07_to_93 = here::here("inst", "extdata",
-                                                "vsic_2007_to_1993.xlsx"))
+                                                "vsic_2007_to_1993.csv"))
 
 
 

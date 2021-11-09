@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: 
     data.table (>= 1.9.8),
     DataExplorer,
@@ -22,7 +22,6 @@ Imports:
     here,
     labelled,
     magrittr,
-    readxl,
     tidytable,
     WDI
 Depends: 

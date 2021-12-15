@@ -15,7 +15,7 @@
 plant <- function(dta_list,
                       years,
                       store_dir){
-      dta_list <- plant_list
+
       ### read the Stata files
       dn_dta <- lapply(dta_list, function(x)
             haven::read_dta(file = x,

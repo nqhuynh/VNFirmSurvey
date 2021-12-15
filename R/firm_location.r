@@ -175,9 +175,10 @@ harmonize_district <- function(geo_dta,
 
    result <- mapply(function(x, y)  {merge(x, y,
                                            #all.x =  T,
-                                           by = c("huyen", "tinh"),
+                                           by = c("huyen", "tinh")
                                            #by.y = c("district_2015", "province_2015"),
-                                           allow.cartesian = T)},
+                                           #allow.cartesian = T
+                                           )},
                     dat_list,
                     district_list,
                     SIMPLIFY = F)

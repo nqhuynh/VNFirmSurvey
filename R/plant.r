@@ -34,13 +34,13 @@ plant <- function(dta_list,
 
       plant_data <- data.table::rbindlist(plant_data, fill = TRUE)
 
-      DataExplorer::update_columns(plant_data,
-                                   c("tinh", "madn", "macs",
-                                     "stt", "sector", "tax_id",
-                                     "commune", "district",
-                                     "branch_province"), as.factor)
+      # DataExplorer::update_columns(plant_data,
+      #                              c("tinh", "madn", "macs",
+      #                                "stt", "sector", "tax_id",
+      #                                "commune", "district",
+      #                                "branch_province"), as.factor)
 
-      DataExplorer::profile_missing(plant_data)
+      # DataExplorer::profile_missing(plant_data)
 
       ## Label variables
 

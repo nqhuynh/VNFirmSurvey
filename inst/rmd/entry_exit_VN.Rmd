@@ -1,0 +1,129 @@
+---
+title: "Entry and Exit of formal firms in Vietnam 2000-2015"
+thanks: "I would like to thank Sam Kortum and Costas Arkolakis for comments on this note"
+author: 
+    - Nghiem Q. Huynh^[Yale University, nghiem.huynh@yale.edu]
+output: 
+  bookdown::pdf_document2: 
+    toc: false
+    keep_tex: true
+  bookdown::word_document2: default  
+abstract: " "
+keywords: " "
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+geometry: margin=1in
+fontfamily: charter
+fontsize: 12pt
+#bibliography: " "
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+# Chunk options
+knitr::opts_chunk$set(
+  echo = FALSE,
+  #warning=FALSE, 
+  #message=FALSE,
+  #fig.width = 6,
+  fig.asp = 0.8,
+  out.width = "90%"
+)
+```
+
+```{r load-files, include= FALSE}
+library(here)
+
+source(file = here("inst", "rmd", "required_packages.R"))
+```
+
+
+```{r theme-ggplot2, echo = FALSE}
+library(ggplot2)
+
+theme_nghiem <- function(base_size = 14) {
+  theme_classic(base_size = base_size) %+replace%
+    theme(
+      # L'ensemble de la figure
+      plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # Zone où se situe le graphique
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # Les axes
+      axis.title = element_text(size = rel(0.85)),
+      axis.text = element_text(size = rel(0.70)),
+      #axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed"))
+      # La légende
+      legend.title = element_text(size = rel(0.85), face = "bold"),
+      legend.text = element_text(size = rel(0.70)),
+      legend.key = element_rect(fill = "transparent", colour = NA),
+      legend.key.size = unit(1.5, "lines"),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      legend.position = "bottom"
+    )
+}
+# Changing the default theme
+theme_set(theme_nghiem())
+```
+
+# Single plant share
+
+
+```{r single-plant-g, fig.align='center', fig.cap= 'Single plant share'}
+knitr::include_graphics(path = here("inst", "tmp", "figure",
+                                    "single_plant_share.png"))
+```
+
+
+
+# Entry and Exit of all firms 
+Let me begin with entry and exit 
+
+```{r entry-exit-dta, include= F}
+entry_exit_dta <- fread(here("inst", "tmp", "entry_exit_dta.csv"))
+
+t_dta <- dcast(melt(entry_exit_dta, id.vars = "svyear"), 
+     variable ~ svyear, 
+     value.var = "value")
+# 
+# t_dta <- t_dta %>% mutate_if(is.numeric, ~round(., 3)) 
+
+t_dta[t_dta$variable %like% "E", type := "entry"]
+t_dta[t_dta$variable %like% "X", type := "exit"]
+
+t_dta <- t_dta[order(type), !c("type")]
+
+t_dta$variable <- c("Entry Rate (ER)", 
+                    "Entrant Market Share (ESH)",
+                    "Entrant Relative Size (ERS)",
+                    "Exit Rate (XR)",
+                    "Exiter Market Share (XRH)",
+                    "Exiter Relative Size (XRS)")
+
+colnames(t_dta)[1] <- ""
+```
+
+```{r entry-exit-tab}
+kbl(t_dta, 
+    digits = 3, 
+             format = "latex",
+             booktabs = TRUE, 
+             caption = "Entry and Exit all firms", 
+             table.envir = "table", 
+             position = "!h") %>% 
+      #kable_classic(full_width = T) %>% 
+      pack_rows(index = c("Entry" = 3, "Exit" = 3))
+
+
+```
+
+
+```{r entry-exit-g, fig.align='center', fig.cap= 'Entry-Exit'}
+knitr::include_graphics(path = here("inst", "tmp", "figure",
+                                    "entry_exit_g.png"))
+```
+
+
+
+
+
+

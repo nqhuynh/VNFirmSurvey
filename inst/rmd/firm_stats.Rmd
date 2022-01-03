@@ -246,7 +246,7 @@ list(
 list(
   tar_target(ave_entry_exit, 
              EnExitDta(dta = entry_exit_mccaig, 
-                       year_list= c(2001:2015)))
+                       year_list= c(2005, 2010, 2015)))
 )
 
 ```

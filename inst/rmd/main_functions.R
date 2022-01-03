@@ -242,7 +242,7 @@ PairEntryExit <- function(dta,
                        yyear,
                        df_id) {
 
-      pre_year <-  yyear-1
+      pre_year <-  yyear-5
 
       rel_col <- paste0("status_", yyear, "rel_", pre_year)
 

@@ -8,13 +8,13 @@ output:
     toc: false
     keep_tex: true
   bookdown::word_document2: default  
-abstract: " "
+abstract: "Using annual firm survey, I follow @Dunne1988 to compute summary statistics of formal firms in Vietnam from 2000 to 2015. "
 keywords: " "
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 geometry: margin=1in
 fontfamily: charter
 fontsize: 12pt
-#bibliography: " "
+bibliography: "entry_exit.bib"
 link-citations: true
 ---
 
@@ -36,6 +36,11 @@ library(here)
 source(file = here("inst", "rmd", "required_packages.R"))
 ```
 
+```{r bibtex, include=FALSE, eval=FALSE}
+file.copy(from = "/Volumes/GoogleDrive/My Drive/MendeleyBibTeX/entry_exit.bib", 
+          to = here("inst", "rmd"), 
+          overwrite = T)
+```
 
 ```{r theme-ggplot2, echo = FALSE}
 library(ggplot2)
@@ -67,16 +72,12 @@ theme_set(theme_nghiem())
 
 # Single plant share
 
-
 ```{r single-plant-g, fig.align='center', fig.cap= 'Single plant share'}
 knitr::include_graphics(path = here("inst", "tmp", "figure",
                                     "single_plant_share.png"))
 ```
 
-
-
-# Entry and Exit of all firms 
-Let me begin with entry and exit 
+# Entry and exit of all firms
 
 ```{r entry-exit-dta, include= F}
 entry_exit_dta <- fread(here("inst", "tmp", "entry_exit_dta.csv"))
@@ -116,14 +117,19 @@ kbl(t_dta,
 
 ```
 
-
 ```{r entry-exit-g, fig.align='center', fig.cap= 'Entry-Exit'}
 knitr::include_graphics(path = here("inst", "tmp", "figure",
                                     "entry_exit_g.png"))
 ```
 
+## Discussion
 
+1.  Entry rate is about 4 times that of the US.
+2.  The other rates are comparable
 
+Why entry rate is so high?
 
+1.  The annualized rate seems comparable to @McCaig2021 who reports the entry rate of firms 2000-2017 at 27% annually. Thus, the data seem trustworthy.
+2.  The rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies.
 
-
+# Manufacturing

@@ -80,31 +80,64 @@ BranchData <- function(year_length){
 
 }
 
+
 MergeBranchFirmID <- function(firm_dta, branch_dta){
 
-      merged_dta <- merge(firm_dta,
+      temp <- merge(firm_dta,
                           branch_dta[, .(plant_num = .N), by = .(madn, svyear)],
                           by = c("madn", "svyear"),
                           all.x = T)
 
-      merged_dta[is.na(plant_num), plant_num := 0]
-#
-#       merged_dta[, .N, by = .(plant_num, svyear)][plant_num > 0]
-#
-#       sum_dta <- merged_dta[, .(plant_num_0_1 = (plant_num < 2) , svyear, simple_ownership)][!is.na(simple_ownership),
-#                                                                                              .N,
-#                                                                                              by = .(svyear, simple_ownership, plant_num_0_1)
-#       ]
-#
-#       num_plant <- datasummary(factor(svyear) * simple_ownership * plant_num_0_1 ~ N + Percent(),
-#                                data = sum_dta)
-#
-#       g_dta <- sum_dta[svyear < 2015, percent := prop.table(N)*100, .(svyear, simple_ownership)][plant_num_0_1 == F][order(svyear)]
+      temp[is.na(plant_num), plant_num := 0]
 
-      fwrite(x = merged_dta[sample(nrow(merged_dta), 100000),],
+      fwrite(x = temp[sample(nrow(temp), 100000),],
              file = here("inst", "tmp", "plant_firm_dta.csv"))
 
-      return(merged_dta)
+
+
+      return(temp)
+
+}
+
+
+
+SingleMutiPlant <- function(dta){
+
+
+      single_multi_plant <- dta[, .(num_firm = .N,
+                                     sales = sum(revenue, na.rm = T)),
+                                 by = .(plant_num > 1,
+                                        svyear)]
+
+      share_dta <- single_multi_plant[, `:=` (share_num = prop.table(num_firm),
+                                          share_sales = prop.table(sales)),
+                                      by = svyear]
+
+      graph_dta <- melt(share_dta[plant_num == F, .(share_num,
+                                       share_sales,
+                                       svyear)],
+           id.vars = "svyear")
+
+      g <- ggplot(data = graph_dta[svyear < 2015] ,
+                  aes(x = factor(svyear),
+                      y = value*100,
+                      group = variable)) +
+            geom_point(aes(col = variable)) +
+            geom_line(aes(col = variable)) +
+            labs(title = "Single-plant firms shares",
+                 x = "Year",
+                 y = "") +
+            theme_minimal()
+
+      ggsave(plot = g,
+             filename = "single_plant_share.png",
+             dpi = 300,
+             path = here("inst", "tmp", "figure"))
+
+      mean_plant <- dta[plant_num > 0, .(mean_plant_per_firm = mean(plant_num)),
+                         by = svyear][order(svyear)]
+
+      return(list(share_dta, mean_plant))
 }
 
 # library(ggrepel)
@@ -156,13 +189,133 @@ PlantNumTab <- function(dta){
                   x = "Year",
                   y = "")
 
+}
 
-      return(num_firm)
+
+EnExitDta <- function(dta, year_list){
+
+      df_id <- c("svyear")
+
+      tmp <- rbindlist(lapply(year_list,
+                              function(x)  PairEntryExit(dta = dta,
+                                                      yyear = x,
+                                                      df_id = df_id)))
+
+      g_dta <- melt(tmp,
+                    id.vars = "svyear")
+
+      g <- ggplot(g_dta,
+             aes(x = svyear,
+                 y = value,
+                 group = variable))+
+            geom_point(aes(col = variable)) +
+            geom_line(aes(col = variable)) +
+            labs(x = "Year",
+                 y = "") +
+            theme(legend.position = "bottom") +
+            theme_minimal() +
+            scale_color_brewer(palette = "Dark2")
+
+      ggsave(plot = g,
+             filename = "entry_exit_g.png",
+             path = here("inst", "tmp", "figure"))
+
+      return(tmp)
+
 
 }
 
 
+PairEntryExit <- function(dta,
+                       yyear,
+                       df_id) {
 
+      pre_year <-  yyear-5
+
+      rel_col <- paste0("status_", yyear, "rel_", pre_year)
+
+      year_pair <-  paste(pre_year, yyear, sep = "-")
+
+      entry <- dta[svyear == yyear ,
+                   .(num_firm = .N,
+                     sales = sum(revenue, na.rm = T)),
+                   by = c( df_id,  eval(rel_col))]
+
+      exit <- dta[svyear ==pre_year ,
+                   .(num_firm = .N,
+                     sales = sum(revenue, na.rm = T)),
+                   by = c( df_id,  eval(rel_col))]
+
+      entry_exit_dta  <- rbindlist(list(entry, exit))
+
+      entry_exit_dta[, `:=` (num_shares = prop.table(num_firm),
+                             sales_shares = prop.table(sales)),
+                     by = df_id]
+
+      entry_exit_dta[, ave := sales/num_firm]
+
+      NT_pre <- entry_exit_dta[svyear == pre_year, .(svyear = yyear,
+                                            num_firm_pre = sum(num_firm)),
+                               by = c(df_id[df_id != "svyear"])]
+
+      entry <- merge(entry_exit_dta,
+                            NT_pre,
+                            by  = df_id)
+
+      entry[, num_rel_pre := (num_firm/ num_firm_pre)]
+
+      ER <-dcast(entry,
+            formula = as.formula(paste(paste(df_id, collapse = " + "), "~", rel_col )),
+            value.var = "num_rel_pre")[, .(ER =  entrant),
+                                        by = df_id]
+
+      XR <- dcast(entry_exit_dta[svyear == pre_year],
+                  formula = as.formula(paste(paste(df_id, collapse = " + "), "~", rel_col )),
+                  value.var = "num_shares")[, .(XR = exit),
+                                            by = df_id]
+      ER_XR <- merge( ER[, svyear:= year_pair],
+                              XR[, svyear:= year_pair],
+                    by = df_id)
+
+
+      ESH_XSH <- dcast(entry_exit_dta,
+                     formula = as.formula(paste(paste(df_id, collapse = " + "), "~", rel_col )),
+                  value.var = "sales_shares")[, .(ESH =  entrant,
+                                                  XSH = exit),
+                                              by = df_id]
+
+      ESH_XSH <- merge( ESH_XSH[svyear == pre_year, .(svyear = year_pair,
+                                                         XSH),
+                                by =  c(df_id[df_id != "svyear"])],
+                        ESH_XSH[svyear == (yyear), .(svyear = year_pair,
+                                                     ESH),
+                                by =  c(df_id[df_id != "svyear"])],
+                      by = df_id)
+
+      relative_size <- dcast(entry_exit_dta,
+                     formula = as.formula(paste(paste(df_id, collapse = " + "), "~", rel_col )),
+                     value.var = "ave")
+
+      relative_size <- relative_size[, .(ERS = entrant/ incumbent,
+                                         XRS = exit/incumbent),
+                                     by = df_id]
+
+      relative_size <- merge( relative_size[svyear == pre_year, .(svyear = year_pair,
+                                                         XRS),
+                                by =  c(df_id[df_id != "svyear"])],
+                              relative_size[svyear == (yyear), .(svyear = year_pair,
+                                                     ERS),
+                                by =  c(df_id[df_id != "svyear"])],
+                        by = df_id)
+
+      final_dta <- merge(ER_XR, merge(ESH_XSH,
+            relative_size,
+            by = df_id),
+            by = df_id)
+
+      return(final_dta)
+
+}
 
 
 

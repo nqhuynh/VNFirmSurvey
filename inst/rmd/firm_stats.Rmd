@@ -218,8 +218,11 @@ list(
 
 list(
   tar_target(branch_dta, BranchData(year_length = c(2000:2014)))
+  
 )
 ```
+
+
 
 
 
@@ -230,7 +233,20 @@ list(
   tar_target(num_firm, PlantNumTab(dta = entry_exit_mccaig)), 
   
   tar_target(firm_branch_dta, MergeBranchFirmID(firm_dta = entry_exit_mccaig,
-                                                branch_dta = branch_dta))
+                                                branch_dta = branch_dta)), 
+  
+  tar_target(single_multi_stats, SingleMutiPlant(dta = firm_branch_dta ))
+)
+
+```
+
+
+```{targets ave-entry-exit-stats}
+
+list(
+  tar_target(ave_entry_exit, 
+             EnExitDta(dta = entry_exit_mccaig, 
+                       year_list= c(2005, 2010, 2015)))
 )
 
 ```

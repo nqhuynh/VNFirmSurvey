@@ -201,6 +201,16 @@ EnExitDta <- function(dta, year_list){
                                                       yyear = x,
                                                       df_id = df_id)))
 
+      tmp_ind <- rbindlist(lapply(year_list,
+                              function(x)  PairEntryExit(dta = dta,
+                                                         yyear = x,
+                                                         df_id = c(df_id, "vsic1993"))))
+      fwrite(tmp,
+             file = here("inst", "tmp", "entry_exit_dta.csv"))
+
+      fwrite(tmp_ind,
+             file = here("inst", "tmp", "entry_exit_ind_dta.csv"))
+
       g_dta <- melt(tmp,
                     id.vars = "svyear")
 
@@ -220,8 +230,7 @@ EnExitDta <- function(dta, year_list){
              filename = "entry_exit_g.png",
              path = here("inst", "tmp", "figure"))
 
-      fwrite(tmp,
-              file = here("inst", "tmp", "entry_exit_dta.csv"))
+
 
       return(tmp)
 
@@ -233,7 +242,7 @@ PairEntryExit <- function(dta,
                        yyear,
                        df_id) {
 
-      pre_year <-  yyear-5
+      pre_year <-  yyear-1
 
       rel_col <- paste0("status_", yyear, "rel_", pre_year)
 
@@ -276,8 +285,8 @@ PairEntryExit <- function(dta,
                   formula = as.formula(paste(paste(df_id, collapse = " + "), "~", rel_col )),
                   value.var = "num_shares")[, .(XR = exit),
                                             by = df_id]
-      ER_XR <- merge( ER[, svyear:= year_pair],
-                              XR[, svyear:= year_pair],
+      ER_XR <- merge( ER[, svyear:= as.character(svyear)][, svyear:= year_pair],
+                      XR[, svyear:= as.character(svyear)][, svyear:= year_pair],
                     by = df_id)
 
 

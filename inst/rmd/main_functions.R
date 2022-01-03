@@ -220,6 +220,9 @@ EnExitDta <- function(dta, year_list){
              filename = "entry_exit_g.png",
              path = here("inst", "tmp", "figure"))
 
+      fwrite(tmp,
+              file = here("inst", "tmp", "entry_exit_dta.csv"))
+
       return(tmp)
 
 

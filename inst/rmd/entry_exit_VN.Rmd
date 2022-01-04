@@ -82,47 +82,142 @@ knitr::include_graphics(path = here("inst", "tmp", "figure",
 ```{r entry-exit-dta, include= F}
 entry_exit_dta <- fread(here("inst", "tmp", "entry_exit_dta.csv"))
 
-t_dta <- dcast(melt(entry_exit_dta, id.vars = "svyear"), 
+Dunne98Table <- function(dta){
+    
+    t_dta <- dcast(melt(dta, id.vars = "svyear"), 
      variable ~ svyear, 
      value.var = "value")
-# 
-# t_dta <- t_dta %>% mutate_if(is.numeric, ~round(., 3)) 
 
-t_dta[t_dta$variable %like% "E", type := "entry"]
-t_dta[t_dta$variable %like% "X", type := "exit"]
+    t_dta[t_dta$variable %like% "E", type := "entry"]
+    t_dta[t_dta$variable %like% "X", type := "exit"]
+    
+    t_dta <- t_dta[order(type), !c("type")]
+    
+    t_dta$variable <- c("Entry Rate (ER)", 
+                        "Entrant Market Share (ESH)",
+                        "Entrant Relative Size (ERS)",
+                        "Exit Rate (XR)",
+                        "Exiter Market Share (XSH)",
+                        "Exiter Relative Size (XRS)")
+    
+    #colnames(t_dta)[1] <- " "
+    
+    return(t_dta)
+}
 
-t_dta <- t_dta[order(type), !c("type")]
-
-t_dta$variable <- c("Entry Rate (ER)", 
-                    "Entrant Market Share (ESH)",
-                    "Entrant Relative Size (ERS)",
-                    "Exit Rate (XR)",
-                    "Exiter Market Share (XRH)",
-                    "Exiter Relative Size (XRS)")
-
-colnames(t_dta)[1] <- ""
-```
-
-```{r entry-exit-tab}
-kbl(t_dta, 
-    digits = 3, 
-             format = "latex",
-             booktabs = TRUE, 
-             caption = "Entry and Exit all firms", 
-             table.envir = "table", 
-             position = "!h") %>% 
-      #kable_classic(full_width = T) %>% 
-      pack_rows(index = c("Entry" = 3, "Exit" = 3))
-
+t_entry_exit <- Dunne98Table(entry_exit_dta)
 
 ```
+
 
 ```{r entry-exit-g, fig.align='center', fig.cap= 'Entry-Exit'}
 knitr::include_graphics(path = here("inst", "tmp", "figure",
                                     "entry_exit_g.png"))
 ```
 
+
+# Manufacturing
+
+There are 374 4-digit VSIC 1993 manufacturing industries. 
+
+```{r entry-exit-manu, include= F}
+entry_exit_manu <- fread(here("inst", "tmp", "entry_exit_ind_dta.csv"))
+
+ind_93_des <- read_dta(here("inst", "Stata", "VSIC1993 4-digit codes and descriptions.dta")) 
+
+entry_exit_manu <- merge(entry_exit_manu, 
+      ind_93_des, 
+      by = c("vsic1993"))[, manu := fcase(vsic1993 > 1500 & vsic1993 < 4000, T, 
+                                          default = F)][manu == T, !c("manu")]
+
+
+mean_manu <- entry_exit_manu[, lapply(.SD, function(x) mean(x, na.rm = T)), 
+                by = .(svyear), 
+                .SDcols = c("ER", "ESH", "ERS", "XR", "XSH", "XRS")]
+
+
+manu_tab <- Dunne98Table(mean_manu)
+
+```
+
+```{r manu-and-all}
+manu_all_dta <- merge(t_entry_exit, 
+                            manu_tab, 
+                      by = c("variable"), 
+                      sort = F)
+
+```
+
+
+
+```{r entry-exit-tab}
+
+kbl(manu_all_dta, 
+    digits = 3, 
+             format = "latex",
+             booktabs = TRUE, 
+    col.names = c("", "00-05","05-10","10-15", 
+                  "00-05","05-10","10-15"), 
+             caption = "Entry and exit all and manufacturing firms", 
+             table.envir = "table", 
+             position = "!h") %>% 
+      #kable_classic(full_width = T) %>% 
+    pack_rows(index = c("Entry" = 3, "Exit" = 3)) %>% 
+  add_header_above(c(" " = 1, "All" = 3, "Manufacturing" = 3)) %>% 
+  kable_styling(latex_options="scale_down")
+
+
+```
+
+
+```{r, eval=FALSE}
+med_2 <- rbindlist(list(entry_exit_dta[, manu := F], 
+               mean_manu[, manu := T]), 
+               use.names = T)
+
+kbl(med_2[, .(Year = svyear, 
+              ER, ESH,ERS, 
+              XR, XSH, XRS)], 
+    digits = 3, 
+             format = "latex",
+             booktabs = TRUE, 
+    #col.names = c("", "2000-2005","2005-2010","2010-2015", 
+    #              "2000-2005","2005-2010","2010-2015"), 
+             caption = "Entry and exit all and manufacturing firms", 
+             table.envir = "table", 
+             position = "!h") %>% 
+      #kable_classic(full_width = T) %>% 
+    pack_rows(index = c("All" = 3, "Manufacturing" = 3)) %>% 
+  add_header_above(c(" " = 1, "Entry" = 3, 
+                     "Exit" = 3)) 
+#%>% 
+#  kable_styling(latex_options="scale_down")
+
+```
+
+
+
 ## Discussion
+Compare to the US 
+```{r us-dta}
+us_dta <-tibble( "variable"  = c("ER", "ESH", "ERS", "XR", "XSH", "XRS"), 
+                 "1963-1967" = c(.307, .136, .369, .308, .144, .367), 
+                 "1967-1972" = c(.427, .185, .359, .390, .191, .367), 
+                 "1972-1977" = c(.408, .169, .324, .372, .173, .344))
+
+kbl(us_dta,  
+             format = "latex",
+             booktabs = TRUE, 
+    col.names = c("", "1963-1967","1967-1972","1972-1977"), 
+             caption = "Entry and exit of US manufacturing firms", 
+             table.envir = "table", 
+             position = "!h") %>% 
+      #kable_classic(full_width = T) %>% 
+    pack_rows(index = c("Entry" = 3, "Exit" = 3))
+
+
+```
+
 
 1.  Entry rate is about 4 times that of the US.
 2.  The other rates are comparable
@@ -132,4 +227,6 @@ Why entry rate is so high?
 1.  The annualized rate seems comparable to @McCaig2021 who reports the entry rate of firms 2000-2017 at 27% annually. Thus, the data seem trustworthy.
 2.  The rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies.
 
-# Manufacturing
+
+
+# References

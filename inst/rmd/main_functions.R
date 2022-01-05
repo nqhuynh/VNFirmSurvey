@@ -1,4 +1,25 @@
 
+theme_nghiem <- function(base_size = 14) {
+   theme_minimal(base_size = base_size) %+replace%
+      theme(
+         # L'ensemble de la figure
+         plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+         # Zone où se situe le graphique
+         panel.grid.minor = element_blank(),
+         panel.border = element_blank(),
+         # Les axes
+         axis.title = element_text(size = rel(0.85)),
+         axis.text = element_text(size = rel(0.70)),
+         #axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed"))
+         # La légende
+         legend.title = element_text(size = rel(0.85), face = "bold"),
+         legend.text = element_text(size = rel(0.70)),
+         legend.key = element_rect(fill = "transparent", colour = NA),
+         legend.key.size = unit(1.5, "lines"),
+         legend.background = element_rect(fill = "transparent", colour = NA),
+         legend.position = "bottom"
+      )
+}
 
 ColSelect <- function(dta){
       setDT(dta)
@@ -113,8 +134,8 @@ SingleMutiPlant <- function(dta){
                                           share_sales = prop.table(sales)),
                                       by = svyear]
 
-      graph_dta <- melt(share_dta[plant_num == F, .(share_num,
-                                       share_sales,
+      graph_dta <- melt(share_dta[plant_num == F, .('count shares' = share_num,
+                                                    'revenue shares' = share_sales,
                                        svyear)],
            id.vars = "svyear")
 
@@ -127,7 +148,7 @@ SingleMutiPlant <- function(dta){
             labs(title = "Single-plant firms shares",
                  x = "Year",
                  y = "") +
-            theme_minimal()
+            scale_color_brewer(palette = "Dark2")
 
       ggsave(plot = g,
              filename = "single_plant_share.png",

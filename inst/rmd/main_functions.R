@@ -41,7 +41,7 @@ ColSelect <- function(dta){
 
 SaveEntryDta <- function(dta, base_year, years){
 
-      dta <- EntryExit(geo_dta = dta,
+      dta <- VNFirmSurvey::EntryExit(geo_dta = dta,
                        base_year = base_year,
                        years = years)
 
@@ -240,10 +240,11 @@ EnExitDta <- function(dta, year_list){
 }
 
 
-EntryDta <- function(dta,
+EntryExit <- function(dta,
                      yyear,
                      year_gap,
-                     df_id = c("svyear")){
+                     df_id = c("svyear"),
+                     entry_exit = "both"){
 
    pre_year <-  yyear - year_gap
 
@@ -252,9 +253,32 @@ EntryDta <- function(dta,
    entry <- dta[svyear == yyear ,
                 .(num_firm = .N,
                   sales = sum(revenue, na.rm = T)),
-                by = c( df_id,  eval(rel_col))]
+                by = c( df_id,  eval(rel_col))][, `:=` (num_shares = prop.table(num_firm),
+                                                        sales_shares = prop.table(sales)),
+                                                by = df_id]
 
-   return(entry)
+   exit <- dta[svyear == pre_year ,
+               .(num_firm = .N,
+                 sales = sum(revenue, na.rm = T)),
+               by = c( df_id,  eval(rel_col))][, `:=` (num_shares = prop.table(num_firm),
+                                                       sales_shares = prop.table(sales)),
+                                               by = df_id]
+
+
+   if (entry_exit == "entry"){
+
+      return(entry)
+
+      }
+   else if(entry_exit == "exit"){
+
+         return(exit)
+
+      }
+   else{
+      return(list(entry, exit))
+   }
+
 }
 
 CastStatus <- function(dta,
@@ -290,25 +314,25 @@ PairEntryExit <- function(dta,
 
       year_pair <-  paste(pre_year, yyear, sep = "-")
 
-      entry <-  EntryDta(dta = dta,
-                         yyear = yyear,
-                         year_gap = year_gap,
-                         df_id = df_id)
-      # entry <- dta[svyear == yyear ,
+      # entry <-  EntryExitDta(dta = dta,
+      #                    yyear = yyear,
+      #                    year_gap = year_gap,
+      #                    df_id = df_id)
+
+      entry_exit_dta <-  EntryExit(dta = dta,
+                                     yyear = yyear,
+                                     year_gap = year_gap,
+                                     df_id = df_id)
+      # exit <- dta[svyear ==pre_year ,
       #              .(num_firm = .N,
       #                sales = sum(revenue, na.rm = T)),
       #              by = c( df_id,  eval(rel_col))]
 
-      exit <- dta[svyear ==pre_year ,
-                   .(num_firm = .N,
-                     sales = sum(revenue, na.rm = T)),
-                   by = c( df_id,  eval(rel_col))]
+      entry_exit_dta  <- rbindlist(entry_exit_dta)
 
-      entry_exit_dta  <- rbindlist(list(entry, exit))
-
-      entry_exit_dta[, `:=` (num_shares = prop.table(num_firm),
-                             sales_shares = prop.table(sales)),
-                     by = df_id]
+      # entry_exit_dta[, `:=` (num_shares = prop.table(num_firm),
+      #                        sales_shares = prop.table(sales)),
+      #                by = df_id]
 
       entry_exit_dta[, ave := sales/num_firm]
 
@@ -381,18 +405,19 @@ AggEntryYear <- function(dta, year_list ){
 
 
       dta <- lapply(year_list,
-                    function(x) EntryDta(dta = dta,
+                    function(x) EntryExit(dta = dta,
                                          yyear = x,
-                                         year_gap = 1))
+                                         year_gap = 1,
+                                         entry_exit = "entry"))
 
-      dta <- lapply(dta, function(x)
-                  x[, `:=` (n_share =  prop.table(num_firm),
-                  sale_share = prop.table(sales))])
+      # dta <- lapply(dta, function(x)
+      #             x[, `:=` (n_share =  prop.table(num_firm),
+      #             sale_share = prop.table(sales))])
 
       tmp <- mapply(function(x,y) CastStatus(dta = x,
                         yyear = y,
                         year_gap = 1,
-                        value_name = "n_share"),
+                        value_name = "num_shares"),
                     x = dta,
                     y = year_list,
                     SIMPLIFY = F)
@@ -412,3 +437,5 @@ AggEntryYear <- function(dta, year_list ){
 
       return(g)
 }
+
+

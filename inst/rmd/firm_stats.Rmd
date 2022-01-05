@@ -188,9 +188,8 @@ tar_option_set(packages = packages)
 
 ```{targets mccaig-data}
 list(
-      
   tar_target(mccaig_dta, 
-             read_dta(here("Stata", "output", 
+             read_dta(here("inst", "Stata", "output", 
                            "Master enterprise dataset part 30.dta")))
 )
 

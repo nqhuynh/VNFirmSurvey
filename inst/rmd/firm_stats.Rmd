@@ -251,6 +251,14 @@ list(
 ```
 
 
+```{targets agg-entry}
+list(
+  tar_target(agg_entry_g, 
+             AggEntryYear(dta = entry_exit_mccaig,
+                          year_list = c(2001:2015)))
+)
+```
+
 
 ## Report 
 

@@ -199,11 +199,13 @@ EnExitDta <- function(dta, year_list){
       tmp <- rbindlist(lapply(year_list,
                               function(x)  PairEntryExit(dta = dta,
                                                       yyear = x,
+                                                      year_gap = 5,
                                                       df_id = df_id)))
 
       tmp_ind <- rbindlist(lapply(year_list,
                               function(x)  PairEntryExit(dta = dta,
                                                          yyear = x,
+                                                         year_gap = 5,
                                                          df_id = c(df_id, "vsic1993"))))
       fwrite(tmp,
              file = here("inst", "tmp", "entry_exit_dta.csv"))
@@ -238,20 +240,64 @@ EnExitDta <- function(dta, year_list){
 }
 
 
+EntryDta <- function(dta,
+                     yyear,
+                     year_gap,
+                     df_id = c("svyear")){
+
+   pre_year <-  yyear - year_gap
+
+   rel_col <- paste0("status_", yyear, "rel_", pre_year)
+
+   entry <- dta[svyear == yyear ,
+                .(num_firm = .N,
+                  sales = sum(revenue, na.rm = T)),
+                by = c( df_id,  eval(rel_col))]
+
+   return(entry)
+}
+
+CastStatus <- function(dta,
+                       yyear,
+                       year_gap,
+                       df_id = c("svyear"),
+                       value_name ){
+
+   pre_year <-  yyear - year_gap
+
+   rel_col <- paste0("status_", yyear, "rel_", pre_year)
+
+   tmp <- dcast(dta,
+              formula = as.formula(paste(paste(df_id, collapse = " + "),
+                                         "~",
+                                         rel_col )),
+              value.var = value_name)
+
+   return(tmp)
+
+
+}
+
+
 PairEntryExit <- function(dta,
                        yyear,
+                       year_gap,
                        df_id) {
 
-      pre_year <-  yyear-5
+      pre_year <-  yyear - year_gap
 
       rel_col <- paste0("status_", yyear, "rel_", pre_year)
 
       year_pair <-  paste(pre_year, yyear, sep = "-")
 
-      entry <- dta[svyear == yyear ,
-                   .(num_firm = .N,
-                     sales = sum(revenue, na.rm = T)),
-                   by = c( df_id,  eval(rel_col))]
+      entry <-  EntryDta(dta = dta,
+                         yyear = yyear,
+                         year_gap = year_gap,
+                         df_id = df_id)
+      # entry <- dta[svyear == yyear ,
+      #              .(num_firm = .N,
+      #                sales = sum(revenue, na.rm = T)),
+      #              by = c( df_id,  eval(rel_col))]
 
       exit <- dta[svyear ==pre_year ,
                    .(num_firm = .N,
@@ -331,22 +377,37 @@ PairEntryExit <- function(dta,
 
 
 
-AggEntryShareYear <- function(entry_graph_dta){
+AggEntryYear <- function(dta, year_list ){
 
 
+      dta <- lapply(year_list,
+                    function(x) EntryDta(dta = dta,
+                                         yyear = x,
+                                         year_gap = 1))
 
-      graph_dta <- entry_graph_dta[, .(avg = mean(entrant_share, na.rm = T)), by = .(svyear = (svyear))]
+      dta <- lapply(dta, function(x)
+                  x[, `:=` (n_share =  prop.table(num_firm),
+                  sale_share = prop.table(sales))])
+
+      tmp <- mapply(function(x,y) CastStatus(dta = x,
+                        yyear = y,
+                        year_gap = 1,
+                        value_name = "n_share"),
+                    x = dta,
+                    y = year_list,
+                    SIMPLIFY = F)
+
+      graph_dta <- rbindlist(tmp)
 
       g <- ggplot(graph_dta,
-                  aes(x =  factor(svyear),  y = avg)) +
+                  aes(x =  factor(svyear),  y = entrant)) +
             geom_line(group = 1, color= "steelblue", size = 1) +
             geom_point(alpha = 0.3) +
             labs(title = "Entrant share (%)",
                  subtitle = "Fraction of entrants among all surveyed firms in a year",
-                 caption = "Source: Annual Firm Survey 2001-2018",
+                 caption = "Source: Annual Firm Survey 2001-2015",
                  x = "Year",
-                 y = "")+
-            theme_minimal()
+                 y = "")
 
 
       return(g)

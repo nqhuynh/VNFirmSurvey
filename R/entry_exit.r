@@ -16,12 +16,11 @@ EntryExit <- function(geo_dta,
 
       dynamic_dta <- geo_dta  # getLocation(dta_list, years)
 
-      #(harmonized = T)
       for (byear in base_year){
          if (byear < 2015 ){
             for (j in years){
-                  if (j > byear){
-                        dynamic_dta[svyear >= byear, paste0("status_", j, "rel_", byear) :=  fcase(
+                  if (j > byear){ #svyear >= byear
+                        dynamic_dta[, paste0("status_", j, "rel_", byear) :=  fcase(
                               (madn %in%  intersect(dynamic_dta[svyear == byear]$madn,
                                                     dynamic_dta[svyear == j]$madn)), "incumbent",
                               madn %in%  setdiff(dynamic_dta[svyear == byear]$madn,
@@ -46,7 +45,7 @@ EntryExit <- function(geo_dta,
          }
       }
 
-      #DataExplorer::profile_missing(dynamic_dta)
+
       return(dynamic_dta)
 
 }

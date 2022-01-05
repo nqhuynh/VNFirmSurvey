@@ -46,7 +46,7 @@ file.copy(from = "/Volumes/GoogleDrive/My Drive/MendeleyBibTeX/entry_exit.bib",
 library(ggplot2)
 
 theme_nghiem <- function(base_size = 14) {
-  theme_classic(base_size = base_size) %+replace%
+  theme_minimal(base_size = base_size) %+replace%
     theme(
       # L'ensemble de la figure
       plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
@@ -227,6 +227,33 @@ Why entry rate is so high?
 1.  The annualized rate seems comparable to @McCaig2021 who reports the entry rate of firms 2000-2017 at 27% annually. Thus, the data seem trustworthy.
 2.  The rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies.
 
+## Surviving firms
+
+```{r, include = F}
+tar_load(cohort_g)
+```
+
+
+- Sales shares of each cohort fall over time. Plus, the average sale shares of entering cohorts is smaller than the US  0.1082453. This can be due to high exit rate or falling of average size of incumbents or both. In the US, the former is true while the latter is not. Incumbents become larger over time in the US. 
+
+```{r sale-share}
+cohort_g[["Market Share"]]
+```
+
+- In Vietnam, the average size of surviving do not always increase. Both 2001 and 2005 cohorts experience a decline in their average size from 2005. 
+
+
+
+```{r ave-size}
+cohort_g[['Avg Size']]
+```
+
+- Exit rates are about the same as the US 
+
+
+```{r exit}
+cohort_g[["Exit"]]
+```
 
 
 # References

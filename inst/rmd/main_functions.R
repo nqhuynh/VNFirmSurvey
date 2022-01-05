@@ -192,7 +192,7 @@ PlantNumTab <- function(dta){
 }
 
 
-EnExitDta <- function(dta, year_list){
+EnExitDunne88 <- function(dta, year_list){
 
       df_id <- c("svyear")
 
@@ -240,7 +240,7 @@ EnExitDta <- function(dta, year_list){
 }
 
 
-EntryExit <- function(dta,
+EntryExitDta <- function(dta,
                      yyear,
                      year_gap,
                      df_id = c("svyear"),
@@ -314,19 +314,12 @@ PairEntryExit <- function(dta,
 
       year_pair <-  paste(pre_year, yyear, sep = "-")
 
-      # entry <-  EntryExitDta(dta = dta,
-      #                    yyear = yyear,
-      #                    year_gap = year_gap,
-      #                    df_id = df_id)
 
-      entry_exit_dta <-  EntryExit(dta = dta,
+      entry_exit_dta <-  EntryExitDta(dta = dta,
                                      yyear = yyear,
                                      year_gap = year_gap,
                                      df_id = df_id)
-      # exit <- dta[svyear ==pre_year ,
-      #              .(num_firm = .N,
-      #                sales = sum(revenue, na.rm = T)),
-      #              by = c( df_id,  eval(rel_col))]
+
 
       entry_exit_dta  <- rbindlist(entry_exit_dta)
 
@@ -405,7 +398,7 @@ AggEntryYear <- function(dta, year_list ){
 
 
       dta <- lapply(year_list,
-                    function(x) EntryExit(dta = dta,
+                    function(x) EntryExitDta(dta = dta,
                                          yyear = x,
                                          year_gap = 1,
                                          entry_exit = "entry"))
@@ -436,6 +429,93 @@ AggEntryYear <- function(dta, year_list ){
 
 
       return(g)
+}
+
+
+
+CohortDta <- function(dta){
+
+   dta <- dta[, cohort := min(svyear), by = madn]
+
+   cohort_share <- dta[, .(num = .N,
+                              sales = sum(revenue, na.rm = T)),
+                            by = .(svyear, cohort )
+                            ][, `:=` (num_shares = prop.table(num),
+                                      sales_shares = prop.table(sales)),
+                              by = .(svyear)]
+
+   cohort_share[,  year_ave_size := mean(sales, na.rm = T),
+                by = .(svyear)]
+
+   cohort_share[,  cohort_ave_size := (mean(sales, na.rm = T)/ year_ave_size) ,
+                by = .(svyear, cohort)]
+
+   cohort_init_size  <- cohort_share[cohort == svyear, .(cohort,
+                                                         init_size = num)]
+
+
+   cohort_share <- merge(cohort_share,
+                          cohort_init_size,
+                          by = c("cohort"))[, exit_rate := (1-  num/init_size) ]
+
+   return(cohort_share)
+}
+
+
+GraphCohort <- function(cohort_dta){
+
+   cohort_list <- c(2001, 2005, 2010, 2015)
+   year_list <- c(2001, 2005, 2010, 2015)
+
+   graph_list <- list()
+
+   g_dta <- cohort_dta[(cohort %in% cohort_list) &
+                               (svyear %in% year_list)][order(svyear)]
+
+
+   graph_list[['Market Share']] <- ggplot(data = g_dta,
+                      aes(x = (svyear),
+                          y = sales_shares,
+                          group = factor(cohort) )) +
+      geom_point(aes(color =  factor(cohort)),
+                 size = 3) +
+      geom_line(aes(color =  factor(cohort)), alpha = 0.5) +
+      scale_x_continuous(limits=c(2000, 2015))+
+      labs(x = "Year",
+           color = "Cohort",
+           y = "",
+           title = "Sales shares (%) by cohort over time") +
+      scale_color_brewer(palette = "Dark2")
+
+   graph_list[['Avg Size']]  <- ggplot(data = g_dta,
+                      aes(x = (svyear),
+                          y = cohort_ave_size,
+                          group = factor(cohort) )) +
+      geom_point(aes(color =  factor(cohort)),
+                 size = 3) +
+      geom_line(aes(color =  factor(cohort)), alpha = 0.5) +
+      scale_x_continuous(limits=c(2000, 2015))+
+      labs(x = "Year",
+           color = "Cohort",
+           y = "",
+           title = "Average Size of Surviving Firms Relative to All Firms") +
+      scale_color_brewer(palette = "Dark2")
+
+   graph_list[['Exit']]  <- ggplot(data = g_dta[cohort != svyear],
+                        aes(x = (svyear),
+                            y = exit_rate,
+                            group = factor(cohort) )) +
+      geom_point(aes(color =  factor(cohort)),
+                 size = 3) +
+      geom_line(aes(color =  factor(cohort)), alpha = 0.5) +
+      scale_x_continuous(limits=c(2000, 2015))+
+      labs(x = "Year",
+           color = "Cohort",
+           y = "",
+           title = "Cumulative Cohort Exit Rates") +
+      scale_color_brewer(palette = "Dark2")
+
+   return(graph_list)
 }
 
 

@@ -244,7 +244,7 @@ list(
 
 list(
   tar_target(ave_entry_exit, 
-             EnExitDta(dta = entry_exit_mccaig, 
+             EnExitDunne88(dta = entry_exit_mccaig, 
                        year_list= c(2005, 2010, 2015)))
 )
 
@@ -260,7 +260,15 @@ list(
 ```
 
 
-## Survival 
+## Cohort 
+
+```{targets cohort}
+list(
+  tar_target(cohort_dta, CohortDta(entry_exit_mccaig)), 
+  
+  tar_target(cohort_g, GraphCohort(cohort_dta))
+)
+```
 
 
 ## Report 

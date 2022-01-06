@@ -1,6 +1,6 @@
 ---
 title: "Entry and Exit of formal firms in Vietnam 2000-2015"
-thanks: "I would like to thank Sam Kortum and Costas Arkolakis for comments on this note"
+thanks: "I would like to thank Sam Kortum and Costas Arkolakis for suggestions and comments. "
 author: 
     - Nghiem Q. Huynh^[Yale University, nghiem.huynh@yale.edu]
 output: 
@@ -8,7 +8,7 @@ output:
     toc: false
     keep_tex: true
   bookdown::word_document2: default  
-abstract: "Using annual firm survey, I follow @Dunne1988 to compute summary statistics of formal firms in Vietnam from 2000 to 2015. "
+abstract: "Following  @Dunne1988 and using Vietnamese firm survey, I report summary statistics of formal firms in Vietnam from 2000 to 2015."
 keywords: " "
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 geometry: margin=1in
@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
   #warning=FALSE, 
   #message=FALSE,
   #fig.width = 6,
-  fig.asp = 0.8,
+  #fig.asp = 0.8,
   out.width = "90%"
 )
 ```
@@ -46,7 +46,7 @@ file.copy(from = "/Volumes/GoogleDrive/My Drive/MendeleyBibTeX/entry_exit.bib",
 library(ggplot2)
 
 theme_nghiem <- function(base_size = 14) {
-  theme_classic(base_size = base_size) %+replace%
+  theme_minimal(base_size = base_size) %+replace%
     theme(
       # L'ensemble de la figure
       plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
@@ -72,12 +72,16 @@ theme_set(theme_nghiem())
 
 # Single plant share
 
-```{r single-plant-g, fig.align='center', fig.cap= 'Single plant share'}
+Figure \@ref(fig:single-plant-g) reports the shares of single-plant firms and their sales shares from 2000-2014. The shares of single plant firms are comparable to the US starting from 2002. The overall trend is increasing despite the strange numbers in 2000 and 2001. I will check the matching of these two years.
+
+Before 2002, it looks like the shares of single-plant firms are relatively low. It is likely due to the high share of state-owned enterprises (SOEs). I will compute these shares again disaggregated by ownership.
+
+```{r single-plant-g, out.width= '85%', fig.pos= 't', fig.align='center', fig.cap= 'Single plant share'}
 knitr::include_graphics(path = here("inst", "tmp", "figure",
                                     "single_plant_share.png"))
 ```
 
-# Entry and exit of all firms
+# Entry and exit
 
 ```{r entry-exit-dta, include= F}
 entry_exit_dta <- fread(here("inst", "tmp", "entry_exit_dta.csv"))
@@ -109,16 +113,39 @@ t_entry_exit <- Dunne98Table(entry_exit_dta)
 
 ```
 
+<!-- ```{r entry-exit-g, fig.align='center', fig.cap= 'Entry-Exit'} -->
 
-```{r entry-exit-g, fig.align='center', fig.cap= 'Entry-Exit'}
-knitr::include_graphics(path = here("inst", "tmp", "figure",
-                                    "entry_exit_g.png"))
-```
+<!-- knitr::include_graphics(path = here("inst", "tmp", "figure", -->
 
+<!--                                     "entry_exit_g.png")) -->
 
-# Manufacturing
+<!-- ``` -->
 
-There are 374 4-digit VSIC 1993 manufacturing industries. 
+I report entry and exit rates, following the definitions in @Dunne1988. These definitions are as follow:
+
+$$
+\begin{aligned}
+N E_{i}(t)=& \text { number of firms that enter industry } i \text { between census years } t-1 \text { and } t ; \\
+N T_{i}(t)=& \text { total number of firms in industry } i \text { in census year } t . \text { This includes firms that } \\
+& \text { enter industry } i \text { between census years } t-1 \text { and } t ; \\
+N X_{i}(t-1)=& \text { number of firms that exit industry } i \text { between census years } t-1 \text { and } t ; \\
+Q E_{i}(t)=& \text { total output of firms that enter industry } i \text { between census years } t-1 \text { and } t . \\
+Q T_{i}(t)=& \text { total output of all firms in industry } i \text { in census year } t ; \\
+Q X_{i}(t-1)=& \text { total year } t-1 \text { output of firms that exit industry } i \text { between census years } \\
+& t-1 \text { and } t .
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+E R_{i}(t) &=N E_{i}(t) / N T_{i}(t-1) \\
+X R_{i}(t-1) &=N X_{i}(t-1) / N T_{i}(t-1) . \\
+E S H_{i}(t) &=Q E_{i}(t) / Q T_{i}(t) \\
+X S H_{i}(t-1) &=Q X_{i}(t-1) / Q T_{i}(t-1) . \\
+E R S_{i}(t) &=\frac{Q E_{i}(t) / N E_{i}(t)}{\left(Q T_{i}(t)-Q E_{i}(t)\right) /\left(N T_{i}(t)-N E_{i}(t)\right)} \\
+X R S_{i}(t-1) &=\frac{Q X_{i}(t) / N X_{i}(t-1)}{\left(Q T_{i}(t-1)-Q X_{i}(t-1)\right) /\left(N T_{i}(t-1)-N X_{i}(t-1)\right)} .
+\end{aligned}
+$$
 
 ```{r entry-exit-manu, include= F}
 entry_exit_manu <- fread(here("inst", "tmp", "entry_exit_ind_dta.csv"))
@@ -148,8 +175,6 @@ manu_all_dta <- merge(t_entry_exit,
 
 ```
 
-
-
 ```{r entry-exit-tab}
 
 kbl(manu_all_dta, 
@@ -158,17 +183,17 @@ kbl(manu_all_dta,
              booktabs = TRUE, 
     col.names = c("", "00-05","05-10","10-15", 
                   "00-05","05-10","10-15"), 
-             caption = "Entry and exit all and manufacturing firms", 
+             caption = "Entry and exit all and manufacturing Vietnamese plants 2000-2015", 
              table.envir = "table", 
-             position = "!h") %>% 
+             position = "!t") %>% 
       #kable_classic(full_width = T) %>% 
     pack_rows(index = c("Entry" = 3, "Exit" = 3)) %>% 
   add_header_above(c(" " = 1, "All" = 3, "Manufacturing" = 3)) %>% 
-  kable_styling(latex_options="scale_down")
+  kable_styling(latex_options="scale_down") %>% 
+  footnote("Manufacturing are averages over 374 4-digit VSIC1993 manufacturing industries")
 
 
 ```
-
 
 ```{r, eval=FALSE}
 med_2 <- rbindlist(list(entry_exit_dta[, manu := F], 
@@ -195,10 +220,10 @@ kbl(med_2[, .(Year = svyear,
 
 ```
 
+Table \@ref(tab:entry-exit-tab) reports these statistics for three pairs of years, 2000-2005, 2005-2010, and 2010-2015. The first three columns are statistics for all firms, while the last three columns are averages over 374 4-digit VSIC 1993 manufacturing industries.
 
+Table \@ref(tab:us-dta) reports numbers from @Dunne1988 to compare with the Vietnamese numbers.
 
-## Discussion
-Compare to the US 
 ```{r us-dta}
 us_dta <-tibble( "variable"  = c("ER", "ESH", "ERS", "XR", "XSH", "XRS"), 
                  "1963-1967" = c(.307, .136, .369, .308, .144, .367), 
@@ -213,20 +238,103 @@ kbl(us_dta,
              table.envir = "table", 
              position = "!h") %>% 
       #kable_classic(full_width = T) %>% 
-    pack_rows(index = c("Entry" = 3, "Exit" = 3))
+    pack_rows(index = c("Entry" = 3, "Exit" = 3)) %>%
+  footnote("Figures are from Dunne et. al (1988)")
 
 
 ```
 
+## Discussion
 
-1.  Entry rate is about 4 times that of the US.
-2.  The other rates are comparable
+While most Vietnamese statistics are comparable to the US, the entry rate of Vietnam is about 4 times as high as that of the US during the period of rapid economic growth 2000-2010. Using the same data source, @McCaig2021 independently reports a comparable annualized rate at 27%.
 
-Why entry rate is so high?
+This rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies. That is, as the economy privatizes SOEs, private and foreign firms seize this opportunity to open new firms.
 
-1.  The annualized rate seems comparable to @McCaig2021 who reports the entry rate of firms 2000-2017 at 27% annually. Thus, the data seem trustworthy.
-2.  The rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies.
+# Surviving firms
+
+I document market shares, average firm size, and exit rates of four cohorts 2001, 2005, 2010, 2015. Based on the following figures, I observe the following:
+
+First, sales shares of each cohort fall over time. Besides, the average revenue shares of entering cohorts is about 0.108 which is smaller than that of the US . This can be due to high exit rate or falling of average size of incumbents or both. In the US, the former is true while the latter is not. Incumbents become larger over time in the US.
+
+Second, the average size of surviving do not always increase. Both 2001 and 2005 cohorts experience a decline in their average size from 2005.
+
+Finally, the exit rates are about the same as the US.
+
+```{r, include = F}
+tar_load(cohort_g)
+```
+
+```{r sale-share}
+cohort_g[["Market Share"]]
+```
+
+```{r ave-size}
+cohort_g[['Avg Size']]
+```
+
+```{r exit}
+cohort_g[["Exit"]]
+```
+
+## Manufacturing
+
+I include manufacturing figures next to the previous figures
+
+```{r, include = F}
+tar_load(manu_cohort_g)
+```
+
+```{r manu-sale-share}
+cohort_g[["Market Share"]] <- cohort_g[["Market Share"]] + labs(title = "")
+manu_cohort_g[["Market Share"]] <- manu_cohort_g[["Market Share"]] + labs(title = "", color = " ") 
+
+cowplot::plot_grid(cohort_g[["Market Share"]], 
+                    manu_cohort_g[["Market Share"]], 
+                   labels = c("All", "Manufacturing"))
+
+```
+
+```{r manu-ave-size}
+cohort_g[['Avg Size']] <- cohort_g[['Avg Size']] + labs(title = "")
+manu_cohort_g[['Avg Size']] <- manu_cohort_g[['Avg Size']] + labs(title = "", color = " ") 
+
+cowplot::plot_grid(cohort_g[['Avg Size']], 
+                    manu_cohort_g[['Avg Size']], 
+                   labels = c("All", "Manufacturing"))
 
 
+```
+
+```{r manu-exit}
+
+
+cohort_g[['Exit']] <- cohort_g[['Exit']] + labs(title = "")
+manu_cohort_g[["Exit"]] <-manu_cohort_g[["Exit"]] + labs(title = "", color = " ") 
+
+cowplot::plot_grid(cohort_g[['Exit']], 
+                    manu_cohort_g[['Exit']], 
+                   labels = c("All", "Manufacturing"))
+
+```
+
+# Next steps
+
+First, I should check single-plant by ownership.
+
+Second, firm size distribution.
+
+Third, distribution of entry relative to incumbent across districts.
+
+# Appendix
+
+Here are the entry and exit rates from @McCaig2021
+
+![](images/entry_rich.png)
+
+![](images/entry_poor.png)
+
+![](images/exit_rich.png)
+
+![](images/exit_poor.png)
 
 # References

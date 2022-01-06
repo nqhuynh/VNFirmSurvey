@@ -1,4 +1,25 @@
 
+theme_nghiem <- function(base_size = 14) {
+   theme_minimal(base_size = base_size) %+replace%
+      theme(
+         # L'ensemble de la figure
+         plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+         # Zone où se situe le graphique
+         panel.grid.minor = element_blank(),
+         panel.border = element_blank(),
+         # Les axes
+         axis.title = element_text(size = rel(0.85)),
+         axis.text = element_text(size = rel(0.70)),
+         #axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed"))
+         # La légende
+         legend.title = element_text(size = rel(0.85), face = "bold"),
+         legend.text = element_text(size = rel(0.70)),
+         legend.key = element_rect(fill = "transparent", colour = NA),
+         legend.key.size = unit(1.5, "lines"),
+         legend.background = element_rect(fill = "transparent", colour = NA),
+         legend.position = "bottom"
+      )
+}
 
 ColSelect <- function(dta){
       setDT(dta)
@@ -41,7 +62,7 @@ ColSelect <- function(dta){
 
 SaveEntryDta <- function(dta, base_year, years){
 
-      dta <- EntryExit(geo_dta = dta,
+      dta <- VNFirmSurvey::EntryExit(geo_dta = dta,
                        base_year = base_year,
                        years = years)
 
@@ -113,8 +134,8 @@ SingleMutiPlant <- function(dta){
                                           share_sales = prop.table(sales)),
                                       by = svyear]
 
-      graph_dta <- melt(share_dta[plant_num == F, .(share_num,
-                                       share_sales,
+      graph_dta <- melt(share_dta[plant_num == F, .('count shares' = share_num,
+                                                    'revenue shares' = share_sales,
                                        svyear)],
            id.vars = "svyear")
 
@@ -127,7 +148,7 @@ SingleMutiPlant <- function(dta){
             labs(title = "Single-plant firms shares",
                  x = "Year",
                  y = "") +
-            theme_minimal()
+            scale_color_brewer(palette = "Dark2")
 
       ggsave(plot = g,
              filename = "single_plant_share.png",
@@ -192,7 +213,7 @@ PlantNumTab <- function(dta){
 }
 
 
-EnExitDta <- function(dta, year_list){
+EnExitDunne88 <- function(dta, year_list){
 
       df_id <- c("svyear")
 
@@ -240,10 +261,11 @@ EnExitDta <- function(dta, year_list){
 }
 
 
-EntryDta <- function(dta,
+EntryExitDta <- function(dta,
                      yyear,
                      year_gap,
-                     df_id = c("svyear")){
+                     df_id = c("svyear"),
+                     entry_exit = "both"){
 
    pre_year <-  yyear - year_gap
 
@@ -252,9 +274,32 @@ EntryDta <- function(dta,
    entry <- dta[svyear == yyear ,
                 .(num_firm = .N,
                   sales = sum(revenue, na.rm = T)),
-                by = c( df_id,  eval(rel_col))]
+                by = c( df_id,  eval(rel_col))][, `:=` (num_shares = prop.table(num_firm),
+                                                        sales_shares = prop.table(sales)),
+                                                by = df_id]
 
-   return(entry)
+   exit <- dta[svyear == pre_year ,
+               .(num_firm = .N,
+                 sales = sum(revenue, na.rm = T)),
+               by = c( df_id,  eval(rel_col))][, `:=` (num_shares = prop.table(num_firm),
+                                                       sales_shares = prop.table(sales)),
+                                               by = df_id]
+
+
+   if (entry_exit == "entry"){
+
+      return(entry)
+
+      }
+   else if(entry_exit == "exit"){
+
+         return(exit)
+
+      }
+   else{
+      return(list(entry, exit))
+   }
+
 }
 
 CastStatus <- function(dta,
@@ -290,25 +335,18 @@ PairEntryExit <- function(dta,
 
       year_pair <-  paste(pre_year, yyear, sep = "-")
 
-      entry <-  EntryDta(dta = dta,
-                         yyear = yyear,
-                         year_gap = year_gap,
-                         df_id = df_id)
-      # entry <- dta[svyear == yyear ,
-      #              .(num_firm = .N,
-      #                sales = sum(revenue, na.rm = T)),
-      #              by = c( df_id,  eval(rel_col))]
 
-      exit <- dta[svyear ==pre_year ,
-                   .(num_firm = .N,
-                     sales = sum(revenue, na.rm = T)),
-                   by = c( df_id,  eval(rel_col))]
+      entry_exit_dta <-  EntryExitDta(dta = dta,
+                                     yyear = yyear,
+                                     year_gap = year_gap,
+                                     df_id = df_id)
 
-      entry_exit_dta  <- rbindlist(list(entry, exit))
 
-      entry_exit_dta[, `:=` (num_shares = prop.table(num_firm),
-                             sales_shares = prop.table(sales)),
-                     by = df_id]
+      entry_exit_dta  <- rbindlist(entry_exit_dta)
+
+      # entry_exit_dta[, `:=` (num_shares = prop.table(num_firm),
+      #                        sales_shares = prop.table(sales)),
+      #                by = df_id]
 
       entry_exit_dta[, ave := sales/num_firm]
 
@@ -381,18 +419,19 @@ AggEntryYear <- function(dta, year_list ){
 
 
       dta <- lapply(year_list,
-                    function(x) EntryDta(dta = dta,
+                    function(x) EntryExitDta(dta = dta,
                                          yyear = x,
-                                         year_gap = 1))
+                                         year_gap = 1,
+                                         entry_exit = "entry"))
 
-      dta <- lapply(dta, function(x)
-                  x[, `:=` (n_share =  prop.table(num_firm),
-                  sale_share = prop.table(sales))])
+      # dta <- lapply(dta, function(x)
+      #             x[, `:=` (n_share =  prop.table(num_firm),
+      #             sale_share = prop.table(sales))])
 
       tmp <- mapply(function(x,y) CastStatus(dta = x,
                         yyear = y,
                         year_gap = 1,
-                        value_name = "n_share"),
+                        value_name = "num_shares"),
                     x = dta,
                     y = year_list,
                     SIMPLIFY = F)
@@ -412,3 +451,139 @@ AggEntryYear <- function(dta, year_list ){
 
       return(g)
 }
+
+
+
+CohortDta <- function(dta){
+
+   dta <- dta[, cohort := min(svyear), by = madn]
+
+   cohort_share <- dta[, .(num = .N,
+                              sales = sum(revenue, na.rm = T)),
+                            by = .(svyear, cohort )
+                            ][, `:=` (num_shares = prop.table(num),
+                                      sales_shares = prop.table(sales)),
+                              by = .(svyear)]
+
+   cohort_share[,  year_ave_size := mean(sales, na.rm = T),
+                by = .(svyear)]
+
+   cohort_share[,  cohort_ave_size := (mean(sales, na.rm = T)/ year_ave_size) ,
+                by = .(svyear, cohort)]
+
+   cohort_init_size  <- cohort_share[cohort == svyear, .(cohort,
+                                                         init_size = num)]
+
+
+   cohort_share <- merge(cohort_share,
+                          cohort_init_size,
+                          by = c("cohort"))[, exit_rate := (1-  num/init_size) ]
+
+   return(cohort_share)
+}
+
+
+GraphCohort <- function(cohort_dta){
+
+   cohort_list <- c(2001, 2005, 2010, 2015)
+   year_list <- c(2001, 2005, 2010, 2015)
+
+   graph_list <- list()
+
+   g_dta <- cohort_dta[(cohort %in% cohort_list) &
+                               (svyear %in% year_list)][order(svyear)]
+
+
+   graph_list[['Market Share']] <- ggplot(data = g_dta,
+                      aes(x = (svyear),
+                          y = sales_shares,
+                          group = factor(cohort) )) +
+      geom_point(aes(color =  factor(cohort)),
+                 size = 3) +
+      geom_line(aes(color =  factor(cohort)), alpha = 0.5) +
+      scale_x_continuous(limits=c(2000, 2015))+
+      labs(x = "Year",
+           color = "Cohort",
+           y = "",
+           title = "Sales shares (%) by cohort over time") +
+      scale_color_brewer(palette = "Dark2")
+
+   graph_list[['Avg Size']]  <- ggplot(data = g_dta,
+                      aes(x = (svyear),
+                          y = cohort_ave_size,
+                          group = factor(cohort) )) +
+      geom_point(aes(color =  factor(cohort)),
+                 size = 3) +
+      geom_line(aes(color =  factor(cohort)), alpha = 0.5) +
+      scale_x_continuous(limits=c(2000, 2015))+
+      labs(x = "Year",
+           color = "Cohort",
+           y = "",
+           title = "Average Size of Surviving Firms Relative to All Firms") +
+      scale_color_brewer(palette = "Dark2")
+
+   graph_list[['Exit']]  <- ggplot(data = g_dta[cohort != svyear],
+                        aes(x = (svyear),
+                            y = exit_rate,
+                            group = factor(cohort) )) +
+      geom_point(aes(color =  factor(cohort)),
+                 size = 3) +
+      geom_line(aes(color =  factor(cohort)), alpha = 0.5) +
+      scale_x_continuous(limits=c(2000, 2015))+
+      labs(x = "Year",
+           color = "Cohort",
+           y = "",
+           title = "Cumulative Cohort Exit Rates") +
+      scale_color_brewer(palette = "Dark2")
+
+   return(graph_list)
+}
+
+
+fancy_scientific <- function(l) {
+      # turn in to character string in scientific notation
+      l <- format(l, scientific = TRUE)
+      # quote the part before the exponent to keep all the digits
+      #l <- gsub("^(.*)e", "'\\1'e", l)
+      # turn the 'e+' into plotmath format
+      #l <- gsub("e", "%*%10^", l)
+      # return this as an expression
+      parse(text=l)
+}
+
+SaleDist <- function(dta){
+
+      mean_sale <- dta[, mean_rev := mean(revenue, na.rm = T), by = .(svyear)]
+
+      size_dta <- dta[, .(year = factor(year), madn,
+                                               norm_sales = revenue/mean_rev)]
+
+
+      q_tab <- size_dta[, .(q = seq(0, 1, 0.04)*100,
+                             value = quantile(norm_sales, probs = seq(0, 1, 0.04),
+                           na.rm = T)),
+                         by = .(year)]
+
+      # q_tab <- data.table("q" = seq(0, 1, 0.04)*100,
+      #        "value" = size_q)
+
+      g <- ggplot(q_tab[q < 100 & q > 5 & year %in% c(2001,2005,2010, 2015) ],
+             aes(x = q, y = value, group = year)) +
+            geom_point(aes(color = year)) +
+            scale_y_continuous(trans = "log10",
+                               limits = c(0.001, NA),
+                               labels=fancy_scientific) +
+            scale_x_continuous(#trans = "log10",
+                               limits = c(0, 100))  +
+            labs(x = "Firm Size Percentile",
+                 y = "",
+                 title =  "Sales of Percentile / Mean Sales",
+                 color = "Year") +
+            scale_color_brewer(palette = "Dark2")  +
+            theme(legend.position = "right")
+
+      return(g)
+
+
+}
+

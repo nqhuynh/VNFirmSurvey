@@ -3,7 +3,6 @@ title: "Firm Stats"
 output: html_document
 ---
 
-
 ```{r setup-knitr, include=FALSE, dev="CairoPNG"}
 # Chunk options
 knitr::opts_chunk$set(
@@ -28,39 +27,10 @@ source(file = here("inst", "rmd", "required_packages.R"))
 
 ```
 
-```{r theme-ggplot2, echo = FALSE}
-
-theme_nghiem <- function(base_size = 14) {
-  theme_minimal(base_size = base_size) %+replace%
-    theme(
-      # L'ensemble de la figure
-      plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # Zone où se situe le graphique
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # Les axes
-      axis.title = element_text(size = rel(0.85)),
-      axis.text = element_text(size = rel(0.70)),
-      #axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed"))
-      # La légende
-      legend.title = element_text(size = rel(0.85), face = "bold"),
-      legend.text = element_text(size = rel(0.70)),
-      legend.key = element_rect(fill = "transparent", colour = NA),
-      legend.key.size = unit(1.5, "lines"),
-      legend.background = element_rect(fill = "transparent", colour = NA)
-      #legend.position = "bottom"
-    )
-}
-# Changing the default theme
-theme_set(theme_nghiem())
-```
-
 ```{r}
 tar_unscript()
 
 ```
-
-
 
 ```{targets globals, tar_globals = TRUE, tar_interactive = FALSE}
 library(here)
@@ -70,121 +40,188 @@ source(file = here("inst", "rmd", "required_packages.R"))
 source(file = here("inst", "rmd", "main_functions.R"))
 
 
+# Changing the default theme
+theme_set(theme_nghiem())
+
 options(tidyverse.quiet = TRUE)
 
 tar_option_set(packages = packages)
 
 ```
 
-
-## Data construction 
-
+## Data construction
 
 <!-- ```{targets nghiem-data} -->
+
 <!-- years <- c(2001:2015) -->
 
 <!-- dn_list <- list(  -->
+
 <!--   # here("inst", "extdata", -->
+
 <!--   #                   "Stata_2000", -->
+
 <!--   #                   "dn2000.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2001", -->
+
 <!--                     "dn2001.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2002", -->
+
 <!--                     "dn2002.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2003", -->
+
 <!--                     "dn2003.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2004", -->
+
 <!--                     "dn2004.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2005", -->
+
 <!--                     "dn2005.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2006", -->
+
 <!--                     "dn2006.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2007", -->
+
 <!--                     "dn2007.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2008", -->
+
 <!--                     "dn2008.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2009", -->
+
 <!--                     "dn2009.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2010", -->
+
 <!--                     "dn2010.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2011", -->
+
 <!--                     "dn2011_mst.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2012", -->
+
 <!--                     "dn2012_mst.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2013", -->
+
 <!--                     "dn2013_mst.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2014", -->
+
 <!--                     "dn2014.dta"), -->
+
 <!--                  here("inst", "extdata", -->
+
 <!--                     "Stata_2015", -->
+
 <!--                     "dn2015.dta") -->
+
 <!--                  # here("inst", "extdata", -->
+
 <!--                  #    "Stata_2016", -->
+
 <!--                  #    "dn2016.dta"), -->
+
 <!--                  # here("inst", "extdata", -->
+
 <!--                  #    "Stata_2017", -->
+
 <!--                  #    "dn2017_new.dta"), -->
+
 <!--                  # here("inst", "extdata", -->
+
 <!--                  #    "Stata_2018", -->
+
 <!--                  #    "dn2018.dta") -->
+
 <!--                  ) -->
 
-
 <!-- list( -->
+
 <!--   tar_target(crosswalk_07_to_93, here::here("inst", "extdata", -->
+
 <!--                                             "vsic_2007_to_1993.csv")), -->
 
 <!--   tar_target(district_codes, fread(here("inst", "extdata",  -->
+
 <!--                              "harmonized_district_codes.csv"))),    -->
 
 <!--   tar_target(geo_dta, VNFirmSurvey::getLocation(dta_list = dn_list, -->
+
 <!--                                   years = years, -->
+
 <!--                                   district_codes = district_codes,  -->
+
 <!--                                   crosswalk_07_to_93 = crosswalk_07_to_93)) -->
 
 <!--   ) -->
 
-
 <!-- ``` -->
-
 
 <!-- ```{targets process-dta} -->
 
-
 <!-- list(  -->
+
 <!--     # tar_target(firm_type_entry_dta, -->
+
 <!--     #        ownership(geo_dta = geo_dta)), -->
 
 <!--     tar_target(fixed_firmID_dta, -->
+
 <!--            harmonize_firmID(geo_dta = geo_dta)), -->
 
 <!--      tar_target(entry_exit_dta, -->
+
 <!--            EntryExit(geo_dta = fixed_firmID_dta, -->
+
 <!--                                    base_year = years, -->
+
 <!--                                    years = years)), -->
 
 <!--     tar_target(random_entry_exit,  -->
+
 <!--                entry_exit_dta[sample(nrow(entry_exit_dta), 100000), ]) -->
 
 <!--      ) -->
 
 <!-- ``` -->
-
-
 
 ```{targets mccaig-data}
 list(
@@ -195,7 +232,6 @@ list(
 
 ```
 
-
 ```{targets process-mccaig-data}
 list(
     tar_target(cols_dta, 
@@ -205,13 +241,17 @@ list(
                SaveEntryDta(dta = cols_dta,
                          base_year = c(2000:2015),
                          years = c(2000:2015))), 
-    
+  
     tar_target(random_entry_exit_mccaig, 
-               entry_exit_mccaig[sample(nrow(entry_exit_mccaig), 100000), ])
+               entry_exit_mccaig[sample(nrow(entry_exit_mccaig), 100000), ]), 
+    
+    tar_target(manu_dta, 
+               entry_exit_mccaig[, manu := fcase(vsic1993 > 1500 & 
+                                                   vsic1993 < 4000, T, 
+                                                 default = F)][manu == T])
     
 )    
 ```
-
 
 ```{targets branch-dta}
 
@@ -220,10 +260,6 @@ list(
   
 )
 ```
-
-
-
-
 
 ## Entry and Exit statistics
 
@@ -239,17 +275,15 @@ list(
 
 ```
 
-
 ```{targets ave-entry-exit-stats}
 
 list(
   tar_target(ave_entry_exit, 
-             EnExitDta(dta = entry_exit_mccaig, 
+             EnExitDunne88(dta = entry_exit_mccaig, 
                        year_list= c(2005, 2010, 2015)))
 )
 
 ```
-
 
 ```{targets agg-entry}
 list(
@@ -259,20 +293,40 @@ list(
 )
 ```
 
+## Cohort
 
-## Report 
+```{targets cohort}
+list(
+  tar_target(cohort_dta, CohortDta(entry_exit_mccaig)), 
+  
+  tar_target(cohort_g, GraphCohort(cohort_dta)), 
+  
+  ## Manufacturing 
+  tar_target(manu_cohort, CohortDta(manu_dta)), 
+  
+  tar_target(manu_cohort_g, GraphCohort(manu_cohort)) 
+)
+```
 
+## Sale distribution
+
+```{targets sale-dist}
+list(
+      tar_target(sale_dist_all, SaleDist(entry_exit_mccaig)), 
+      
+      tar_target(sale_dist_manu, SaleDist(manu_dta))
+)
+```
+
+## Report
 
 ```{targets report}
 
-list(
-    tarchetypes::tar_render(report, path = here("inst", "rmd", "entry_exit_VN.Rmd"))
-)
+# list(
+#     tarchetypes::tar_render(report, path = here("inst", "rmd", "entry_exit_VN.Rmd"))
+# )
 
 ```
-
-
-
 
 ```{r, include = FALSE}
 tar_make()
@@ -280,4 +334,22 @@ tar_make()
 
 ```{r}
 tar_visnetwork()
+```
+
+## Save figures
+
+```{r}
+tar_load(sale_dist_all)
+
+tar_load(sale_dist_manu)
+
+ggsave(sale_dist_all, 
+       dpi = 300, 
+       filename = "sale_dist_all.png", 
+       path = here("inst", "tmp", "figure"))
+
+ggsave(sale_dist_manu, 
+       dpi = 300, 
+       filename = "sale_dist_manul.png", 
+       path = here("inst", "tmp", "figure"))
 ```

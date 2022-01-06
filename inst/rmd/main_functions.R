@@ -567,7 +567,7 @@ SaleDist <- function(dta){
       # q_tab <- data.table("q" = seq(0, 1, 0.04)*100,
       #        "value" = size_q)
 
-      g <- ggplot(q_tab[q < 100 & q > 5 & year %in% c(2001,2005,2010, 2015) ],
+      g <- ggplot(q_tab[q < 100 & q > 5 & year %in% c(2001, 2010) ],
              aes(x = q, y = value, group = year)) +
             geom_point(aes(color = year)) +
             scale_y_continuous(trans = "log10",

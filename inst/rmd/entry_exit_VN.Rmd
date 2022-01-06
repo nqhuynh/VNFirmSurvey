@@ -26,7 +26,9 @@ knitr::opts_chunk$set(
   #message=FALSE,
   #fig.width = 6,
   #fig.asp = 0.8,
-  out.width = "90%"
+  fig.align = "center",
+  #fig.pos = "ht", 
+  out.width = "80%"
 )
 ```
 
@@ -317,13 +319,37 @@ cowplot::plot_grid(cohort_g[['Exit']],
 
 ```
 
+# Size distribution
+
+## Number of workers 
+
+## Revenue 
+
+Figure \@ref(fig:size-all) shows the firm size distribution by revenue of all firms in 2001 and 2010, and Figure \@ref(fig:size-manu) the distribution of manufacuturing only. The vertical axis is the ratio between the revenues of the firms at a specific percentiles and the mean sales among firms in the year of interest.
+
+These figures look very similar to the US case.
+
+Furthermore, the revenue size of firms increase from 2001 to 2010.
+
+```{r size-all, fig.cap= "Firm Size Distribution of All Firms", fig.align='center'}
+include_graphics(path = here("inst", "tmp", "figure", 
+                             "sale_dist_all.png"))
+```
+
+```{r size-manu, fig.cap= "Firm Size Distribution of Manufacturing Firms", }
+include_graphics(path = here("inst", "tmp", "figure", 
+                             "sale_dist_manul.png"))
+```
+
 # Next steps
 
 First, I should check single-plant by ownership.
 
-Second, firm size distribution.
+Second, firm size distribution by age group
 
 Third, distribution of entry relative to incumbent across districts.
+
+\newpage
 
 # Appendix
 

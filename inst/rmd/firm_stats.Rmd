@@ -24,6 +24,8 @@ library(here)
 
 source(file = here("inst", "rmd", "required_packages.R"))
 
+source(file = here("inst", "rmd", "main_functions.R"))
+
 
 ```
 
@@ -31,6 +33,12 @@ source(file = here("inst", "rmd", "required_packages.R"))
 tar_unscript()
 
 ```
+
+```{r ggplot}
+theme_set(theme_nghiem())
+
+```
+
 
 ```{targets globals, tar_globals = TRUE, tar_interactive = FALSE}
 library(here)

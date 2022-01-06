@@ -321,17 +321,17 @@ cowplot::plot_grid(cohort_g[['Exit']],
 
 # Size distribution
 
-<!-- ## Number of workers  -->
+## Number of workers
 
-<!-- ```{r emp-all, fig.cap= "Firm Size Distribution by Employment of All Firms"} -->
-<!-- include_graphics(path = here("inst", "tmp", "figure",  -->
-<!--                              "all _emp_dist.png")) -->
-<!-- ``` -->
+```{r emp-all, fig.cap= "Firm Size Distribution by Employment of All Firms"}
+include_graphics(path = here("inst", "tmp", "figure",
+                             "all_emp_dist.png"))
+```
 
-<!-- ```{r emp-manu, fig.cap= "Firm Size Distribution by Employment of Manufacturing Firms"} -->
-<!-- include_graphics(path = here("inst", "tmp", "figure",  -->
-<!--                              "manu _emp_dist.png")) -->
-<!-- ``` -->
+```{r emp-manu, fig.cap= "Firm Size Distribution by Employment of Manufacturing Firms"}
+include_graphics(path = here("inst", "tmp", "figure",
+                             "manu_emp_dist.png"))
+```
 
 
 
@@ -345,12 +345,12 @@ Furthermore, the revenue size of firms increase from 2001 to 2010.
 
 ```{r size-all, fig.cap= "Firm Size Distribution of All Firms", fig.align='center'}
 include_graphics(path = here("inst", "tmp", "figure", 
-                             "sale_dist_all.png"))
+                             "all_sale_dist.png"))
 ```
 
 ```{r size-manu, fig.cap= "Firm Size Distribution of Manufacturing Firms", }
 include_graphics(path = here("inst", "tmp", "figure", 
-                             "sale_dist_manul.png"))
+                             "manu_sale_dist.png"))
 ```
 
 # Next steps

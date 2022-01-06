@@ -316,13 +316,21 @@ list(
 )
 ```
 
-## Sale distribution
+## Firm size distribution
 
 ```{targets sale-dist}
 list(
-      tar_target(sale_dist_all, SaleDist(entry_exit_mccaig)), 
+      tar_target(sale_dist_all, SaleDist(entry_exit_mccaig, 
+                                         name = "all")), 
       
-      tar_target(sale_dist_manu, SaleDist(manu_dta))
+      tar_target(sale_dist_manu, SaleDist(manu_dta, 
+                                          name = "manu")), 
+      
+      tar_target(emp_dist_all, NumWorkerDist(entry_exit_mccaig,
+                                             name = "all")), 
+      
+      tar_target(emp_dist_manu, NumWorkerDist(manu_dta, 
+                                              name = "manu"))
 )
 ```
 
@@ -347,17 +355,35 @@ tar_visnetwork()
 ## Save figures
 
 ```{r}
-tar_load(sale_dist_all)
+# tar_load(sale_dist_all)
+# 
+# tar_load(sale_dist_manu)
 
-tar_load(sale_dist_manu)
+# ggsave(sale_dist_all, 
+#        dpi = 300, 
+#        filename = "sale_dist_all.png", 
+#        path = here("inst", "tmp", "figure"))
+# 
+# ggsave(sale_dist_manu, 
+#        dpi = 300, 
+#        filename = "sale_dist_manul.png", 
+#        path = here("inst", "tmp", "figure"))
+```
 
-ggsave(sale_dist_all, 
-       dpi = 300, 
-       filename = "sale_dist_all.png", 
-       path = here("inst", "tmp", "figure"))
 
-ggsave(sale_dist_manu, 
-       dpi = 300, 
-       filename = "sale_dist_manul.png", 
-       path = here("inst", "tmp", "figure"))
+
+```{r}
+# tar_load(emp_dist_all)
+# 
+# tar_load(emp_dist_manu)
+
+# ggsave(emp_dist_all, 
+#        dpi = 300, 
+#        filename = "emp_dist_all.png", 
+#        path = here("inst", "tmp", "figure"))
+# 
+# ggsave(emp_dist_manu, 
+#        dpi = 300, 
+#        filename = "emp_dist_manu.png", 
+#        path = here("inst", "tmp", "figure"))
 ```

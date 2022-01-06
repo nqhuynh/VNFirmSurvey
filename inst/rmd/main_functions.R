@@ -551,7 +551,7 @@ fancy_scientific <- function(l) {
       parse(text=l)
 }
 
-SaleDist <- function(dta){
+SaleDist <- function(dta, name){
 
       mean_sale <- dta[, mean_rev := mean(revenue, na.rm = T), by = .(svyear)]
 
@@ -582,8 +582,65 @@ SaleDist <- function(dta){
             scale_color_brewer(palette = "Dark2")  +
             theme(legend.position = "right")
 
+
+      ggsave(g,
+             dpi = 300,
+             filename = paste0(name, "_sale_dist.png"),
+             path = here("inst", "tmp", "figure"))
+
       return(g)
 
 
 }
+
+
+NumWorkerDist <- function(dta, name){
+
+   dta <- dta[svyear %in% c(2001, 2005, 2010 )]
+
+   size_dist <-  dta[, .N , by = .(svyear, empend)][, frac := N/(sum(N)), by = svyear]
+
+   PlotDis <- function(dta){
+
+      g <- ggplot(data = dta,
+             aes(x = empend, y = frac,
+                 fill = factor(svyear) )) +
+         scale_x_binned(n.breaks = 10) +
+         geom_bar(stat = 'identity',
+                  position = "dodge") +
+         scale_y_continuous(labels=percent) +
+         labs(x = "Firm Size by Employment",
+              y  = "",
+              fill = ""
+              #title = "0 < Employment < 200 "
+              ) +
+         scale_fill_brewer(palette = "Dark2") +
+         theme(legend.position =  "bottom")
+
+      return(g)
+   }
+
+
+   g_small <- PlotDis(size_dist[empend < 200 & empend > 0])
+
+   g_10 <- PlotDis(size_dist[empend < 200 & empend > 10])
+
+   g_50 <- PlotDis(size_dist[empend < 200 & empend > 50])
+
+   g_large <- PlotDis(size_dist[empend < 3000 & empend > 200])
+
+
+   g <- plot_grid( g_small, g_10,
+                  g_50, g_large)
+
+   ggsave(g,
+          dpi = 300,
+          filename = paste0(name, "_emp_dist.png"),
+          path = here("inst", "tmp", "figure"))
+
+
+   return(g)
+}
+
+
 

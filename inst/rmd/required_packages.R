@@ -22,7 +22,8 @@ packages <- c(
       "targets",
       "tarchetypes",
       "DataExplorer",
-      "VNFirmSurvey"
+      "VNFirmSurvey",
+      "scales"
 )
 
 

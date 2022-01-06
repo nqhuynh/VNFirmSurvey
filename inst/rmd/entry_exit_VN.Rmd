@@ -321,13 +321,25 @@ cowplot::plot_grid(cohort_g[['Exit']],
 
 # Size distribution
 
-## Number of workers 
+<!-- ## Number of workers  -->
+
+<!-- ```{r emp-all, fig.cap= "Firm Size Distribution by Employment of All Firms"} -->
+<!-- include_graphics(path = here("inst", "tmp", "figure",  -->
+<!--                              "all _emp_dist.png")) -->
+<!-- ``` -->
+
+<!-- ```{r emp-manu, fig.cap= "Firm Size Distribution by Employment of Manufacturing Firms"} -->
+<!-- include_graphics(path = here("inst", "tmp", "figure",  -->
+<!--                              "manu _emp_dist.png")) -->
+<!-- ``` -->
+
+
 
 ## Revenue 
 
 Figure \@ref(fig:size-all) shows the firm size distribution by revenue of all firms in 2001 and 2010, and Figure \@ref(fig:size-manu) the distribution of manufacuturing only. The vertical axis is the ratio between the revenues of the firms at a specific percentiles and the mean sales among firms in the year of interest.
 
-These figures look very similar to the US case.
+These figures look very similar to the US.
 
 Furthermore, the revenue size of firms increase from 2001 to 2010.
 

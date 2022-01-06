@@ -540,3 +540,50 @@ GraphCohort <- function(cohort_dta){
 }
 
 
+fancy_scientific <- function(l) {
+      # turn in to character string in scientific notation
+      l <- format(l, scientific = TRUE)
+      # quote the part before the exponent to keep all the digits
+      #l <- gsub("^(.*)e", "'\\1'e", l)
+      # turn the 'e+' into plotmath format
+      #l <- gsub("e", "%*%10^", l)
+      # return this as an expression
+      parse(text=l)
+}
+
+SaleDist <- function(dta){
+
+      mean_sale <- dta[, mean_rev := mean(revenue, na.rm = T), by = .(svyear)]
+
+      size_dta <- dta[, .(year = factor(year), madn,
+                                               norm_sales = revenue/mean_rev)]
+
+
+      q_tab <- size_dta[, .(q = seq(0, 1, 0.04)*100,
+                             value = quantile(norm_sales, probs = seq(0, 1, 0.04),
+                           na.rm = T)),
+                         by = .(year)]
+
+      # q_tab <- data.table("q" = seq(0, 1, 0.04)*100,
+      #        "value" = size_q)
+
+      g <- ggplot(q_tab[q < 100 & q > 5 & year %in% c(2001,2005,2010, 2015) ],
+             aes(x = q, y = value, group = year)) +
+            geom_point(aes(color = year)) +
+            scale_y_continuous(trans = "log10",
+                               limits = c(0.001, NA),
+                               labels=fancy_scientific) +
+            scale_x_continuous(#trans = "log10",
+                               limits = c(0, 100))  +
+            labs(x = "Firm Size Percentile",
+                 y = "",
+                 title =  "Sales of Percentile / Mean Sales",
+                 color = "Year") +
+            scale_color_brewer(palette = "Dark2")  +
+            theme(legend.position = "right")
+
+      return(g)
+
+
+}
+

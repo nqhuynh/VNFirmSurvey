@@ -147,7 +147,6 @@ X R S_{i}(t-1) &=\frac{Q X_{i}(t) / N X_{i}(t-1)}{\left(Q T_{i}(t-1)-Q X_{i}(t-1
 \end{aligned}
 $$
 
-
 ```{r entry-exit-manu, include= F}
 entry_exit_manu <- fread(here("inst", "tmp", "entry_exit_ind_dta.csv"))
 
@@ -196,8 +195,6 @@ kbl(manu_all_dta,
 
 ```
 
-
-
 ```{r, eval=FALSE}
 med_2 <- rbindlist(list(entry_exit_dta[, manu := F], 
                mean_manu[, manu := T]), 
@@ -223,12 +220,9 @@ kbl(med_2[, .(Year = svyear,
 
 ```
 
-
-Table \@ref(tab:entry-exit-tab) reports these statistics for three pairs of years, 2000-2005, 2005-2010, and 2010-2015. The first three columns are statistics for all firms, while the last three columns are averages over  374 4-digit VSIC 1993 manufacturing industries.
-
+Table \@ref(tab:entry-exit-tab) reports these statistics for three pairs of years, 2000-2005, 2005-2010, and 2010-2015. The first three columns are statistics for all firms, while the last three columns are averages over 374 4-digit VSIC 1993 manufacturing industries.
 
 Table \@ref(tab:us-dta) reports numbers from @Dunne1988 to compare with the Vietnamese numbers.
-
 
 ```{r us-dta}
 us_dta <-tibble( "variable"  = c("ER", "ESH", "ERS", "XR", "XSH", "XRS"), 
@@ -252,43 +246,39 @@ kbl(us_dta,
 
 ## Discussion
 
-While most Vietnamese statistics are comparable to the US, the entry rate of Vietnam is  about 4 times as high as that of the US during the period of rapid economic growth 2000-2010. Using the same data source, @McCaig2021  independently reports a comparable annualized rate at 27%. 
+While most Vietnamese statistics are comparable to the US, the entry rate of Vietnam is about 4 times as high as that of the US during the period of rapid economic growth 2000-2010. Using the same data source, @McCaig2021 independently reports a comparable annualized rate at 27%.
 
-This rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies. That is, as the economy privatizes SOEs, private and foreign firms seize this opportunity to open new firms. 
+This rate is high even compared to developing countries as documented in @McCaig2021 and much higher than developed countries. @McCaig2021 observe that this number is comparable to other countries that transition out of centrally planned economies. That is, as the economy privatizes SOEs, private and foreign firms seize this opportunity to open new firms.
 
 # Surviving firms
+
 I document market shares, average firm size, and exit rates of four cohorts 2001, 2005, 2010, 2015. Based on the following figures, I observe the following:
 
 First, sales shares of each cohort fall over time. Besides, the average revenue shares of entering cohorts is about 0.108 which is smaller than that of the US . This can be due to high exit rate or falling of average size of incumbents or both. In the US, the former is true while the latter is not. Incumbents become larger over time in the US.
 
 Second, the average size of surviving do not always increase. Both 2001 and 2005 cohorts experience a decline in their average size from 2005.
 
-Finally, the exit rates are about the same as the US. 
-
-
+Finally, the exit rates are about the same as the US.
 
 ```{r, include = F}
 tar_load(cohort_g)
 ```
 
-
-
 ```{r sale-share}
 cohort_g[["Market Share"]]
 ```
 
-
 ```{r ave-size}
 cohort_g[['Avg Size']]
 ```
-
 
 ```{r exit}
 cohort_g[["Exit"]]
 ```
 
 ## Manufacturing
-I include manufacturing figures next to the previous figures 
+
+I include manufacturing figures next to the previous figures
 
 ```{r, include = F}
 tar_load(manu_cohort_g)
@@ -327,12 +317,24 @@ cowplot::plot_grid(cohort_g[['Exit']],
 
 ```
 
-# Next steps 
+# Next steps
 
-First, I should check single-plant by ownership. 
+First, I should check single-plant by ownership.
 
-Second, firm size distribution. 
+Second, firm size distribution.
 
-Third, distribution of entry relative to incumbent across districts. 
+Third, distribution of entry relative to incumbent across districts.
+
+# Appendix
+
+Here are the entry and exit rates from @McCaig2021
+
+![](images/entry_rich.png)
+
+![](images/entry_poor.png)
+
+![](images/exit_rich.png)
+
+![](images/exit_poor.png)
 
 # References

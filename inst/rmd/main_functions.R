@@ -35,6 +35,7 @@ ColSelect <- function(dta){
                       empend,
                       wages,
                       kend,
+                      ownership,
                       revenue,
                       valueadded,
                       dexport,
@@ -449,7 +450,7 @@ AggEntryYear <- function(dta, year_list ){
                  y = "")
 
 
-      return(g)
+      return(list(graph_dta, g))
 }
 
 

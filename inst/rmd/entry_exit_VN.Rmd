@@ -85,6 +85,20 @@ knitr::include_graphics(path = here("inst", "tmp", "figure",
 
 # Entry and exit
 
+```{r agg-entry, fig.cap="All firm entry"}
+setwd(here("inst", "rmd"))
+tar_load(agg_entry_g)
+tar_load(manu_entry_g)
+agg_entry_g[[2]]
+
+
+```
+
+```{r, fig.cap="Manu Entry"}
+manu_entry_g[[2]]
+```
+
+
 ```{r entry-exit-dta, include= F}
 entry_exit_dta <- fread(here("inst", "tmp", "entry_exit_dta.csv"))
 

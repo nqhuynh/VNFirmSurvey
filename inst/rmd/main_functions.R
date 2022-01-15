@@ -129,26 +129,38 @@ SingleMutiPlant <- function(dta){
       single_multi_plant <- dta[, .(num_firm = .N,
                                      sales = sum(revenue, na.rm = T)),
                                  by = .(plant_num > 1,
-                                        svyear)]
+                                        svyear,
+                                        ownership_type)]
+
+
 
       share_dta <- single_multi_plant[, `:=` (share_num = prop.table(num_firm),
                                           share_sales = prop.table(sales)),
-                                      by = svyear]
+                                      by = .(svyear,
+                                             ownership_type)]
 
-      graph_dta <- melt(share_dta[plant_num == F, .('count shares' = share_num,
-                                                    'revenue shares' = share_sales,
-                                       svyear)],
-           id.vars = "svyear")
+
+      graph_dta <- melt(share_dta[plant_num == F,
+                                  .(count = share_num,
+                                    revenue = share_sales,
+                                    svyear,
+                                    ownership_type) ],
+                        id.vars = c("svyear", "ownership_type"),
+                        variable.name = "shares")
 
       g <- ggplot(data = graph_dta[svyear < 2015] ,
-                  aes(x = factor(svyear),
-                      y = value*100,
-                      group = variable)) +
-            geom_point(aes(col = variable)) +
-            geom_line(aes(col = variable)) +
+                  aes(x = (svyear),
+                      y = value,
+                      group = ownership_type)) +
+            geom_point(aes(col = ownership_type)) +
+            geom_line(aes(col = ownership_type)) +
             labs(title = "Single-plant firms shares",
+                 subtitle = "More than 90% of foreign and private firms are single-plant",
                  x = "Year",
-                 y = "") +
+                 y = "",
+                 col = "Ownership") +
+            scale_x_continuous(breaks = seq(2000, 2014, by = 2)) +
+            facet_wrap(~shares) +
             scale_color_brewer(palette = "Dark2")
 
       ggsave(plot = g,
@@ -156,8 +168,10 @@ SingleMutiPlant <- function(dta){
              dpi = 300,
              path = here("inst", "tmp", "figure"))
 
-      mean_plant <- dta[plant_num > 0, .(mean_plant_per_firm = mean(plant_num)),
-                         by = svyear][order(svyear)]
+      mean_plant <- dta[plant_num > 0, .(mean_plant_per_firm = mean(plant_num),
+                                                     median_plant_per_firm = median(plant_num)),
+                         by = .(svyear,
+                                ownership_type)][order(svyear)]
 
       return(list(share_dta, mean_plant))
 }
@@ -642,6 +656,39 @@ NumWorkerDist <- function(dta, name){
 
    return(g)
 }
+
+
+HarOwnership <- function(dta,
+                         own_cross){
+
+   merged_dta <- merge(dta[, year := as.factor(year)],
+         own_cross[, year := as.factor(year)],
+         by = c("year", "ownership"))
+
+
+   return(merged_dta)
+
+}
+
+
+
+OwnCrossWalk  <- function(own_cross){
+
+   ownership_crosswalk <- fread(own_cross, header = T)
+
+
+   own_cross <- melt(ownership_crosswalk[, !c("description")],
+                     id.vars = "ownership_type",
+                     value.name = "ownership",
+                     variable.name = "year"
+   )[!is.na(ownership)]
+
+
+   return(own_cross)
+
+}
+
+
 
 
 

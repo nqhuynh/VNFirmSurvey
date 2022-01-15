@@ -381,12 +381,12 @@ Third, distribution of entry relative to incumbent across districts.
 
 Here are the entry and exit rates from @McCaig2021
 
-![](images/entry_rich.png)
+<!-- ![](images/entry_rich.png) -->
 
-![](images/entry_poor.png)
+<!-- ![](images/entry_poor.png) -->
 
-![](images/exit_rich.png)
+<!-- ![](images/exit_rich.png) -->
 
-![](images/exit_poor.png)
+<!-- ![](images/exit_poor.png) -->
 
 # References

@@ -235,7 +235,7 @@ tar_option_set(packages = packages)
 list(
   tar_target(mccaig_dta, 
              read_dta(here("inst", "Stata", "output", 
-                           "Master enterprise dataset part 30 (2).dta")))
+                           "Master enterprise dataset part 30.dta")))
 )
 
 ```
@@ -243,23 +243,51 @@ list(
 ```{targets process-mccaig-data}
 list(
     tar_target(cols_dta, 
-               ColSelect(mccaig_dta)), 
-    
+               ColSelect(mccaig_dta))
+)    
+```
+
+```{targets entry-exit-data}
+
+list(
     tar_target(entry_exit_mccaig,
                SaveEntryDta(dta = cols_dta,
                          base_year = c(2000:2015),
-                         years = c(2000:2015))), 
+                         years = c(2000:2015)))
+    
+)
+
+```
+
+
+
+```{targets ownership}
+list(
   
-    tar_target(random_entry_exit_mccaig, 
-               entry_exit_mccaig[sample(nrow(entry_exit_mccaig), 100000), ]), 
+  tar_target(own_cross, OwnCrossWalk(here("inst", "extdata","ownership_class_nghiem.csv"))), 
+  
+  tar_target(har_own_dta, HarOwnership(dta = entry_exit_mccaig, 
+                                       own_cross = own_cross)) 
+  
+)
+```
+
+
+```{targets sub-samples}
+list(
+      tar_target(random_dta, 
+               har_own_dta[sample(nrow(har_own_dta), 100000), ]), 
     
     tar_target(manu_dta, 
-               entry_exit_mccaig[, manu := fcase(vsic1993 > 1500 & 
+               har_own_dta[, manu := fcase(vsic1993 > 1500 & 
                                                    vsic1993 < 4000, T, 
                                                  default = F)][manu == T])
-    
-)    
+)
 ```
+
+
+
+
 
 ```{targets branch-dta}
 
@@ -275,7 +303,7 @@ list(
 list(
   tar_target(num_firm, PlantNumTab(dta = entry_exit_mccaig)), 
   
-  tar_target(firm_branch_dta, MergeBranchFirmID(firm_dta = entry_exit_mccaig,
+  tar_target(firm_branch_dta, MergeBranchFirmID(firm_dta = har_own_dta,
                                                 branch_dta = branch_dta)), 
   
   tar_target(single_multi_stats, SingleMutiPlant(dta = firm_branch_dta ))
@@ -287,7 +315,7 @@ list(
 
 list(
   tar_target(ave_entry_exit, 
-             EnExitDunne88(dta = entry_exit_mccaig, 
+             EnExitDunne88(dta = har_own_dta, 
                        year_list= c(2005, 2010, 2015)))
 )
 
@@ -296,7 +324,7 @@ list(
 ```{targets agg-entry}
 list(
   tar_target(agg_entry_g, 
-             AggEntryYear(dta = entry_exit_mccaig,
+             AggEntryYear(dta = har_own_dta,
                           year_list = c(2001:2015))),
   tar_target(manu_entry_g, 
              AggEntryYear(dta = manu_dta,
@@ -308,7 +336,7 @@ list(
 
 ```{targets cohort}
 list(
-  tar_target(cohort_dta, CohortDta(entry_exit_mccaig)), 
+  tar_target(cohort_dta, CohortDta(har_own_dta)), 
   
   tar_target(cohort_g, GraphCohort(cohort_dta)), 
   
@@ -323,19 +351,22 @@ list(
 
 ```{targets sale-dist}
 list(
-      tar_target(sale_dist_all, SaleDist(entry_exit_mccaig, 
+      tar_target(sale_dist_all, SaleDist(har_own_dta, 
                                          name = "all")), 
       
       tar_target(sale_dist_manu, SaleDist(manu_dta, 
                                           name = "manu")), 
       
-      tar_target(emp_dist_all, NumWorkerDist(entry_exit_mccaig,
+      tar_target(emp_dist_all, NumWorkerDist(har_own_dta,
                                              name = "all")), 
       
       tar_target(emp_dist_manu, NumWorkerDist(manu_dta, 
                                               name = "manu"))
 )
 ```
+
+
+
 
 ## Report
 

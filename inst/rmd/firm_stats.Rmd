@@ -288,7 +288,6 @@ list(
 
 
 
-
 ```{targets branch-dta}
 
 list(
@@ -297,7 +296,17 @@ list(
 )
 ```
 
-## Entry and Exit statistics
+## Market share 
+
+
+```{targets market-share-ownership}
+list(
+  tar_target(market_share_own, MarketShareOwnership(list(har_own_dta, manu_dta)))
+)
+
+```
+
+
 
 ```{targets num-firm}
 list(
@@ -310,6 +319,13 @@ list(
 )
 
 ```
+
+
+
+
+
+
+## Entry and Exit statistics
 
 ```{targets ave-entry-exit-stats}
 

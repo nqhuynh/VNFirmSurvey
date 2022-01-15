@@ -176,35 +176,50 @@ SingleMutiPlant <- function(dta){
       return(list(share_dta, mean_plant))
 }
 
-# library(ggrepel)
-#
-# g <- ggplot(data= g_dta, aes(x = factor(svyear), y = percent, group = simple_ownership)) +
-#       geom_line(aes(color=simple_ownership))+
-#       geom_point(aes(color=simple_ownership)) +
-#       #geom_text(aes(label = percent), hjust=0.7, vjust=-0.5, size = 4) +
-#       # scale_y_continuous(trans='log2',
-#       #                    limits = c(NA,NA)) +
-#       labs(x = "Year",
-#            y = "",
-#            title = "Percentage of firms with more than 1 branch, by ownership",
-#            caption = "Source: Vietnam Annual Enterprise Surveys 2001-2014") +
-#       theme_minimal() +
-#       theme(#axis.line.y = element_blank(),
-#             #axis.text.y = element_blank(),
-#             #axis.ticks.y = element_blank(),
-#             legend.title = element_blank(),
-#             legend.position = "none") +
-#
-#       geom_text_repel(aes(label = simple_ownership),
-#                       data = g_dta[svyear == 2014],
-#                       #color = "red",
-#                       hjust = 1,
-#                       size = 4,
-#                       nudge_x = 0) +
-#       scale_color_brewer(palette = "Dark2")
-#
-# ggsave(plot = g, path = "/Users/nghiemhuynh/Documents/papers/TradeSOE/output",
-#        filename = "plant_share_by_ownership.png")
+
+
+
+MarketShareOwnership <- function(dta_list){
+
+   GetShare <- function(dta){
+
+      share_dta <- dta[, .(rev = sum(revenue, na.rm = T)),
+                       by = .(svyear, ownership_type)
+      ][,  rev_share := prop.table(rev),
+        by = .(svyear) ]
+
+      return(share_dta)
+   }
+
+   dta_list <- lapply(dta_list, function(x) GetShare(x))
+
+   dta_list[[1]]$manu <- "all"
+   dta_list[[2]]$manu <- "manufacturing"
+
+   graph_dta <- rbindlist(dta_list, fill = T,
+                          use.names = T)
+
+
+   g <- ggplot(graph_dta[ownership_type == "SOE"],
+          aes(x = svyear,
+              y = rev_share,
+              col = manu)) +
+      geom_point() +
+      geom_line() +
+      scale_x_continuous(breaks = seq(2000, 2016, by = 2))  +
+      labs(x = "Year",
+         y = "",
+         title = "Revenue share of state-owned enterprise") +
+      scale_color_brewer(palette = "Dark2")
+
+   ggsave(g,
+          filename = "market_share_own.png",
+          path = here("inst", "tmp", "figure"))
+
+   return(graph_dta)
+
+
+}
 
 
 
@@ -224,6 +239,8 @@ PlantNumTab <- function(dta){
             labs( title = "Number of firms over years",
                   x = "Year",
                   y = "")
+
+      return(g)
 
 }
 

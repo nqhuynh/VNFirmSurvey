@@ -74,14 +74,37 @@ theme_set(theme_nghiem())
 
 # Single plant share
 
-Figure \@ref(fig:single-plant-g) reports the shares of single-plant firms and their sales shares from 2000-2014. The shares of single plant firms are comparable to the US starting from 2002. The overall trend is increasing despite the strange numbers in 2000 and 2001. I will check the matching of these two years.
+I harmonize the ownership codes across waves. The GSO gave me a data set with "consistent" codes since these codes do not match the numbers in the questionnaires. 
 
-Before 2002, it looks like the shares of single-plant firms are relatively low. It is likely due to the high share of state-owned enterprises (SOEs). I will compute these shares again disaggregated by ownership.
+To harmonize these codes, I assume that it is unlikely that firms change their ownership codes between two consecutive years. I then infer major changes across surveys. I start from the last year, say 2015 and go back in time to 2000. There are only three major changes in 2011, 2003, and 2001. 
+
+These codes are at finer categories than state-owned, private, and foreign. For instance, there are central state-owned and local state-owned enterprises. I combine these categories to one big category under SOEs. 
+
+
+Figure \@ref(fig:single-plant-g) reports the shares of single-plant firms and their sales shares from 2000-2014. The shares of single plant firms are comparable to the US starting from 2002. The overall trend is increasing despite the strange numbers in 2000 and 2001. 
+
+Furthermore, more than 90% of foreign and private firms are single-plant. Among SOEs, 75% are single-plant on average. 
+
+In terms of revenue, the shares are lower for all ownership types, but the general pattern is consistent with counts. Single plants constitute about 85% of revenues among foreign and private firms.
+
+In sum, the GSO main data files are single-plants. I interpret results of analysis of these data as covering all foreign and private firms and at the firm-level for SOEs.
 
 ```{r single-plant-g, out.width= '85%', fig.pos= 't', fig.align='center', fig.cap= 'Single plant share'}
 knitr::include_graphics(path = here("inst", "tmp", "figure",
                                     "single_plant_share.png"))
 ```
+
+
+## Market share by ownership 
+
+Before 2002, it looks like the shares of single-plant firms are relatively low. It is likely due to the high share of state-owned enterprises (SOEs). 
+
+
+
+```{r market-share, out.width= '85%', fig.pos= 't', fig.align='center', fig.cap= 'Market share'}
+knitr::include_graphics(path = here("inst", "tmp", "figure","market_share_own.png"))
+```
+
 
 # Entry and exit
 

@@ -63,6 +63,23 @@ ColSelect <- function(dta){
 
 SaveEntryDta <- function(dta, base_year, years){
 
+   ## When I merge 2000 to concor 2001, I ignore data that have been dropped. I should have merged in before dropping with Stata data
+
+      concor2000_2001 <- read_dta(here("inst", "Stata",
+                                       "Changes to 2000 firm identifiers.dta"))
+
+      dta[,  madn_unfix00 := madn]
+
+      merged_dta <- merge(dta,
+            concor2000_2001,
+            by.x = c("madn"),
+            by.y = c("madn00"),
+            all.x = T)
+
+      merged_dta[!is.na(madn01),  madn := madn01]
+
+      dta <- merged_dta[, !c("madn01", "match")]
+
       dta <- VNFirmSurvey::EntryExit(geo_dta = dta,
                        base_year = base_year,
                        years = years)

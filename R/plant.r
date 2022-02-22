@@ -27,6 +27,115 @@ plant <- function(dta_list,
                            dn_dta,
                            years, SIMPLIFY = F)
 
+      harmonize_plant <- function(dta, svyear){
+         if (svyear == 2000){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn = madn_new,
+                           stt,
+                           branch_name = tendv,
+                           address = dia_diem,
+                           sector =  nganh_kd,
+                           net_revenue = d_thu,
+                           num_employee = lao_dong
+            )]
+         } else if (svyear == 2001){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn,
+                           macs,
+                           stt,
+                           branch_name = tencn,
+                           tax_id = ma_thue,
+                           address = dchi,
+                           commune = xa,
+                           district = huyen,
+                           branch_province = tinhcn,
+                           sector =  nganh_kd
+            )]
+         } else if (svyear > 2001 & svyear <= 2003){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn,
+                           macs,
+                           stt,
+                           branch_name = tencn,
+                           tax_id = ma_thue,
+                           address = dchi,
+                           #commune = xa,
+                           #district = huyen,
+                           branch_province = tinhcn,
+                           sector =  nganh_kd,
+                           num_employee = lao_dong
+            )]
+         }else if (svyear > 2003 & svyear <= 2008){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn,
+                           macs,
+                           stt,
+                           branch_name = tencn,
+                           tax_id = ma_thue,
+                           address = dchi,
+                           #commune = xa,
+                           #district = huyen,
+                           branch_province = tinhcn,
+                           sector =  nganh_kd,
+                           num_employee = lao_dong,
+                           net_revenue = doanh_thu
+            )]
+         }else if (svyear > 2008 & svyear <= 2013 & svyear != 2011){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn,
+                           macs,
+                           stt,
+                           branch_name = tencn,
+                           tax_id = ma_thue,
+                           address = dchi,
+                           district = huyencn,
+                           branch_province = tinhcn,
+                           sector =  nganh_kd,
+                           num_employee = lao_dong,
+                           net_revenue = doanh_thu
+            )]
+         }else if (svyear == 2014){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn,
+                           macs,
+                           stt,
+                           #branch_name = tencn,
+                           tax_id = ma_thue,
+                           #address = dchi,
+                           district = huyencn,
+                           branch_province = tinhcn,
+                           sector =  nganh_kd,
+                           num_employee = lao_dong,
+                           net_revenue = doanh_thu
+            )]
+         }else if (svyear == 2011){
+            dta <- dta[, .(svyear,
+                           tinh,
+                           madn,
+                           macs,
+                           stt = phieu1b,
+                           branch_name = tencstt,
+                           #tax_id = ma_thue,
+                           branch_tax_id = ma_thuecs,
+                           address = dchics,
+                           district = mahuyen,
+                           commune = maxa,
+                           branch_province = matinh,
+                           sector =  nganh_kd,
+                           num_employee = ld,
+                           net_revenue = doanhthu1
+            )]
+         }
+         return(dta)
+      }
+
+
       plant_data <- mapply(harmonize_plant,
                            plant_data,
                            years,
@@ -59,110 +168,3 @@ plant <- function(dta_list,
 }
 
 
-harmonize_plant <- function(dta, svyear){
-      if (svyear == 2000){
-            dta <- dta[, .(svyear,
-                    tinh,
-                    madn = madn_new,
-                    stt,
-                    branch_name = tendv,
-                    address = dia_diem,
-                    sector =  nganh_kd,
-                    net_revenue = d_thu,
-                    num_employee = lao_dong
-                    )]
-      } else if (svyear == 2001){
-            dta <- dta[, .(svyear,
-                    tinh,
-                    madn,
-                    macs,
-                    stt,
-                    branch_name = tencn,
-                    tax_id = ma_thue,
-                    address = dchi,
-                    commune = xa,
-                    district = huyen,
-                    branch_province = tinhcn,
-                    sector =  nganh_kd
-            )]
-      } else if (svyear > 2001 & svyear <= 2003){
-            dta <- dta[, .(svyear,
-                    tinh,
-                    madn,
-                    macs,
-                    stt,
-                    branch_name = tencn,
-                    tax_id = ma_thue,
-                    address = dchi,
-                    #commune = xa,
-                    #district = huyen,
-                    branch_province = tinhcn,
-                    sector =  nganh_kd,
-                    num_employee = lao_dong
-            )]
-      }else if (svyear > 2003 & svyear <= 2008){
-            dta <- dta[, .(svyear,
-                    tinh,
-                    madn,
-                    macs,
-                    stt,
-                    branch_name = tencn,
-                    tax_id = ma_thue,
-                    address = dchi,
-                    #commune = xa,
-                    #district = huyen,
-                    branch_province = tinhcn,
-                    sector =  nganh_kd,
-                    num_employee = lao_dong,
-                    net_revenue = doanh_thu
-            )]
-      }else if (svyear > 2008 & svyear <= 2013 & svyear != 2011){
-         dta <- dta[, .(svyear,
-                        tinh,
-                        madn,
-                        macs,
-                        stt,
-                        branch_name = tencn,
-                        tax_id = ma_thue,
-                        address = dchi,
-                        district = huyencn,
-                        branch_province = tinhcn,
-                        sector =  nganh_kd,
-                        num_employee = lao_dong,
-                        net_revenue = doanh_thu
-         )]
-      }else if (svyear == 2014){
-         dta <- dta[, .(svyear,
-                        tinh,
-                        madn,
-                        macs,
-                        stt,
-                        #branch_name = tencn,
-                        tax_id = ma_thue,
-                        #address = dchi,
-                        district = huyencn,
-                        branch_province = tinhcn,
-                        sector =  nganh_kd,
-                        num_employee = lao_dong,
-                        net_revenue = doanh_thu
-         )]
-      }else if (svyear == 2011){
-         dta <- dta[, .(svyear,
-                        tinh,
-                        madn,
-                        macs,
-                        stt = phieu1b,
-                        branch_name = tencstt,
-                        #tax_id = ma_thue,
-                        branch_tax_id = ma_thuecs,
-                        address = dchics,
-                        district = mahuyen,
-                        commune = maxa,
-                        branch_province = matinh,
-                        sector =  nganh_kd,
-                        num_employee = ld,
-                        net_revenue = doanhthu1
-         )]
-      }
-      return(dta)
-}

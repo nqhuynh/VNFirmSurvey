@@ -63,7 +63,7 @@ harmonize_plant <- function(dta, svyear){
       if (svyear == 2000){
             dta <- dta[, .(svyear,
                     tinh,
-                    madn,
+                    madn = madn_new,
                     stt,
                     branch_name = tendv,
                     address = dia_diem,

@@ -112,12 +112,21 @@ BranchData <- function(year_length){
 
 
 
-      dta <- VNFirmSurvey::plant(dta_list = dta_list,
+
+      dta <- plant(dta_list = dta_list,
                                  years = year_length)
 
       return(dta)
 
 }
+
+
+# dn_dta <- lapply(dta_list, function(x) haven::read_dta(file = x,
+#                                                        encoding = "latin1"))
+#
+# har_own_dta[, .(madn, province2003, vsic1993)][madn == 1]
+#
+# plant_00 <- VNFirmSurvey::plant(dta_list = dn_dta)
 
 
 MergeBranchFirmID <- function(firm_dta, branch_dta){
